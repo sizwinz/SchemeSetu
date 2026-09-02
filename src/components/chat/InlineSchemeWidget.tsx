@@ -124,7 +124,7 @@ export function InlineSchemeWidget({
           {/* Action CTAs */}
           <div className="mt-3 flex flex-wrap items-center gap-2 pt-1">
             <Link
-              href="/#locator"
+              href="/locator"
               className="flex-1 min-w-[140px] text-center bg-mosje-saffron hover:bg-amber-600 text-white text-xs font-semibold py-2 px-3 rounded-lg shadow-xs transition-colors flex items-center justify-center gap-1.5"
             >
               <MapPin className="h-3.5 w-3.5" />
