@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Landmark, ShieldCheck, MessageSquareText, BookOpen } from "lucide-react";
+import { Landmark, ShieldCheck, MessageSquareText, BookOpen, Calculator } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
@@ -31,7 +31,7 @@ export function Header() {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center space-x-4 text-xs">
+        <div className="hidden md:flex items-center space-x-3 text-xs">
           <Link
             href="/"
             className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-colors ${
@@ -54,6 +54,18 @@ export function Header() {
           >
             <MessageSquareText className="h-4 w-4" />
             <span>Voice Assistant</span>
+          </Link>
+
+          <Link
+            href="/calculator"
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+              pathname === "/calculator"
+                ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
+                : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+            }`}
+          >
+            <Calculator className="h-4 w-4" />
+            <span>Calculator</span>
           </Link>
 
           <div className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1.5 rounded-full border border-slate-700 text-slate-300 ml-2">

@@ -132,7 +132,7 @@ export function InlineSchemeWidget({
             </Link>
 
             <Link
-              href="/#calculator"
+              href="/calculator"
               className="flex-1 min-w-[140px] text-center bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-2 px-3 rounded-lg border border-slate-700 shadow-xs transition-colors flex items-center justify-center gap-1.5"
             >
               <Calculator className="h-3.5 w-3.5" />
