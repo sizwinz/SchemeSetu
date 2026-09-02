@@ -22,7 +22,7 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-mosje-navy border-t border-slate-800 md:hidden pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-mosje-navy border-t border-slate-800 md:hidden pb-safe print:hidden">
       <div className="grid grid-cols-4 h-16">
         {navItems.map((item) => {
           const Icon = item.icon;

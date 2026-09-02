@@ -10,13 +10,14 @@ import {
   BookOpen,
   Calculator,
   MapPin,
+  FileCheck,
 } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="w-full bg-mosje-navy text-white shadow-sm border-b border-slate-800 sticky top-0 z-40">
+    <header className="w-full bg-mosje-navy text-white shadow-sm border-b border-slate-800 sticky top-0 z-40 print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <Link href="/" className="bg-mosje-saffron p-2 rounded-lg text-white block hover:bg-amber-600 transition-colors">
@@ -38,7 +39,7 @@ export function Header() {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center space-x-3 text-xs">
+        <div className="hidden md:flex items-center space-x-2.5 text-xs">
           <Link
             href="/"
             className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-colors ${
@@ -87,7 +88,19 @@ export function Header() {
             <span>Partner Locator</span>
           </Link>
 
-          <div className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1.5 rounded-full border border-slate-700 text-slate-300 ml-2">
+          <Link
+            href="/dossier"
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+              pathname === "/dossier"
+                ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
+                : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+            }`}
+          >
+            <FileCheck className="h-4 w-4" />
+            <span>Dossier</span>
+          </Link>
+
+          <div className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1.5 rounded-full border border-slate-700 text-slate-300 ml-1.5">
             <ShieldCheck className="h-4 w-4 text-amber-400" />
             <span>NSFDC Verified</span>
           </div>

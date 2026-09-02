@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { ChannelPartner } from "@/lib/partners/types";
 import {
   Building2,
@@ -11,7 +12,7 @@ import {
   CheckCircle2,
   ExternalLink,
   Clock,
-  Briefcase,
+  ArrowRight,
 } from "lucide-react";
 
 interface PartnerCardProps {
@@ -154,7 +155,7 @@ export function PartnerCard({
       </div>
 
       {/* Action CTA Buttons */}
-      <div className="flex items-center space-x-2 pt-1">
+      <div className="flex flex-wrap items-center gap-2 pt-1">
         <button
           type="button"
           onClick={(e) => {
@@ -166,7 +167,7 @@ export function PartnerCard({
               ? "bg-emerald-600 text-white shadow-xs"
               : isHighRisk
               ? "bg-slate-200 text-slate-500 hover:bg-slate-300"
-              : "bg-mosje-saffron hover:bg-amber-600 text-white shadow-xs"
+              : "bg-mosje-saffron hover:bg-amber-600 text-white shadow-xs cursor-pointer"
           }`}
         >
           {isDesignated ? (
@@ -181,6 +182,17 @@ export function PartnerCard({
             </>
           )}
         </button>
+
+        {isDesignated && (
+          <Link
+            href="/dossier"
+            onClick={(e) => e.stopPropagation()}
+            className="py-2 px-3 rounded-xl bg-mosje-navy hover:bg-slate-800 text-amber-300 text-xs font-semibold shadow-xs transition-colors flex items-center space-x-1.5"
+          >
+            <span>Create Dossier</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        )}
 
         <a
           href={directionsUrl}
