@@ -5,11 +5,15 @@ import {
   ChatMessage,
   QuickPrompt,
   AssistantLanguage,
+  DialogState,
 } from "@/lib/chat/types";
 import { ChatMessageItem } from "./ChatMessageItem";
 import { QuickReplyChips } from "./QuickReplyChips";
 import { VoiceInputButton } from "./VoiceInputButton";
+import { InlineSchemeWidget } from "./InlineSchemeWidget";
 import { speakText } from "@/lib/audio/speechSynthesis";
+import { advanceDialog } from "@/lib/chat/dialogEngine";
+import { DIALOG_PROMPTS } from "@/lib/chat/prompts";
 import {
   Send,
   RotateCcw,
@@ -19,27 +23,12 @@ import {
   MessageSquare,
 } from "lucide-react";
 
-const INITIAL_PROMPTS: Record<AssistantLanguage, QuickPrompt[]> = {
-  "en-IN": [
-    { id: "p1", label: "Small Retail Shop", value: "I want to start a small grocery retail shop", iconName: "store" },
-    { id: "p2", label: "Tailoring & Boutique", value: "I want to start a tailoring and boutique enterprise", iconName: "scissors" },
-    { id: "p3", label: "Dairy & Husbandry", value: "I need finance for dairy farming and cattle", iconName: "milk" },
-    { id: "p4", label: "Higher Education Loan", value: "I need an education loan for professional studies", iconName: "graduation" },
-  ],
-  "hi-IN": [
-    { id: "p1", label: "किराना दुकान", value: "मैं एक छोटी किराना दुकान शुरू करना चाहता हूँ", iconName: "store" },
-    { id: "p2", label: "सिलाई और बुटीक", value: "मुझे सिलाई और बुटीक केंद्र के लिए ऋण चाहिए", iconName: "scissors" },
-    { id: "p3", label: "डेयरी फार्मिंग", value: "मुझे दुग्ध व्यवसाय और पशुपालन के लिए सहायता चाहिए", iconName: "milk" },
-    { id: "p4", label: "उच्च शिक्षा ऋण", value: "मुझे उच्च शिक्षा और डिग्री के लिए शिक्षा ऋण चाहिए", iconName: "graduation" },
-  ],
-};
-
 const INITIAL_MESSAGES: Record<AssistantLanguage, ChatMessage[]> = {
   "en-IN": [
     {
       id: "msg-welcome-en",
       sender: "ASSISTANT",
-      text: "Namaste! I am your SchemeSetu Concessional Credit Advisor. I help Scheduled Caste entrepreneurs and students find up to 90% government concessional financing at 4.0% to 8.0% interest rates.\n\nWhat kind of business enterprise or educational program are you planning to start?",
+      text: DIALOG_PROMPTS["en-IN"].GREETING.promptText,
       timestamp: "Just now",
       type: "TEXT",
     },
@@ -48,7 +37,7 @@ const INITIAL_MESSAGES: Record<AssistantLanguage, ChatMessage[]> = {
     {
       id: "msg-welcome-hi",
       sender: "ASSISTANT",
-      text: "नमस्ते! मैं आपका स्कीमसेतु रियायती ऋण सलाहकार हूँ। मैं अनुसूचित जाति के उद्यमियों और विद्यार्थियों को 4.0% से 8.0% ब्याज दर पर 90% तक सरकारी ऋण प्राप्त करने में सहायता करता हूँ।\n\nआप किस प्रकार का व्यवसाय या शिक्षा कार्यक्रम शुरू करना चाहते हैं?",
+      text: DIALOG_PROMPTS["hi-IN"].GREETING.promptText,
       timestamp: "अभी",
       type: "TEXT",
     },
@@ -58,23 +47,25 @@ const INITIAL_MESSAGES: Record<AssistantLanguage, ChatMessage[]> = {
 interface ChatContainerProps {
   onReplayAudio?: (text: string, lang: AssistantLanguage) => void;
   renderWidget?: (message: ChatMessage) => React.ReactNode;
-  onSendMessage?: (
-    text: string,
-    currentLanguage: AssistantLanguage
-  ) => Promise<{ assistantReply: string; newPrompts?: QuickPrompt[]; widgetData?: any }>;
 }
 
 export function ChatContainer({
   onReplayAudio,
   renderWidget,
-  onSendMessage,
 }: ChatContainerProps) {
   const [language, setLanguage] = useState<AssistantLanguage>("en-IN");
   const [autoSpeak, setAutoSpeak] = useState<boolean>(true);
   const [inputText, setInputText] = useState<string>("");
   const [messages, setMessages] = useState<ChatMessage[]>(() => INITIAL_MESSAGES["en-IN"]);
-  const [prompts, setPrompts] = useState<QuickPrompt[]>(() => INITIAL_PROMPTS["en-IN"]);
+  const [prompts, setPrompts] = useState<QuickPrompt[]>(() => DIALOG_PROMPTS["en-IN"].GREETING.quickPrompts);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  const [dialogState, setDialogState] = useState<DialogState>({
+    currentStep: "GREETING",
+    collectedProfile: {},
+    language: "en-IN",
+    autoSpeak: true,
+  });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -97,8 +88,12 @@ export function ChatContainer({
   const handleLanguageToggle = () => {
     const nextLang: AssistantLanguage = language === "en-IN" ? "hi-IN" : "en-IN";
     setLanguage(nextLang);
+    setDialogState((prev) => ({
+      ...prev,
+      language: nextLang,
+    }));
     setMessages(INITIAL_MESSAGES[nextLang]);
-    setPrompts(INITIAL_PROMPTS[nextLang]);
+    setPrompts(DIALOG_PROMPTS[nextLang].GREETING.quickPrompts);
   };
 
   const handleResetChat = () => {
@@ -108,8 +103,14 @@ export function ChatContainer({
         : "Clear Conversation: Are you sure you want to reset the chat and clear your inputs?"
     );
     if (confirmed) {
+      setDialogState({
+        currentStep: "GREETING",
+        collectedProfile: {},
+        language,
+        autoSpeak,
+      });
       setMessages(INITIAL_MESSAGES[language]);
-      setPrompts(INITIAL_PROMPTS[language]);
+      setPrompts(DIALOG_PROMPTS[language].GREETING.quickPrompts);
       setInputText("");
     }
   };
@@ -130,57 +131,40 @@ export function ChatContainer({
     setInputText("");
     setIsProcessing(true);
 
-    if (onSendMessage) {
-      try {
-        const response = await onSendMessage(trimmed, language);
-        const assistantMsg: ChatMessage = {
-          id: `asst-${Date.now()}`,
-          sender: "ASSISTANT",
-          text: response.assistantReply,
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          type: response.widgetData ? "SCHEME_WIDGET" : "TEXT",
-          widgetData: response.widgetData,
-        };
-        setMessages((prev) => [...prev, assistantMsg]);
-        if (response.newPrompts) {
-          setPrompts(response.newPrompts);
-        }
-        if (autoSpeak) {
-          handleAudioPlayback(response.assistantReply, language);
-        }
-      } catch {
-        const errorMsg: ChatMessage = {
-          id: `err-${Date.now()}`,
-          sender: "SYSTEM",
-          text:
-            language === "hi-IN"
-              ? "संदेश संसाधित करने में त्रुटि। कृपया पुनः प्रयास करें।"
-              : "Unable to process message. Please enter valid criteria or choose a suggested prompt.",
-          timestamp: "Now",
-          type: "ERROR",
-        };
-        setMessages((prev) => [...prev, errorMsg]);
-      } finally {
-        setIsProcessing(false);
+    try {
+      // Advance the multi-turn conversational dialogue state machine
+      const stepResult = advanceDialog(dialogState, trimmed);
+      setDialogState(stepResult.nextState);
+
+      const assistantMsg: ChatMessage = {
+        id: `asst-${Date.now()}`,
+        sender: "ASSISTANT",
+        text: stepResult.assistantReply,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        type: stepResult.widgetData ? "SCHEME_WIDGET" : "TEXT",
+        widgetData: stepResult.widgetData,
+      };
+
+      setMessages((prev) => [...prev, assistantMsg]);
+      setPrompts(stepResult.newPrompts);
+
+      if (autoSpeak) {
+        handleAudioPlayback(stepResult.assistantReply, language);
       }
-    } else {
-      setTimeout(() => {
-        const sampleReply: ChatMessage = {
-          id: `asst-${Date.now()}`,
-          sender: "ASSISTANT",
-          text:
-            language === "hi-IN"
-              ? `धन्यवाद। आपने उल्लेख किया: "${trimmed}"। इस परियोजना के लिए आपकी अनुमानित लागत क्या है?`
-              : `Thank you. You mentioned: "${trimmed}". What is your estimated project or equipment cost?`,
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          type: "TEXT",
-        };
-        setMessages((prev) => [...prev, sampleReply]);
-        if (autoSpeak) {
-          handleAudioPlayback(sampleReply.text, language);
-        }
-        setIsProcessing(false);
-      }, 500);
+    } catch {
+      const errorMsg: ChatMessage = {
+        id: `err-${Date.now()}`,
+        sender: "SYSTEM",
+        text:
+          language === "hi-IN"
+            ? "संदेश संसाधित करने में त्रुटि। कृपया पुनः प्रयास करें।"
+            : "Unable to evaluate criteria. Please enter valid amounts or choose a suggested prompt.",
+        timestamp: "Now",
+        type: "ERROR",
+      };
+      setMessages((prev) => [...prev, errorMsg]);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -196,13 +180,28 @@ export function ChatContainer({
   const handleVoiceTranscript = (transcript: string) => {
     if (transcript && transcript.trim()) {
       setInputText(transcript);
-      // Auto-submit after voice recording finishes
       submitMessage(transcript);
     }
   };
 
+  const defaultRenderWidget = (msg: ChatMessage) => {
+    if (
+      msg.type === "SCHEME_WIDGET" &&
+      msg.widgetData?.evaluationResult &&
+      msg.widgetData?.userProfile
+    ) {
+      return (
+        <InlineSchemeWidget
+          initialResult={msg.widgetData.evaluationResult}
+          initialProfile={msg.widgetData.userProfile as any}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
-    <div className="flex flex-col h-[calc(100vh-8.5rem)] sm:h-[680px] max-w-4xl mx-auto bg-white rounded-2xl border border-slate-200/90 shadow-md overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-8.5rem)] sm:h-[700px] max-w-4xl mx-auto bg-white rounded-2xl border border-slate-200/90 shadow-md overflow-hidden">
       {/* Top Controls Bar */}
       <div className="bg-mosje-navy text-white px-4 py-3 flex items-center justify-between border-b border-slate-800">
         <div className="flex items-center space-x-2.5">
@@ -261,7 +260,7 @@ export function ChatContainer({
             key={msg.id}
             message={msg}
             onReplayAudio={(text) => handleAudioPlayback(text, language)}
-            renderWidget={renderWidget}
+            renderWidget={renderWidget || defaultRenderWidget}
           />
         ))}
 
