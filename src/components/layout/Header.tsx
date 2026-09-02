@@ -11,6 +11,7 @@ import {
   Calculator,
   MapPin,
   FileCheck,
+  Building2,
 } from "lucide-react";
 
 export function Header() {
@@ -39,70 +40,82 @@ export function Header() {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center space-x-2.5 text-xs">
+        <div className="hidden md:flex items-center space-x-2 text-xs">
           <Link
             href="/"
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
               pathname === "/"
                 ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
                 : "text-slate-300 hover:text-white hover:bg-slate-800/60"
             }`}
           >
-            <BookOpen className="h-4 w-4" />
+            <BookOpen className="h-3.5 w-3.5" />
             <span>Schemes</span>
           </Link>
 
           <Link
             href="/assistant"
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
               pathname === "/assistant"
                 ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
                 : "text-slate-300 hover:text-white hover:bg-slate-800/60"
             }`}
           >
-            <MessageSquareText className="h-4 w-4" />
+            <MessageSquareText className="h-3.5 w-3.5" />
             <span>Voice Assistant</span>
           </Link>
 
           <Link
             href="/calculator"
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
               pathname === "/calculator"
                 ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
                 : "text-slate-300 hover:text-white hover:bg-slate-800/60"
             }`}
           >
-            <Calculator className="h-4 w-4" />
+            <Calculator className="h-3.5 w-3.5" />
             <span>Calculator</span>
           </Link>
 
           <Link
             href="/locator"
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
               pathname === "/locator"
                 ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
                 : "text-slate-300 hover:text-white hover:bg-slate-800/60"
             }`}
           >
-            <MapPin className="h-4 w-4" />
-            <span>Partner Locator</span>
+            <MapPin className="h-3.5 w-3.5" />
+            <span>Locator</span>
           </Link>
 
           <Link
             href="/dossier"
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
               pathname === "/dossier"
                 ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
                 : "text-slate-300 hover:text-white hover:bg-slate-800/60"
             }`}
           >
-            <FileCheck className="h-4 w-4" />
+            <FileCheck className="h-3.5 w-3.5" />
             <span>Dossier</span>
           </Link>
 
-          <div className="flex items-center space-x-1 bg-slate-800/80 px-2.5 py-1.5 rounded-full border border-slate-700 text-slate-300 ml-1.5">
-            <ShieldCheck className="h-4 w-4 text-amber-400" />
-            <span>NSFDC Verified</span>
+          <Link
+            href="/admin"
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
+              pathname === "/admin"
+                ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
+                : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+            }`}
+          >
+            <Building2 className="h-3.5 w-3.5" />
+            <span>Admin</span>
+          </Link>
+
+          <div className="flex items-center space-x-1 bg-slate-800/80 px-2 py-1 rounded-full border border-slate-700 text-slate-300 ml-1">
+            <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
+            <span className="text-[11px]">NSFDC</span>
           </div>
         </div>
       </div>
