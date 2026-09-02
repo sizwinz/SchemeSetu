@@ -5,10 +5,11 @@ import {
   ChatMessage,
   QuickPrompt,
   AssistantLanguage,
-  DialogStep,
 } from "@/lib/chat/types";
 import { ChatMessageItem } from "./ChatMessageItem";
 import { QuickReplyChips } from "./QuickReplyChips";
+import { VoiceInputButton } from "./VoiceInputButton";
+import { speakText } from "@/lib/audio/speechSynthesis";
 import {
   Send,
   RotateCcw,
@@ -56,7 +57,6 @@ const INITIAL_MESSAGES: Record<AssistantLanguage, ChatMessage[]> = {
 
 interface ChatContainerProps {
   onReplayAudio?: (text: string, lang: AssistantLanguage) => void;
-  voiceInputSlot?: React.ReactNode;
   renderWidget?: (message: ChatMessage) => React.ReactNode;
   onSendMessage?: (
     text: string,
@@ -66,7 +66,6 @@ interface ChatContainerProps {
 
 export function ChatContainer({
   onReplayAudio,
-  voiceInputSlot,
   renderWidget,
   onSendMessage,
 }: ChatContainerProps) {
@@ -78,6 +77,14 @@ export function ChatContainer({
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const handleAudioPlayback = (text: string, lang: AssistantLanguage) => {
+    if (onReplayAudio) {
+      onReplayAudio(text, lang);
+    } else {
+      speakText(text, lang);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -138,8 +145,8 @@ export function ChatContainer({
         if (response.newPrompts) {
           setPrompts(response.newPrompts);
         }
-        if (autoSpeak && onReplayAudio) {
-          onReplayAudio(response.assistantReply, language);
+        if (autoSpeak) {
+          handleAudioPlayback(response.assistantReply, language);
         }
       } catch {
         const errorMsg: ChatMessage = {
@@ -169,8 +176,8 @@ export function ChatContainer({
           type: "TEXT",
         };
         setMessages((prev) => [...prev, sampleReply]);
-        if (autoSpeak && onReplayAudio) {
-          onReplayAudio(sampleReply.text, language);
+        if (autoSpeak) {
+          handleAudioPlayback(sampleReply.text, language);
         }
         setIsProcessing(false);
       }, 500);
@@ -184,6 +191,14 @@ export function ChatContainer({
 
   const handlePromptSelect = (prompt: QuickPrompt) => {
     submitMessage(prompt.value);
+  };
+
+  const handleVoiceTranscript = (transcript: string) => {
+    if (transcript && transcript.trim()) {
+      setInputText(transcript);
+      // Auto-submit after voice recording finishes
+      submitMessage(transcript);
+    }
   };
 
   return (
@@ -245,7 +260,7 @@ export function ChatContainer({
           <ChatMessageItem
             key={msg.id}
             message={msg}
-            onReplayAudio={(text) => onReplayAudio && onReplayAudio(text, language)}
+            onReplayAudio={(text) => handleAudioPlayback(text, language)}
             renderWidget={renderWidget}
           />
         ))}
@@ -276,7 +291,11 @@ export function ChatContainer({
       {/* Input Control Bar */}
       <div className="p-3 bg-white border-t border-slate-200">
         <form onSubmit={handleFormSubmit} className="flex items-center space-x-2">
-          {voiceInputSlot}
+          <VoiceInputButton
+            language={language}
+            onTranscript={handleVoiceTranscript}
+            disabled={isProcessing}
+          />
 
           <input
             type="text"
