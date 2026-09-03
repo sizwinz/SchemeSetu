@@ -390,8 +390,8 @@ export function SmartRecommenderWizard() {
           {primaryScheme && evalResult.isEligible ? (
             <div className="space-y-4">
               <div>
-                <span className="text-[10px] text-amber-800 uppercase font-bold">
-                  {primaryScheme.code} ({primaryScheme.name}) • {primaryScheme.category.replace("_", " ")}
+                <span className="text-[10px] text-amber-800 uppercase font-bold tracking-wider">
+                  {primaryScheme.code} • {primaryScheme.category.replace("_", " ")}
                 </span>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-0.5 leading-snug">
                   {primaryScheme.name}
@@ -465,13 +465,13 @@ export function SmartRecommenderWizard() {
               <div className="space-y-2 pt-1">
                 <Link
                   href={`/calculator?scheme=${primaryScheme.code}&amount=${funding?.totalCost || cost}&rate=${primaryScheme.interestRateMin}&tenure=${primaryScheme.repaymentTenureYears}`}
-                  className="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between transition-colors shadow-2xs group"
+                  className="w-full py-2.5 px-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold flex items-center justify-between transition-colors shadow-xs group"
                 >
                   <div className="flex items-center space-x-2">
-                    <Calculator className="h-4 w-4 text-amber-400" />
+                    <Calculator className="h-4 w-4 text-amber-100" />
                     <span>Simulate Projected EMI &amp; Moratorium</span>
                   </div>
-                  <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-white transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight className="h-3.5 w-3.5 text-amber-100 group-hover:text-white transition-transform group-hover:translate-x-0.5" />
                 </Link>
 
                 <Link
