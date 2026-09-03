@@ -22,7 +22,7 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-mosje-navy border-t border-slate-800 md:hidden pb-safe print:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 md:hidden pb-safe print:hidden shadow-xs">
       <div className="grid grid-cols-4 h-16">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -33,8 +33,8 @@ export function BottomNav() {
               href={item.href}
               className={`flex flex-col items-center justify-center space-y-1 transition-colors ${
                 isActive
-                  ? "text-mosje-saffron font-medium"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "text-slate-900 font-bold"
+                  : "text-slate-500 hover:text-slate-800"
               }`}
             >
               <Icon className="h-5 w-5" />

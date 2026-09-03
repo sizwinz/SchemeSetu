@@ -1,122 +1,139 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Landmark,
-  ShieldCheck,
+  User,
   MessageSquareText,
   BookOpen,
   Calculator,
   MapPin,
   FileCheck,
   Building2,
+  Wifi,
 } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
+  const [currentLang, setCurrentLang] = useState<"hi" | "en">("hi");
+
+  const toggleLanguage = () => {
+    setCurrentLang((prev) => (prev === "hi" ? "en" : "hi"));
+  };
 
   return (
-    <header className="w-full bg-mosje-navy text-white shadow-sm border-b border-slate-800 sticky top-0 z-40 print:hidden">
+    <header className="w-full bg-white text-slate-900 shadow-2xs border-b border-slate-200/80 sticky top-0 z-40 print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        {/* Left: Brand Identity */}
         <div className="flex items-center space-x-3">
-          <Link href="/" className="bg-mosje-saffron p-2 rounded-lg text-white block hover:bg-amber-600 transition-colors">
-            <Landmark className="h-6 w-6" aria-hidden="true" />
-          </Link>
-          <div>
-            <div className="flex items-center space-x-2">
-              <Link href="/" className="font-bold text-lg tracking-tight text-white hover:text-amber-300 transition-colors">
-                SchemeSetu
-              </Link>
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                MoSJE Concessional Finance
-              </span>
-            </div>
-            <p className="text-xs text-slate-300 hidden sm:block">
-              Ministry of Social Justice and Empowerment: Affirmative Action Credit Engine
-            </p>
-          </div>
-        </div>
-
-        {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center space-x-2 text-xs">
           <Link
             href="/"
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
+            className="flex items-center space-x-2 text-slate-900 hover:text-amber-700 transition-colors"
+          >
+            <Landmark className="h-6 w-6 text-slate-900" aria-hidden="true" />
+            <span className="font-extrabold text-xl tracking-tight text-slate-900">
+              SchemeSetu
+            </span>
+          </Link>
+        </div>
+
+        {/* Center: Sleek Desktop Navigation */}
+        <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold text-slate-600">
+          <Link
+            href="/"
+            className={`px-3 py-1.5 rounded-lg transition-colors ${
               pathname === "/"
-                ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
-                : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                ? "bg-slate-100 text-slate-900 font-bold"
+                : "hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
-            <BookOpen className="h-3.5 w-3.5" />
-            <span>Schemes</span>
+            Schemes
           </Link>
 
           <Link
             href="/assistant"
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
+            className={`px-3 py-1.5 rounded-lg transition-colors ${
               pathname === "/assistant"
-                ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
-                : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                ? "bg-slate-100 text-slate-900 font-bold"
+                : "hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
-            <MessageSquareText className="h-3.5 w-3.5" />
-            <span>Voice Assistant</span>
+            Voice Assistant
           </Link>
 
           <Link
             href="/calculator"
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
+            className={`px-3 py-1.5 rounded-lg transition-colors ${
               pathname === "/calculator"
-                ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
-                : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                ? "bg-slate-100 text-slate-900 font-bold"
+                : "hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
-            <Calculator className="h-3.5 w-3.5" />
-            <span>Calculator</span>
+            Calculator
           </Link>
 
           <Link
             href="/locator"
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
+            className={`px-3 py-1.5 rounded-lg transition-colors ${
               pathname === "/locator"
-                ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
-                : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                ? "bg-slate-100 text-slate-900 font-bold"
+                : "hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
-            <MapPin className="h-3.5 w-3.5" />
-            <span>Locator</span>
+            Locator
           </Link>
 
           <Link
             href="/dossier"
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
+            className={`px-3 py-1.5 rounded-lg transition-colors ${
               pathname === "/dossier"
-                ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
-                : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                ? "bg-slate-100 text-slate-900 font-bold"
+                : "hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
-            <FileCheck className="h-3.5 w-3.5" />
-            <span>Dossier</span>
+            Dossier
           </Link>
 
           <Link
             href="/admin"
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-colors ${
+            className={`px-3 py-1.5 rounded-lg transition-colors ${
               pathname === "/admin"
-                ? "bg-slate-800 text-amber-300 font-semibold border border-slate-700"
-                : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                ? "bg-slate-100 text-slate-900 font-bold"
+                : "hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
-            <Building2 className="h-3.5 w-3.5" />
-            <span>Admin</span>
+            Admin
           </Link>
+        </nav>
 
-          <div className="flex items-center space-x-1 bg-slate-800/80 px-2 py-1 rounded-full border border-slate-700 text-slate-300 ml-1">
-            <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
-            <span className="text-[11px]">NSFDC</span>
+        {/* Right: Mockup Controls (Offline pill, Language toggle, Profile avatar) */}
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Offline Mode Pill */}
+          <div className="hidden sm:flex items-center space-x-1.5 bg-slate-100/90 text-slate-600 px-3 py-1.5 rounded-full border border-slate-200 text-xs font-medium">
+            <span className="h-2 w-2 rounded-full bg-slate-400"></span>
+            <span>Offline Mode Available</span>
           </div>
+
+          {/* Language Toggle Pill */}
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="flex items-center space-x-1 px-3 py-1.5 rounded-full border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+            title="Toggle between Hindi and English"
+          >
+            <span>{currentLang === "hi" ? "हिंदी / English" : "English / हिंदी"}</span>
+          </button>
+
+          {/* User Profile Avatar */}
+          <Link
+            href="/admin"
+            className="w-8 h-8 rounded-full border border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-700 hover:bg-slate-50 transition-colors"
+            title="User Profile & Admin"
+          >
+            <User className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </header>
