@@ -11,7 +11,15 @@ import { ChatMessageItem } from "./ChatMessageItem";
 import { QuickReplyChips } from "./QuickReplyChips";
 import { VoiceInputButton } from "./VoiceInputButton";
 import { InlineSchemeWidget } from "./InlineSchemeWidget";
-import { speakText } from "@/lib/audio/speechSynthesis";
+import {
+  speakText,
+  pauseSpeech,
+  resumeSpeech,
+  cancelSpeech,
+  isAudioMuted,
+  setAudioMuted,
+  AudioPlaybackState,
+} from "@/lib/audio/speechSynthesis";
 import { advanceDialog } from "@/lib/chat/dialogEngine";
 import { DIALOG_PROMPTS } from "@/lib/chat/prompts";
 import {
@@ -19,6 +27,9 @@ import {
   RotateCcw,
   Volume2,
   VolumeX,
+  Pause,
+  Play,
+  Square,
   Languages,
   MessageSquare,
 } from "lucide-react";
@@ -58,11 +69,18 @@ export function ChatContainer({
   initialScheme,
 }: ChatContainerProps) {
   const [language, setLanguage] = useState<AssistantLanguage>("en-IN");
-  const [autoSpeak, setAutoSpeak] = useState<boolean>(true);
+  const [autoSpeak, setAutoSpeak] = useState<boolean>(!isAudioMuted());
   const [inputText, setInputText] = useState<string>("");
   const [messages, setMessages] = useState<ChatMessage[]>(() => INITIAL_MESSAGES["en-IN"]);
   const [prompts, setPrompts] = useState<QuickPrompt[]>(() => DIALOG_PROMPTS["en-IN"].GREETING.quickPrompts);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  // Audio Playback State from global speech synthesis
+  const [audioState, setAudioState] = useState<AudioPlaybackState>({
+    isSpeaking: false,
+    isPaused: false,
+    isMuted: isAudioMuted(),
+  });
 
   const [dialogState, setDialogState] = useState<DialogState>({
     currentStep: "GREETING",
@@ -100,9 +118,18 @@ export function ChatContainer({
       setPrompts(DIALOG_PROMPTS[targetLang].GREETING.quickPrompts);
     };
 
+    const handleAudio = (e: any) => {
+      setAudioState(e.detail);
+      if (e.detail.isMuted) {
+        setAutoSpeak(false);
+      }
+    };
+
     window.addEventListener("schemesetu_language_changed", handleLangChange);
+    window.addEventListener("schemesetu_audio_state", handleAudio);
     return () => {
       window.removeEventListener("schemesetu_language_changed", handleLangChange);
+      window.removeEventListener("schemesetu_audio_state", handleAudio);
     };
   }, []);
 
@@ -124,6 +151,7 @@ export function ChatContainer({
         : "Clear Conversation: Are you sure you want to reset the chat and clear your inputs?"
     );
     if (confirmed) {
+      cancelSpeech();
       setDialogState({
         currentStep: "GREETING",
         collectedProfile: {},
@@ -167,7 +195,7 @@ export function ChatContainer({
       setMessages((prev) => [...prev, assistantMsg]);
       setPrompts(stepResult.newPrompts);
 
-      if (autoSpeak) {
+      if (autoSpeak && !isAudioMuted()) {
         handleAudioPlayback(stepResult.assistantReply, language);
       }
     } catch {
@@ -222,34 +250,94 @@ export function ChatContainer({
   return (
     <div className="flex flex-col h-[75vh] min-h-[500px] max-h-[850px] bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
       {/* Chat Sub-Header Controls */}
-      <div className="flex items-center justify-between px-4 py-3 bg-slate-50/90 border-b border-slate-200 text-xs">
-        <div className="flex items-center space-x-2 text-slate-700">
+      <div className="flex items-center justify-between px-3 sm:px-4 py-3 bg-slate-50/90 border-b border-slate-200 text-xs gap-2">
+        <div className="flex items-center space-x-2 text-slate-700 shrink-0">
           <MessageSquare className="h-4 w-4 text-mosje-saffron" />
           <span className="font-bold">
-            {language === "hi-IN" ? "योजना सेतु सहायक (सक्रिय)" : "SchemeSetu Advisor (Active)"}
+            {language === "hi-IN" ? "योजना सेतु सहायक" : "SchemeSetu Advisor"}
           </span>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {/* Audio Output Toggle */}
+        <div className="flex items-center space-x-1.5 sm:space-x-2">
+          {/* Read Aloud Active Controls: Pause/Resume and Stop */}
+          {(audioState.isSpeaking || audioState.isPaused) && (
+            <div className="flex items-center space-x-1 bg-white px-2 py-1 rounded-xl border border-slate-200 shadow-2xs">
+              <span className="relative flex h-2 w-2 mr-0.5">
+                <span
+                  className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
+                    audioState.isPaused ? "bg-amber-400" : "bg-emerald-400"
+                  } opacity-75`}
+                />
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    audioState.isPaused ? "bg-amber-500" : "bg-emerald-500"
+                  }`}
+                />
+              </span>
+
+              {/* Pause / Resume Button */}
+              <button
+                type="button"
+                onClick={audioState.isPaused ? resumeSpeech : pauseSpeech}
+                className="p-1 rounded text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                title={audioState.isPaused ? "Resume read aloud" : "Pause read aloud"}
+              >
+                {audioState.isPaused ? (
+                  <Play className="h-3.5 w-3.5 fill-current" />
+                ) : (
+                  <Pause className="h-3.5 w-3.5 fill-current" />
+                )}
+              </button>
+
+              {/* Stop Button */}
+              <button
+                type="button"
+                onClick={cancelSpeech}
+                className="p-1 rounded text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
+                title="Stop read aloud completely"
+              >
+                <Square className="h-3.5 w-3.5 fill-current" />
+              </button>
+            </div>
+          )}
+
+          {/* Audio Mute/Unmute Toggle */}
           <button
             type="button"
-            onClick={() => setAutoSpeak(!autoSpeak)}
-            className={`p-1.5 rounded-lg border transition-colors ${
-              autoSpeak
-                ? "bg-amber-100 text-amber-900 border-amber-300"
-                : "bg-white text-slate-400 border-slate-200 hover:text-slate-600"
+            onClick={() => {
+              const nextMuted = !audioState.isMuted;
+              setAudioMuted(nextMuted);
+              setAutoSpeak(!nextMuted);
+            }}
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border transition-colors cursor-pointer font-semibold ${
+              audioState.isMuted
+                ? "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+                : "bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200"
             }`}
-            title={autoSpeak ? "Voice narration active (Click to mute)" : "Voice narration muted (Click to unmute)"}
+            title={
+              audioState.isMuted
+                ? "Read aloud is muted (Click to unmute)"
+                : "Read aloud is active (Click to mute)"
+            }
           >
-            {autoSpeak ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            {audioState.isMuted ? (
+              <>
+                <VolumeX className="h-3.5 w-3.5 text-red-600" />
+                <span className="hidden sm:inline">Unmute</span>
+              </>
+            ) : (
+              <>
+                <Volume2 className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Mute</span>
+              </>
+            )}
           </button>
 
           {/* Bilingual Switcher */}
           <button
             type="button"
             onClick={handleLanguageToggle}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold transition-colors"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold transition-colors cursor-pointer"
           >
             <Languages className="h-3.5 w-3.5 text-slate-500" />
             <span>{language === "hi-IN" ? "हिंदी" : "EN"}</span>
@@ -259,7 +347,7 @@ export function ChatContainer({
           <button
             type="button"
             onClick={handleResetChat}
-            className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+            className="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
             title="Clear Chat Conversation"
           >
             <RotateCcw className="h-4 w-4" />

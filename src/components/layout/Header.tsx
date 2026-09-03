@@ -11,7 +11,11 @@ import {
   Building2,
   ShieldCheck,
   Save,
-  Radio,
+  Volume2,
+  VolumeX,
+  Pause,
+  Play,
+  Square,
 } from "lucide-react";
 import {
   ApplicantProfileData,
@@ -19,6 +23,14 @@ import {
   saveStoredApplicantProfile,
   DEFAULT_PROFILE,
 } from "@/lib/user/profileStore";
+import {
+  pauseSpeech,
+  resumeSpeech,
+  cancelSpeech,
+  isAudioMuted,
+  setAudioMuted,
+  AudioPlaybackState,
+} from "@/lib/audio/speechSynthesis";
 
 export function Header() {
   const pathname = usePathname();
@@ -27,6 +39,13 @@ export function Header() {
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
   const [profile, setProfile] = useState<ApplicantProfileData>(DEFAULT_PROFILE);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
+
+  // Audio Playback State
+  const [audioState, setAudioState] = useState<AudioPlaybackState>({
+    isSpeaking: false,
+    isPaused: false,
+    isMuted: isAudioMuted(),
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -44,9 +63,15 @@ export function Header() {
 
       setProfile(getStoredApplicantProfile());
 
+      const handleAudioState = (e: any) => {
+        setAudioState(e.detail);
+      };
+      window.addEventListener("schemesetu_audio_state", handleAudioState);
+
       return () => {
         window.removeEventListener("online", handleOnline);
         window.removeEventListener("offline", handleOffline);
+        window.removeEventListener("schemesetu_audio_state", handleAudioState);
       };
     }
   }, []);
@@ -159,11 +184,87 @@ export function Header() {
             </Link>
           </nav>
 
-          {/* Right: Mockup Controls */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Right: Mockup & Audio Controls */}
+          <div className="flex items-center space-x-2 sm:space-x-2.5">
+            {/* Top Read Aloud Audio Control Bar (Mute / Pause / Stop) */}
+            <div className="flex items-center space-x-1 bg-slate-100 border border-slate-200/90 rounded-full px-2 py-1 text-xs transition-all">
+              {/* Active Audio State Indicators & Pause/Resume/Stop Controls */}
+              {audioState.isSpeaking || audioState.isPaused ? (
+                <div className="flex items-center space-x-1.5 pr-1.5 border-r border-slate-300">
+                  <span className="relative flex h-2 w-2">
+                    <span
+                      className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
+                        audioState.isPaused ? "bg-amber-400" : "bg-emerald-400"
+                      } opacity-75`}
+                    />
+                    <span
+                      className={`relative inline-flex rounded-full h-2 w-2 ${
+                        audioState.isPaused ? "bg-amber-500" : "bg-emerald-500"
+                      }`}
+                    />
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-700 hidden sm:inline">
+                    {audioState.isPaused ? "Paused" : "Reading Aloud"}
+                  </span>
+
+                  {/* Pause / Resume Button */}
+                  <button
+                    type="button"
+                    onClick={audioState.isPaused ? resumeSpeech : pauseSpeech}
+                    className="p-1 hover:bg-white rounded-full text-slate-700 transition-colors cursor-pointer"
+                    title={audioState.isPaused ? "Resume read aloud" : "Pause read aloud"}
+                  >
+                    {audioState.isPaused ? (
+                      <Play className="h-3 w-3 fill-current" />
+                    ) : (
+                      <Pause className="h-3 w-3 fill-current" />
+                    )}
+                  </button>
+
+                  {/* Stop Button */}
+                  <button
+                    type="button"
+                    onClick={cancelSpeech}
+                    className="p-1 hover:bg-white rounded-full text-red-600 hover:text-red-700 transition-colors cursor-pointer"
+                    title="Stop read aloud completely"
+                  >
+                    <Square className="h-3 w-3 fill-current" />
+                  </button>
+                </div>
+              ) : null}
+
+              {/* Mute / Unmute Button */}
+              <button
+                type="button"
+                onClick={() => setAudioMuted(!audioState.isMuted)}
+                className={`flex items-center space-x-1 px-1.5 py-0.5 rounded-full text-[11px] font-semibold transition-colors cursor-pointer ${
+                  audioState.isMuted
+                    ? "text-red-700 bg-red-50 hover:bg-red-100"
+                    : "text-slate-700 hover:text-slate-900 hover:bg-white"
+                }`}
+                title={
+                  audioState.isMuted
+                    ? "Read aloud is muted (Click to unmute)"
+                    : "Read aloud is enabled (Click to mute)"
+                }
+              >
+                {audioState.isMuted ? (
+                  <>
+                    <VolumeX className="h-3.5 w-3.5 text-red-600" />
+                    <span className="hidden sm:inline">Audio Off</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 className="h-3.5 w-3.5 text-slate-600" />
+                    <span className="hidden sm:inline">Read Aloud</span>
+                  </>
+                )}
+              </button>
+            </div>
+
             {/* Live Online / Offline State Indicator */}
             <div
-              className={`hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors ${
+              className={`hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors ${
                 isOnline
                   ? "bg-slate-100/90 text-slate-600 border-slate-200"
                   : "bg-amber-50 text-amber-800 border-amber-300"
@@ -182,7 +283,7 @@ export function Header() {
             <button
               type="button"
               onClick={toggleLanguage}
-              className="flex items-center space-x-1 px-3 py-1.5 rounded-full border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-full border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
               title="Toggle between Hindi and English interface language"
             >
               <span>{currentLang === "hi" ? "हिंदी / English" : "English / हिंदी"}</span>
@@ -195,7 +296,7 @@ export function Header() {
                 setProfile(getStoredApplicantProfile());
                 setShowProfileModal(true);
               }}
-              className="w-8 h-8 rounded-full border border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-full border border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0"
               title="View & Edit Beneficiary Applicant Profile"
             >
               <User className="h-4 w-4" />
