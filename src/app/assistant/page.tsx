@@ -24,10 +24,10 @@ export default function AssistantPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Conversational Scheme Advisor
+            AI Scheme Assistant
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Voice-enabled interactive pre-screening for MoSJE concessional credit programs.
+            Voice and chat-enabled interactive pre-screening for MoSJE concessional credit programs.
           </p>
         </div>
         <div className="hidden sm:flex items-center space-x-1.5">

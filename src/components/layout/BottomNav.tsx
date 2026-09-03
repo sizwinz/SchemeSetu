@@ -13,7 +13,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Schemes", href: "/", icon: BookOpen },
-  { label: "Assistant", href: "/assistant", icon: MessageSquareText },
+  { label: "AI Assistant", href: "/assistant", icon: MessageSquareText },
   { label: "Calculator", href: "/calculator", icon: Calculator },
   { label: "Locator", href: "/locator", icon: MapPin },
 ];

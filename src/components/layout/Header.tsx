@@ -155,7 +155,7 @@ export function Header() {
                   : "hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Voice Assistant
+              AI Assistant
             </Link>
 
             <Link
