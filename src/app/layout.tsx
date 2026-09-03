@@ -4,6 +4,8 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Footer } from "@/components/layout/Footer";
+import { LanguageProvider } from "@/lib/i18n/languageContext";
+import { GoogleTranslateScript } from "@/components/layout/GoogleTranslateScript";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -36,12 +38,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${plusJakartaSans.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 pb-16 md:pb-0 font-sans antialiased">
-        <Header />
-        <main className="flex-1 w-full">{children}</main>
-        <Footer />
-        <BottomNav />
+    <html
+      lang="en"
+      className={`${plusJakartaSans.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body
+        className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 pb-16 md:pb-0 font-sans antialiased"
+        suppressHydrationWarning
+      >
+        <LanguageProvider>
+          <GoogleTranslateScript />
+          <Header />
+          <main className="flex-1 w-full">{children}</main>
+          <Footer />
+          <BottomNav />
+        </LanguageProvider>
       </body>
     </html>
   );

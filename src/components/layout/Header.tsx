@@ -31,10 +31,10 @@ import {
   setAudioMuted,
   AudioPlaybackState,
 } from "@/lib/audio/speechSynthesis";
+import { LanguageDropdown } from "@/components/layout/LanguageDropdown";
 
 export function Header() {
   const pathname = usePathname();
-  const [currentLang, setCurrentLang] = useState<"hi" | "en">("hi");
   const [isOnline, setIsOnline] = useState<boolean>(true);
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
   const [profile, setProfile] = useState<ApplicantProfileData>(DEFAULT_PROFILE);
@@ -56,11 +56,6 @@ export function Header() {
       window.addEventListener("online", handleOnline);
       window.addEventListener("offline", handleOffline);
 
-      const savedLang = localStorage.getItem("schemesetu_language");
-      if (savedLang === "en" || savedLang === "hi") {
-        setCurrentLang(savedLang);
-      }
-
       setProfile(getStoredApplicantProfile());
 
       const handleAudioState = (e: any) => {
@@ -75,15 +70,6 @@ export function Header() {
       };
     }
   }, []);
-
-  const toggleLanguage = () => {
-    const nextLang = currentLang === "hi" ? "en" : "hi";
-    setCurrentLang(nextLang);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("schemesetu_language", nextLang);
-      window.dispatchEvent(new CustomEvent("schemesetu_language_changed", { detail: nextLang }));
-    }
-  };
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -288,15 +274,8 @@ export function Header() {
               </div>
             )}
 
-            {/* Interactive Language Toggle Pill */}
-            <button
-              type="button"
-              onClick={toggleLanguage}
-              className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-full border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
-              title="Toggle between Hindi and English interface language"
-            >
-              <span>{currentLang === "hi" ? "हिंदी / English" : "English / हिंदी"}</span>
-            </button>
+            {/* Interactive Language Dropdown */}
+            <LanguageDropdown />
 
             {/* Applicant Profile Modal Trigger */}
             <button

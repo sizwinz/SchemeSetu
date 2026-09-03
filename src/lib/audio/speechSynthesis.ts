@@ -9,6 +9,15 @@ export interface AudioPlaybackState {
 }
 
 let globalMuted = false;
+let globalPreferredLocale = "en-IN";
+
+export function setPreferredSpeechLocale(locale: string): void {
+  globalPreferredLocale = locale;
+}
+
+export function getPreferredSpeechLocale(): string {
+  return globalPreferredLocale;
+}
 
 export function checkSpeechSynthesisSupported(): boolean {
   if (typeof window === "undefined") return false;

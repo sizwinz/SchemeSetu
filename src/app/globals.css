@@ -35,10 +35,34 @@ body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  top: 0px !important;
+  position: static !important;
 }
 
 /* Custom Leaflet Map Pin Styles */
 .custom-health-pin {
   background: transparent !important;
   border: none !important;
+}
+
+/* Google Translate UI Cleanup: Hide Default Floating Banners & Tooltips */
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+#goog-gt-tt,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.skiptranslate:not(.allowed-translate) {
+  display: none !important;
+}
+
+#google_translate_element {
+  display: none !important;
 }
