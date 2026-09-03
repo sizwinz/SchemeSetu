@@ -57,13 +57,13 @@ export function InlineSchemeWidget({
   return (
     <div className="mt-4 space-y-4 pt-3 border-t border-slate-700/60 text-slate-800">
       {/* Interactive Sliders Pane */}
-      <div className="bg-slate-900/95 text-white rounded-2xl p-4 border border-slate-800 shadow-inner space-y-4">
-        <div className="flex items-center justify-between text-xs pb-1 border-b border-slate-800">
-          <span className="font-semibold text-amber-300 flex items-center gap-1.5">
-            <Sliders className="h-3.5 w-3.5" />
-            Live In-Chat Criteria Tuning
+      <div className="bg-slate-50 text-slate-900 rounded-2xl p-4 border border-slate-200/90 shadow-xs space-y-4">
+        <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-200/80">
+          <span className="font-bold text-slate-800 flex items-center gap-1.5">
+            <Sliders className="h-3.5 w-3.5 text-amber-600" />
+            Adjust Scheme Criteria
           </span>
-          <Badge variant="sovereign" className="text-[10px] bg-amber-500/10 text-amber-300">
+          <Badge variant="outline" className="text-[10px] text-slate-600">
             Reactive Rules
           </Badge>
         </div>
@@ -72,8 +72,8 @@ export function InlineSchemeWidget({
           {/* Cost Slider */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-[11px]">
-              <span className="text-slate-400">Project Cost:</span>
-              <span className="font-bold text-amber-400 font-mono">{formatRupees(cost)}</span>
+              <span className="text-slate-500 font-medium">Project Cost:</span>
+              <span className="font-bold text-slate-900 font-sans tabular-nums">{formatRupees(cost)}</span>
             </div>
             <Slider
               min={20000}
@@ -82,9 +82,9 @@ export function InlineSchemeWidget({
               value={[cost]}
               onValueChange={([val]) => handleCostChange(val)}
             />
-            <div className="flex justify-between text-[9px] text-slate-400 font-mono">
-              <span>₹20K (Micro)</span>
-              <span>₹1.4L (MCF Cap)</span>
+            <div className="flex justify-between text-[10px] text-slate-400">
+              <span>₹20K</span>
+              <span>₹1.4L (MCF)</span>
               <span>₹50L (Term Loan)</span>
             </div>
           </div>
@@ -92,8 +92,8 @@ export function InlineSchemeWidget({
           {/* Income Slider */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-[11px]">
-              <span className="text-slate-400">Annual Family Income:</span>
-              <span className={`font-bold font-mono ${income > 500000 ? "text-red-400" : "text-amber-400"}`}>
+              <span className="text-slate-500 font-medium">Annual Family Income:</span>
+              <span className={`font-bold font-sans tabular-nums ${income > 500000 ? "text-red-600" : "text-slate-900"}`}>
                 {formatRupees(income)}
               </span>
             </div>
@@ -104,9 +104,9 @@ export function InlineSchemeWidget({
               value={[income]}
               onValueChange={([val]) => handleIncomeChange(val)}
             />
-            <div className="flex justify-between text-[9px] text-slate-400 font-mono">
+            <div className="flex justify-between text-[10px] text-slate-400">
               <span>₹50K</span>
-              <span className="text-amber-300 font-medium">₹5.00L (Statutory Limit)</span>
+              <span className="text-amber-700 font-medium">₹5.00L Limit</span>
               <span>₹6.00L</span>
             </div>
           </div>

@@ -105,11 +105,26 @@ export function ChatContainer({
     autoSpeak: true,
   });
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const isInitialMount = useRef<boolean>(true);
 
-  // Auto-scroll to bottom of conversation
+  // Auto-scroll only inside message container after user interactions, never scrolling window
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = 0;
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      return;
+    }
+
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   }, [messages, isProcessing]);
 
   // Initial Query Handler
@@ -331,7 +346,10 @@ export function ChatContainer({
       </div>
 
       {/* Message Stream */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/40">
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/40"
+      >
         {messages.map((msg) => (
           <ChatMessageItem
             key={msg.id}
@@ -369,8 +387,6 @@ export function ChatContainer({
             </span>
           </div>
         )}
-
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Suggested Quick Reply Chips */}

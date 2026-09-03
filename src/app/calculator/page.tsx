@@ -173,16 +173,16 @@ function CalculatorContent() {
 
               <Link
                 href={`/assistant?q=${encodeURIComponent(`I want to apply for a ₹${params.principal.toLocaleString("en-IN")} loan at ${params.annualInterestRate}% interest`)}`}
-                className="p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs text-amber-300 flex items-center justify-between transition-colors shadow-xs group"
+                className="p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs text-slate-800 flex items-center justify-between transition-colors group"
               >
                 <div className="flex items-center space-x-2.5">
-                  <MessageSquareText className="h-4 w-4" />
+                  <MessageSquareText className="h-4 w-4 text-amber-600" />
                   <div>
-                    <span className="font-bold text-white block">Pre-Screen in Chat</span>
-                    <span className="text-[10px] text-amber-200/80">Voice-guided application</span>
+                    <span className="font-bold text-slate-900 block">Pre-Screen in Chat</span>
+                    <span className="text-[10px] text-slate-400">Voice-guided application</span>
                   </div>
                 </div>
-                <ArrowRight className="h-3.5 w-3.5 text-amber-300 transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-700 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>
           </div>
