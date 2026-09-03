@@ -47,11 +47,15 @@ const INITIAL_MESSAGES: Record<AssistantLanguage, ChatMessage[]> = {
 interface ChatContainerProps {
   onReplayAudio?: (text: string, lang: AssistantLanguage) => void;
   renderWidget?: (message: ChatMessage) => React.ReactNode;
+  initialQuery?: string;
+  initialScheme?: string;
 }
 
 export function ChatContainer({
   onReplayAudio,
   renderWidget,
+  initialQuery,
+  initialScheme,
 }: ChatContainerProps) {
   const [language, setLanguage] = useState<AssistantLanguage>("en-IN");
   const [autoSpeak, setAutoSpeak] = useState<boolean>(true);
@@ -68,6 +72,7 @@ export function ChatContainer({
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const initialTriggerRef = useRef<boolean>(false);
 
   const handleAudioPlayback = (text: string, lang: AssistantLanguage) => {
     if (onReplayAudio) {
@@ -84,6 +89,22 @@ export function ChatContainer({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Sync language with global header event
+  useEffect(() => {
+    const handleLangChange = (e: any) => {
+      const targetLang: AssistantLanguage = e.detail === "hi" ? "hi-IN" : "en-IN";
+      setLanguage(targetLang);
+      setDialogState((prev) => ({ ...prev, language: targetLang }));
+      setMessages(INITIAL_MESSAGES[targetLang]);
+      setPrompts(DIALOG_PROMPTS[targetLang].GREETING.quickPrompts);
+    };
+
+    window.addEventListener("schemesetu_language_changed", handleLangChange);
+    return () => {
+      window.removeEventListener("schemesetu_language_changed", handleLangChange);
+    };
+  }, []);
 
   const handleLanguageToggle = () => {
     const nextLang: AssistantLanguage = language === "en-IN" ? "hi-IN" : "en-IN";
@@ -111,12 +132,11 @@ export function ChatContainer({
       });
       setMessages(INITIAL_MESSAGES[language]);
       setPrompts(DIALOG_PROMPTS[language].GREETING.quickPrompts);
-      setInputText("");
     }
   };
 
-  const submitMessage = async (textToSend: string) => {
-    const trimmed = textToSend.trim();
+  const submitMessage = (rawText: string) => {
+    const trimmed = rawText.trim();
     if (!trimmed || isProcessing) return;
 
     const userMsg: ChatMessage = {
@@ -132,7 +152,6 @@ export function ChatContainer({
     setIsProcessing(true);
 
     try {
-      // Advance the multi-turn conversational dialogue state machine
       const stepResult = advanceDialog(dialogState, trimmed);
       setDialogState(stepResult.nextState);
 
@@ -168,6 +187,25 @@ export function ChatContainer({
     }
   };
 
+  // Process initial query or scheme from URL
+  useEffect(() => {
+    if (!initialTriggerRef.current) {
+      initialTriggerRef.current = true;
+      if (initialQuery && initialQuery.trim()) {
+        submitMessage(initialQuery.trim());
+      } else if (initialScheme && initialScheme.trim()) {
+        const schemePrompts: Record<string, string> = {
+          MSY: "Tell me about Mahila Samriddhi Yojana (MSY) for women entrepreneurs",
+          MCF: "I need micro credit finance for small business",
+          TERM_LOAN: "I need a term loan for transport/manufacturing machinery",
+          ELS: "I need educational loan for higher studies",
+        };
+        const queryText = schemePrompts[initialScheme] || `Tell me about ${initialScheme} scheme`;
+        submitMessage(queryText);
+      }
+    }
+  }, [initialQuery, initialScheme]);
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     submitMessage(inputText);
@@ -178,99 +216,93 @@ export function ChatContainer({
   };
 
   const handleVoiceTranscript = (transcript: string) => {
-    if (transcript && transcript.trim()) {
-      setInputText(transcript);
-      submitMessage(transcript);
-    }
-  };
-
-  const defaultRenderWidget = (msg: ChatMessage) => {
-    if (
-      msg.type === "SCHEME_WIDGET" &&
-      msg.widgetData?.evaluationResult &&
-      msg.widgetData?.userProfile
-    ) {
-      return (
-        <InlineSchemeWidget
-          initialResult={msg.widgetData.evaluationResult}
-          initialProfile={msg.widgetData.userProfile as any}
-        />
-      );
-    }
-    return null;
+    submitMessage(transcript);
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8.5rem)] sm:h-[700px] max-w-4xl mx-auto bg-white rounded-2xl border border-slate-200/90 shadow-md overflow-hidden">
-      {/* Top Controls Bar */}
-      <div className="bg-mosje-navy text-white px-4 py-3 flex items-center justify-between border-b border-slate-800">
-        <div className="flex items-center space-x-2.5">
-          <div className="p-1.5 bg-amber-500/20 text-amber-300 rounded-lg border border-amber-500/30">
-            <MessageSquare className="h-4 w-4" />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold leading-tight">SchemeSetu Assistant</h2>
-            <p className="text-[10px] text-slate-300">MoSJE Bilingual Voice & Chat Advisor</p>
-          </div>
+    <div className="flex flex-col h-[75vh] min-h-[500px] max-h-[850px] bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+      {/* Chat Sub-Header Controls */}
+      <div className="flex items-center justify-between px-4 py-3 bg-slate-50/90 border-b border-slate-200 text-xs">
+        <div className="flex items-center space-x-2 text-slate-700">
+          <MessageSquare className="h-4 w-4 text-mosje-saffron" />
+          <span className="font-bold">
+            {language === "hi-IN" ? "योजना सेतु सहायक (सक्रिय)" : "SchemeSetu Advisor (Active)"}
+          </span>
         </div>
 
         <div className="flex items-center space-x-2">
-          {/* Auto-Speak Audio Toggle */}
+          {/* Audio Output Toggle */}
           <button
             type="button"
             onClick={() => setAutoSpeak(!autoSpeak)}
-            className={`p-1.5 rounded-md border text-xs flex items-center space-x-1 transition-colors ${
+            className={`p-1.5 rounded-lg border transition-colors ${
               autoSpeak
-                ? "bg-amber-500/20 border-amber-500/40 text-amber-300"
-                : "bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200"
+                ? "bg-amber-100 text-amber-900 border-amber-300"
+                : "bg-white text-slate-400 border-slate-200 hover:text-slate-600"
             }`}
-            title={autoSpeak ? "Voice output enabled" : "Voice output muted"}
+            title={autoSpeak ? "Voice narration active (Click to mute)" : "Voice narration muted (Click to unmute)"}
           >
-            {autoSpeak ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
-            <span className="text-[10px] hidden sm:inline">{autoSpeak ? "Voice On" : "Muted"}</span>
+            {autoSpeak ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
           </button>
 
-          {/* Explicit Language Toggle */}
+          {/* Bilingual Switcher */}
           <button
             type="button"
             onClick={handleLanguageToggle}
-            className="p-1.5 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center space-x-1 transition-colors"
-            title="Switch Language (Hindi / English)"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold transition-colors"
           >
-            <Languages className="h-3.5 w-3.5 text-amber-400" />
-            <span className="text-[10px]">{language === "en-IN" ? "EN / हि" : "हि / EN"}</span>
+            <Languages className="h-3.5 w-3.5 text-slate-500" />
+            <span>{language === "hi-IN" ? "हिंदी" : "EN"}</span>
           </button>
 
           {/* Reset Conversation */}
           <button
             type="button"
             onClick={handleResetChat}
-            className="p-1.5 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-colors"
-            title="Reset conversation"
+            className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+            title="Clear Chat Conversation"
           >
-            <RotateCcw className="h-3.5 w-3.5" />
+            <RotateCcw className="h-4 w-4" />
           </button>
         </div>
       </div>
 
       {/* Message Stream */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 bg-mosje-slate">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/40">
         {messages.map((msg) => (
           <ChatMessageItem
             key={msg.id}
             message={msg}
             onReplayAudio={(text) => handleAudioPlayback(text, language)}
-            renderWidget={renderWidget || defaultRenderWidget}
-          />
+          >
+            {msg.widgetData?.evaluationResult && (
+              <div className="mt-3">
+                {renderWidget ? (
+                  renderWidget(msg)
+                ) : (
+                  <InlineSchemeWidget
+                    initialResult={msg.widgetData.evaluationResult}
+                    initialProfile={{
+                      annualFamilyIncome: msg.widgetData.userProfile?.annualFamilyIncome || 240000,
+                      estimatedCost: msg.widgetData.userProfile?.estimatedCost || 140000,
+                      gender: msg.widgetData.userProfile?.gender || "FEMALE",
+                      targetGroup: msg.widgetData.userProfile?.targetGroup,
+                      educationLevel: msg.widgetData.userProfile?.educationLevel,
+                    }}
+                  />
+                )}
+              </div>
+            )}
+          </ChatMessageItem>
         ))}
 
         {isProcessing && (
-          <div className="flex items-center space-x-2 text-xs text-slate-500 my-2 px-3">
-            <div className="h-2 w-2 bg-amber-500 rounded-full animate-ping" />
+          <div className="flex items-center space-x-2 text-xs text-slate-400 bg-white p-3 rounded-2xl w-fit border border-slate-200">
+            <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
             <span>
               {language === "hi-IN"
-                ? "सलाहकार सोच रहा है..."
-                : "Advisor is evaluating concessional criteria..."}
+                ? "योजना सेतु आपकी पात्रता की गणना कर रहा है..."
+                : "Evaluating affirmative action rules..."}
             </span>
           </div>
         )}
@@ -278,18 +310,17 @@ export function ChatContainer({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Prompt Recommendation Chips */}
-      <div className="px-4 pt-1 bg-white border-t border-slate-100">
-        <QuickReplyChips
-          prompts={prompts}
-          onSelect={handlePromptSelect}
-          disabled={isProcessing}
-        />
-      </div>
+      {/* Suggested Quick Reply Chips */}
+      {prompts.length > 0 && !isProcessing && (
+        <div className="px-4 py-2 bg-white/80 border-t border-slate-100">
+          <QuickReplyChips prompts={prompts} onSelect={handlePromptSelect} />
+        </div>
+      )}
 
-      {/* Input Control Bar */}
+      {/* Input Action Bar */}
       <div className="p-3 bg-white border-t border-slate-200">
         <form onSubmit={handleFormSubmit} className="flex items-center space-x-2">
+          {/* Voice Speech-to-Text Button */}
           <VoiceInputButton
             language={language}
             onTranscript={handleVoiceTranscript}
@@ -303,17 +334,16 @@ export function ChatContainer({
             disabled={isProcessing}
             placeholder={
               language === "hi-IN"
-                ? "अपना प्रश्न या व्यवसाय यहाँ लिखें..."
-                : "Type enterprise idea or criteria..."
+                ? "यहाँ टाइप करें या माइक दबाकर बोलें..."
+                : "Type your query or tap mic to speak..."
             }
-            className="flex-1 text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-slate-50/50"
+            className="flex-1 text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
           />
 
           <button
             type="submit"
             disabled={!inputText.trim() || isProcessing}
-            className="bg-mosje-saffron hover:bg-amber-600 disabled:opacity-50 text-white p-2.5 rounded-xl shadow-xs transition-colors shrink-0"
-            title="Send message"
+            className="p-2.5 rounded-xl bg-mosje-navy hover:bg-slate-800 text-amber-300 font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 shadow-xs cursor-pointer"
           >
             <Send className="h-4 w-4" />
           </button>

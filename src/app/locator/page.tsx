@@ -13,7 +13,7 @@ import { getDesignatedPartner, setDesignatedPartner } from "@/lib/partners/store
 import { PartnerMap } from "@/components/locator/PartnerMap";
 import { PartnerFilter } from "@/components/locator/PartnerFilter";
 import { PartnerCard } from "@/components/locator/PartnerCard";
-import { MapPin, Building2, ShieldCheck, Map, List, CheckCircle2 } from "lucide-react";
+import { MapPin, Building2, ShieldCheck, Map, List, CheckCircle2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function LocatorPage() {
@@ -50,8 +50,8 @@ export default function LocatorPage() {
             <div className="p-2 bg-amber-500/10 text-amber-600 rounded-lg">
               <Building2 className="h-6 w-6" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-mosje-navy tracking-tight">
-              Authorized Channel Partner Locator & Health Router
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              Authorized Channel Partner Locator &amp; Health Router
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -66,6 +66,33 @@ export default function LocatorPage() {
           </div>
         )}
       </div>
+
+      {/* Prominent Designated Partner Handoff Banner */}
+      {designatedPartner && (
+        <div className="bg-emerald-50 border border-emerald-200/90 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs animate-in fade-in">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-emerald-100 text-emerald-700 rounded-xl shrink-0">
+              <CheckCircle2 className="h-5 w-5" />
+            </div>
+            <div>
+              <span className="font-bold text-slate-900 block text-sm">
+                Designated Branch: {designatedPartner.name}
+              </span>
+              <span className="text-slate-600 text-[11px]">
+                {designatedPartner.branchName} • Health Score: {designatedPartner.healthScore}/100 Solvent • Contact: {designatedPartner.nodalOfficer} ({designatedPartner.contactPhone})
+              </span>
+            </div>
+          </div>
+
+          <Link
+            href="/dossier"
+            className="bg-slate-900 hover:bg-slate-800 text-amber-300 font-bold px-4 py-2 rounded-xl flex items-center space-x-1.5 shadow-xs shrink-0 self-start sm:self-auto cursor-pointer transition-colors"
+          >
+            <span>Proceed to Application Dossier</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      )}
 
       {/* Filter Toolbar */}
       <PartnerFilter
@@ -82,32 +109,33 @@ export default function LocatorPage() {
         <button
           type="button"
           onClick={() => setActiveMobileTab("map")}
-          className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-all ${
+          className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
             activeMobileTab === "map"
               ? "bg-white text-mosje-navy shadow-xs"
               : "text-slate-600"
           }`}
         >
-          <Map className="h-3.5 w-3.5" />
-          <span>Map View</span>
+          <Map className="h-4 w-4" />
+          <span>Interactive Map</span>
         </button>
+
         <button
           type="button"
           onClick={() => setActiveMobileTab("list")}
-          className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-all ${
+          className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
             activeMobileTab === "list"
               ? "bg-white text-mosje-navy shadow-xs"
               : "text-slate-600"
           }`}
         >
-          <List className="h-3.5 w-3.5" />
-          <span>Branch List ({rankedPartners.length})</span>
+          <List className="h-4 w-4" />
+          <span>Partner List ({rankedPartners.length})</span>
         </button>
       </div>
 
-      {/* 50/50 Desktop Split View / Tabbed Mobile View */}
+      {/* 50/50 Desktop Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Pane: Interactive Map */}
+        {/* Left 50% Pane: Leaflet Interactive Map */}
         <div
           className={`lg:col-span-6 sticky top-20 ${
             activeMobileTab === "list" ? "hidden sm:block" : "block"
@@ -115,49 +143,38 @@ export default function LocatorPage() {
         >
           <PartnerMap
             partners={rankedPartners}
-            userCoords={userCoords}
             selectedPartnerId={selectedPartnerId}
-            onSelectPartner={setSelectedPartnerId}
+            onSelectPartner={(partnerId: string) => setSelectedPartnerId(partnerId)}
+            userCoords={userCoords}
           />
         </div>
 
-        {/* Right Pane: Scrollable Partner Cards List */}
+        {/* Right 50% Pane: Partner Cards List */}
         <div
-          className={`lg:col-span-6 space-y-4 ${
+          className={`lg:col-span-6 space-y-4 max-h-[700px] overflow-y-auto pr-1 ${
             activeMobileTab === "map" ? "hidden sm:block" : "block"
           }`}
         >
           {rankedPartners.length > 0 ? (
-            <div className="space-y-3 max-h-[650px] overflow-y-auto pr-1">
-              {rankedPartners.map((partner) => (
-                <PartnerCard
-                  key={partner.id}
-                  partner={partner}
-                  isSelected={partner.id === selectedPartnerId}
-                  isDesignated={designatedPartner?.id === partner.id}
-                  onSelect={() => setSelectedPartnerId(partner.id)}
-                  onDesignate={handleDesignate}
-                />
-              ))}
-            </div>
+            rankedPartners.map((partner) => (
+              <PartnerCard
+                key={partner.id}
+                partner={partner}
+                isSelected={selectedPartnerId === partner.id}
+                isDesignated={designatedPartner?.id === partner.id}
+                onSelect={() => setSelectedPartnerId(partner.id)}
+                onDesignate={handleDesignate}
+              />
+            ))
           ) : (
-            <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-3">
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-full w-12 h-12 mx-auto flex items-center justify-center">
-                <MapPin className="h-6 w-6" />
-              </div>
-              <h3 className="font-bold text-base text-mosje-navy">
-                No Solvent Partners Found in this District
-              </h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
-                All local institutions in this area exceed the statutory 10% NPA limit or have exhausted their credit quotas.
+            <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-500">
+              <ShieldCheck className="h-8 w-8 text-amber-600 mx-auto mb-2 opacity-50" />
+              <p className="text-sm font-semibold text-slate-700">
+                No solvent institutions found under current filter.
               </p>
-              <button
-                type="button"
-                onClick={() => setFilters({ ...filters, includeHighRisk: true })}
-                className="text-xs text-amber-700 hover:text-amber-800 font-semibold underline"
-              >
-                Inspect High-Risk & Depleted Partners
-              </button>
+              <p className="text-xs mt-1 text-slate-400">
+                Try enabling &ldquo;Include Overdue / High-Risk Branches&rdquo; or change search radius.
+              </p>
             </div>
           )}
         </div>

@@ -3,7 +3,28 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSpeechRecognition } from "@/lib/audio/speechRecognition";
-import { Search, Mic, Megaphone, Loader2 } from "lucide-react";
+import { Search, Mic, Megaphone, Loader2, ArrowRight, Sparkles } from "lucide-react";
+
+interface KeywordSuggestion {
+  keyword: string;
+  schemeCode: string;
+  schemeName: string;
+}
+
+const KEYWORD_MAP: KeywordSuggestion[] = [
+  { keyword: "dukaan", schemeCode: "MCF", schemeName: "Micro Credit Finance (Up to ₹1.40L)" },
+  { keyword: "shop", schemeCode: "MCF", schemeName: "Micro Credit Finance (Up to ₹1.40L)" },
+  { keyword: "micro", schemeCode: "MCF", schemeName: "Micro Credit Finance (Up to ₹1.40L)" },
+  { keyword: "women", schemeCode: "MSY", schemeName: "Mahila Samriddhi Yojana (4.0% Rate)" },
+  { keyword: "mahila", schemeCode: "MSY", schemeName: "Mahila Samriddhi Yojana (4.0% Rate)" },
+  { keyword: "tailoring", schemeCode: "MSY", schemeName: "Mahila Samriddhi Yojana (4.0% Rate)" },
+  { keyword: "truck", schemeCode: "TERM_LOAN", schemeName: "Term Loan Scheme (Up to ₹50.00L)" },
+  { keyword: "vehicle", schemeCode: "TERM_LOAN", schemeName: "Term Loan Scheme (Up to ₹50.00L)" },
+  { keyword: "business", schemeCode: "TERM_LOAN", schemeName: "Term Loan Scheme (Up to ₹50.00L)" },
+  { keyword: "student", schemeCode: "ELS", schemeName: "Education Loan Scheme (Up to ₹40.00L)" },
+  { keyword: "college", schemeCode: "ELS", schemeName: "Education Loan Scheme (Up to ₹40.00L)" },
+  { keyword: "study", schemeCode: "ELS", schemeName: "Education Loan Scheme (Up to ₹40.00L)" },
+];
 
 export function VoiceHero() {
   const router = useRouter();
@@ -35,6 +56,12 @@ export function VoiceHero() {
     if (!searchQuery.trim()) return;
     router.push(`/assistant?q=${encodeURIComponent(searchQuery.trim())}`);
   };
+
+  const matchedSuggestions = searchQuery.trim()
+    ? KEYWORD_MAP.filter((item) =>
+        searchQuery.toLowerCase().includes(item.keyword.toLowerCase())
+      )
+    : [];
 
   return (
     <section className="flex flex-col items-center justify-center text-center pt-6 pb-4 px-4 max-w-2xl mx-auto space-y-6">
@@ -126,26 +153,56 @@ export function VoiceHero() {
       </div>
 
       {/* Search Input Box */}
-      <form onSubmit={handleSearchSubmit} className="w-full max-w-xl">
-        <div className="flex items-center bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:border-slate-300 focus-within:border-slate-400 focus-within:ring-2 focus-within:ring-slate-100 p-1.5 transition-all">
-          <div className="pl-3 text-slate-400">
-            <Search className="h-4 w-4" />
+      <div className="w-full max-w-xl space-y-2">
+        <form onSubmit={handleSearchSubmit} className="w-full">
+          <div className="flex items-center bg-white border border-slate-200/90 rounded-2xl shadow-xs hover:border-slate-300 focus-within:border-slate-400 focus-within:ring-2 focus-within:ring-slate-100 p-1.5 transition-all">
+            <div className="pl-3 text-slate-400">
+              <Search className="h-4 w-4" />
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Describe your business need, project cost, or course..."
+              className="w-full text-xs sm:text-sm px-3 py-2 text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2 rounded-xl transition-colors shrink-0 cursor-pointer"
+            >
+              Search
+            </button>
           </div>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Describe your business need, project cost, or course..."
-            className="w-full text-xs sm:text-sm px-3 py-2 text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none"
-          />
-          <button
-            type="submit"
-            className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2 rounded-xl transition-colors shrink-0 cursor-pointer"
-          >
-            Search
-          </button>
-        </div>
-      </form>
+        </form>
+
+        {/* Live Matched Suggestions */}
+        {matchedSuggestions.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-xl p-2.5 shadow-sm text-left space-y-1.5 animate-in fade-in">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block px-1">
+              Recommended Schemes Matching Your Input:
+            </span>
+            {matchedSuggestions.map((sug, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => router.push(`/calculator?scheme=${sug.schemeCode}`)}
+                className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-amber-50 text-xs text-slate-800 transition-colors group cursor-pointer"
+              >
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+                  <span className="font-semibold text-slate-900 group-hover:text-amber-800">
+                    {sug.schemeName}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-1 text-[11px] text-slate-500 group-hover:text-amber-700 font-medium">
+                  <span>Calculate EMI</span>
+                  <ArrowRight className="h-3 w-3" />
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Announcement / Updates Ticker */}
       <div className="w-full max-w-xl bg-slate-50 border border-slate-200/80 rounded-xl px-3.5 py-2 flex items-center space-x-2 text-xs text-slate-600">

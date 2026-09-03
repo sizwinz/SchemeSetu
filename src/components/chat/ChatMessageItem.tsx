@@ -6,12 +6,14 @@ interface ChatMessageItemProps {
   message: ChatMessage;
   onReplayAudio?: (text: string) => void;
   renderWidget?: (message: ChatMessage) => React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export function ChatMessageItem({
   message,
   onReplayAudio,
   renderWidget,
+  children,
 }: ChatMessageItemProps) {
   const isAssistant = message.sender === "ASSISTANT";
   const isUser = message.sender === "USER";
@@ -69,6 +71,7 @@ export function ChatMessageItem({
         </div>
 
         {renderWidget && renderWidget(message)}
+        {children}
       </div>
 
       {isUser && (

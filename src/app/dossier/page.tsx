@@ -8,6 +8,7 @@ import {
   computeDossierChecksum,
 } from "@/lib/dossier/engine";
 import { getDesignatedPartner } from "@/lib/partners/store";
+import { getStoredApplicantProfile } from "@/lib/user/profileStore";
 import { DossierQR } from "@/components/dossier/DossierQR";
 import { DocumentChecklist } from "@/components/dossier/DocumentChecklist";
 import {
@@ -20,17 +21,24 @@ import {
   Clock,
   Phone,
   CheckCircle2,
+  User,
 } from "lucide-react";
 
 export default function DossierPage() {
   const [dossier, setDossier] = useState<ApplicationDossier>(getSampleDossier());
 
-  // Check if designated partner was chosen in Phase 4
+  // Load applicant profile and designated partner
   useEffect(() => {
     const designated = getDesignatedPartner();
-    if (designated) {
-      setDossier((prev) => {
-        const updatedBranch = {
+    const storedProfile = getStoredApplicantProfile();
+
+    setDossier((prev) => {
+      let updatedBranch = prev.branch;
+      let partnerId = prev.branch.id;
+
+      if (designated) {
+        partnerId = designated.id;
+        updatedBranch = {
           id: designated.id,
           name: designated.name,
           branchName: designated.branchName,
@@ -41,23 +49,55 @@ export default function DossierPage() {
           healthScore: designated.healthScore,
           healthTier: designated.healthTier,
         };
+      }
 
-        const newChecksum = computeDossierChecksum({
-          applicationId: prev.applicationId,
-          schemeCode: prev.financing.schemeCode,
-          concessionalAmount: prev.financing.concessionalAmount,
-          monthlyEmi: prev.financing.monthlyEmi,
-          partnerId: designated.id,
-        });
+      const updatedApplicant = {
+        ...prev.applicant,
+        fullName: storedProfile.fullName,
+        casteCategory: storedProfile.casteCategory,
+        annualIncome: storedProfile.annualIncome,
+        district: storedProfile.district,
+        state: storedProfile.state,
+        enterpriseActivity: storedProfile.enterpriseActivity,
+      };
 
-        return {
-          ...prev,
-          branch: updatedBranch,
-          checksum: newChecksum,
-          verificationUrl: `https://schemesetu.gov.in/verify?dossierId=${prev.applicationId}&chk=${newChecksum}`,
-        };
+      const newChecksum = computeDossierChecksum({
+        applicationId: prev.applicationId,
+        schemeCode: prev.financing.schemeCode,
+        concessionalAmount: prev.financing.concessionalAmount,
+        monthlyEmi: prev.financing.monthlyEmi,
+        partnerId: partnerId,
       });
-    }
+
+      return {
+        ...prev,
+        applicant: updatedApplicant,
+        branch: updatedBranch,
+        checksum: newChecksum,
+        verificationUrl: `https://schemesetu.gov.in/verify?dossierId=${prev.applicationId}&chk=${newChecksum}`,
+      };
+    });
+
+    const handleProfileUpdate = (e: any) => {
+      const updated = e.detail;
+      setDossier((prev) => ({
+        ...prev,
+        applicant: {
+          ...prev.applicant,
+          fullName: updated.fullName,
+          casteCategory: updated.casteCategory,
+          annualIncome: updated.annualIncome,
+          district: updated.district,
+          state: updated.state,
+          enterpriseActivity: updated.enterpriseActivity,
+        },
+      }));
+    };
+
+    window.addEventListener("schemesetu_profile_updated", handleProfileUpdate);
+    return () => {
+      window.removeEventListener("schemesetu_profile_updated", handleProfileUpdate);
+    };
   }, []);
 
   const handleToggleDocument = (docId: string) => {
@@ -86,7 +126,7 @@ export default function DossierPage() {
         <div>
           <h2 className="text-base font-bold text-mosje-navy flex items-center gap-2">
             <FileText className="h-5 w-5 text-mosje-saffron" />
-            <span>Pre-Screened Application Dossier & Routing Slip</span>
+            <span>Pre-Screened Application Dossier &amp; Routing Slip</span>
           </h2>
           <p className="text-xs text-slate-500">
             Certified MoSJE pre-qualification packet with high-density scannable QR verification code.
@@ -97,7 +137,7 @@ export default function DossierPage() {
           <button
             type="button"
             onClick={handleResetSample}
-            className="text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-xl transition-colors flex items-center space-x-1.5"
+            className="text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer"
             title="Reset to statutory sample application"
           >
             <RefreshCw className="h-3.5 w-3.5" />
@@ -122,19 +162,19 @@ export default function DossierPage() {
           <div className="flex items-center justify-center space-x-2">
             <Landmark className="h-7 w-7 text-mosje-navy" />
             <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-              Government of India • Ministry of Social Justice and Empowerment
+              Government of India &bull; Ministry of Social Justice and Empowerment
             </div>
           </div>
           <h1 className="text-lg sm:text-xl font-black uppercase tracking-tight text-mosje-navy pt-1">
             Pre-Screened Concessional Credit Application Dossier
           </h1>
           <p className="text-xs font-medium text-slate-600">
-            National Scheduled Castes Finance & Development Corporation (NSFDC) Channel Financing
+            National Scheduled Castes Finance &amp; Development Corporation (NSFDC) Channel Financing
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300">
-              VERIFIED PRE-SCREENED • AFFIRMATIVE ACTION PRIORITY
+              VERIFIED PRE-SCREENED &bull; AFFIRMATIVE ACTION PRIORITY
             </span>
             <span className="font-mono text-xs font-bold text-slate-800">
               Application ID: {dossier.applicationId}
@@ -151,9 +191,14 @@ export default function DossierPage() {
           <div className="md:col-span-8 space-y-4">
             {/* Applicant Details */}
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                1. Applicant Profile
-              </h3>
+              <div className="flex items-center justify-between mb-1.5">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                  1. Applicant Profile
+                </h3>
+                <span className="text-[10px] text-slate-400 italic">
+                  (Auto-populated from citizen profile)
+                </span>
+              </div>
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs grid grid-cols-2 gap-2">
                 <div>
                   <span className="text-[10px] text-slate-400 block">Full Name:</span>
@@ -166,12 +211,18 @@ export default function DossierPage() {
                 <div>
                   <span className="text-[10px] text-slate-400 block">Certified Annual Income:</span>
                   <span className="font-bold text-slate-900 font-mono">
-                    ₹{dossier.applicant.annualIncome.toLocaleString("en-IN")} (&lt;= ₹5.00L Limit)
+                    ₹{dossier.applicant.annualIncome.toLocaleString("en-IN")} (&le; ₹5.00L Limit)
                   </span>
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-400 block">Enterprise Activity:</span>
                   <span className="font-medium text-slate-800">{dossier.applicant.enterpriseActivity}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400 block">Location:</span>
+                  <span className="font-medium text-slate-700">
+                    {dossier.applicant.district}, {dossier.applicant.state}
+                  </span>
                 </div>
               </div>
             </div>
@@ -288,10 +339,10 @@ export default function DossierPage() {
         <div className="pt-3 border-t-2 border-slate-900 space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-              5. Branch Acknowledgment & Sanction Seal (For Official Bank / SCA Use Only)
+              5. Branch Acknowledgment &amp; Sanction Seal (For Official Bank / SCA Use Only)
             </h4>
             <span className="text-[10px] text-slate-500 italic">
-              To be stamped & signed upon physical verification
+              To be stamped &amp; signed upon physical verification
             </span>
           </div>
 

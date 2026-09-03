@@ -1,13 +1,24 @@
-import React from "react";
+"use client";
+
+import React, { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { ChatContainer } from "@/components/chat/ChatContainer";
-import { Sparkles, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
+
+function AssistantContent() {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  const initialScheme = searchParams.get("scheme") || "";
+
+  return <ChatContainer initialQuery={initialQuery} initialScheme={initialScheme} />;
+}
 
 export default function AssistantPage() {
   return (
-    <div className="space-y-4 max-w-4xl mx-auto">
+    <div className="space-y-4 max-w-4xl mx-auto pb-12">
       <div className="flex items-center justify-between px-1">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-mosje-navy tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
             Conversational Scheme Advisor
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -20,7 +31,9 @@ export default function AssistantPage() {
         </div>
       </div>
 
-      <ChatContainer />
+      <Suspense fallback={<div className="p-8 text-center text-xs text-slate-400">Loading Assistant...</div>}>
+        <AssistantContent />
+      </Suspense>
     </div>
   );
 }
