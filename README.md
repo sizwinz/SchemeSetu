@@ -3,7 +3,8 @@
 # SchemeSetu
 
 ### AI-Driven Scheme Matching & Channel Finance Routing Platform
-**Ministry of Social Justice and Empowerment (MoSJE) | Problem Statement ID: 26092**
+**Smart India Hackathon 2026 | Problem Statement ID: 26092 | Theme: Smart Automation | Team: TechBizz**  
+*Ministry of Social Justice and Empowerment (MoSJE) & National Scheduled Castes Finance and Development Corporation (NSFDC)*
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.1-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react)](https://react.dev/)
@@ -11,16 +12,18 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![Tests](https://img.shields.io/badge/Vitest-65%20Passed-brightgreen?style=flat-square&logo=vitest)](https://vitest.dev/)
 [![MoSJE](https://img.shields.io/badge/Affirmative%20Credit-MoSJE%20%2F%20NSFDC-amber?style=flat-square)](https://socialjustice.gov.in/)
-[![License](https://img.shields.io/badge/License-Proprietary-slate?style=flat-square)](#)
+[![Privacy](https://img.shields.io/badge/Privacy-DPDP%20Act%202023%20Compliant-emerald?style=flat-square)](#)
 
 <p align="center">
   Connecting Scheduled Caste (SC) entrepreneurs and students with tailored concessional credit schemes (covering up to 90% of project costs at 4.0% to 8.0% interest rates) through financially solvent, low-NPA Channel Partners.
 </p>
 
 [Key Deliverables](#-the-three-mandated-deliverables) •
-[Core Architecture](#-architecture--pipeline) •
+[8-Step Journey](#-the-8-step-beneficiary-delivery-journey) •
+[Competitor Benchmark](#-competitor-benchmark--systemic-gaps) •
 [Statutory Schemes](#-statutory-concessional-schemes) •
-[Channel Finance System](#-channel-finance-partner-network) •
+[Channel Finance Network](#-channel-finance-partner-network) •
+[Feasibility & Mitigations](#-feasibility-challenges--mitigations) •
 [Quickstart](#-getting-started) •
 [Verification](#-automated-verification)
 
@@ -30,12 +33,13 @@
 
 ## Executive Summary
 
-Under statutory mandates from the **Ministry of Social Justice and Empowerment (MoSJE)** and the **National Scheduled Castes Finance and Development Corporation (NSFDC)**, concessional credit cannot be disbursed directly by the ministry to individual bank accounts. Instead, affirmative credit must flow through an accredited **Channel Finance System** (SCAs, PSBs, RRBs, and NBFC-MFIs).
+Under statutory guidelines from the **Ministry of Social Justice and Empowerment (MoSJE)** and the **National Scheduled Castes Finance and Development Corporation (NSFDC)**, concessional credit cannot be disbursed directly by the ministry to individual bank accounts. Instead, affirmative credit must flow through an accredited **Channel Finance System** (SCAs, PSBs, RRBs, and NBFC-MFIs).
 
 In practice, applicants face severe friction:
 1. **Application Misrouting:** Beneficiaries apply directly to bank branches that do not operate the required affirmative credit windows or have exhausted their statutory lending quotas.
-2. **NPA & Overdue Bottlenecks:** Applications routed to institutional branches with high Non-Performing Asset (NPA > 10%) ratios get stalled or rejected outright.
+2. **NPA & Overdue Bottlenecks:** Applications routed to institutional branches with high Non-Performing Asset (NPA > 10%) ratios or overdue burdens get stalled or rejected outright.
 3. **Information Asymmetry:** Semi-literate and vernacular applicants struggle to navigate complex loan terms, interest subventions, and gestation moratorium allowances.
+4. **Third-Party Intermediaries:** Heavy dependence on commission-seeking middlemen leads to leakage and delays.
 
 **SchemeSetu** solves this systemic delivery bottleneck with an end-to-end digital pipeline: from intelligent, vernacular-accessible scheme matching to dynamic EMI simulation, solvent partner branch routing, and cryptographic tamper-proof application packets.
 
@@ -44,7 +48,7 @@ In practice, applicants face severe friction:
 ## The Three Mandated Deliverables
 
 ### Deliverable 1: Smart Scheme Recommender
-- **Multi-Factor Deterministic Matcher:** Evaluates enterprise activity, project cost, annual family income, and demographic quota in real time.
+- **Multi-Factor Matcher with Match Score:** Evaluates enterprise activity, project cost, annual family income, and demographic quota in real time, calculating a granular **Match Score (up to 99%)**.
 - **Statutory Ceiling Enforcement:** Validates the statutory ₹5.00 Lakhs annual family income ceiling and caps funding recommendations strictly within NSFDC limits.
 - **Concessional Funding Breakdown:** Transparently computes the statutory financial breakdown:
   - **NSFDC Concessional Share:** Up to 90% of total project cost.
@@ -71,99 +75,58 @@ In practice, applicants face severe friction:
 
 ---
 
-## Additional Enterprise Features
+## The 8-Step Beneficiary Delivery Journey
 
-### Multilingual Support & Real-Time DOM Translation
-- **Accessible Language Selector:** Dropdown supporting 9 major Indian languages:
-  - English
-  - हिन्दी (Hindi)
-  - मराठी (Marathi)
-  - தமிழ் (Tamil)
-  - తెలుగు (Telugu)
-  - বাংলা (Bengali)
-  - ગુજરાતી (Gujarati)
-  - ಕನ್ನಡ (Kannada)
-  - ਪੰਜਾਬੀ (Punjabi)
-- **Synchronous Speech Synthesis:** Automatically recalibrates the Web Speech voice engine to the chosen regional locale.
-- **Zero-Flicker Audio Controller:** Single-line top header pill for reading aloud page text without UI distortion.
+```
+[1. Voice/Chat Intake] ──► [2. Multilingual AI] ──► [3. Eligibility Check] ──► [4. Scheme Match Score]
+                                                                                       │
+[8. QR Dossier & PM-SURAJ] ◄── [7. Solvent Partner] ◄── [6. DigiLocker Sync] ◄── [5. EMI & Moratorium]
+```
 
-### Conversational AI Assistant
-- Context-aware pre-screening agent guiding applicants through income, caste, and enterprise inputs conversationally.
-- Inline micro-widgets render scheme match summaries directly inside the message flow.
-
-### Verifiable Application Dossier & Level-H QR
-- Client-side generation of official, printable A4 pre-screening packets with designated branch routing slips.
-- Encodes a 32-bit FNV-1a cryptographic checksum to detect client-side payload tampering.
-- Countertop QR verification desk for credit officers to scan and authenticate application packets offline.
-
-### MoSJE National Governance Portal
-- Ministry dashboard with macro KPIs: total pre-screened leads, credit volume sanctioned, and lending quota utilization.
-- Interactive Statutory NPA Ceiling Policy Governor (5.0% to 15.0%) for real-time stress testing of national partner solvency.
-- 4-stage branch lead queue (`PRE_SCREENED` -> `DOCUMENTS_VERIFIED` -> `CREDIT_SANCTIONED` -> `DISBURSED`).
+1. **User Voice / Chat Intake:** Vernacular speech input in local dialects or natural language chat without complex forms.
+2. **Multilingual AI Interaction:** Context-aware assistant guides applicant across 9 official Indian languages.
+3. **Eligibility Analysis:** Real-time audit against the statutory ₹5.00 Lakhs income ceiling and SC affirmative quotas.
+4. **Scheme Recommendation + Match Score:** Deterministic fit scoring (up to 99%) and transparent 90% funding split.
+5. **EMI & Moratorium Calculation:** Parametric loan amortization with 3 to 12 months ₹0-principal grace periods.
+6. **Document Support via DigiLocker:** Consent-based sync of caste certificate, Aadhaar, and income proof without intermediaries.
+7. **Nearest Eligible Channel Partner:** Geo-spatial router directs to solvent (<10% NPA) SCA/bank branches with active lending quotas.
+8. **Application Tracking & PM-SURAJ:** Verifiable Level-H QR dossier handoff and countertop branch verification desk.
 
 ---
 
-## Architecture & Pipeline
+## Competitor Benchmark & Systemic Gaps
 
-```
-[ Beneficiary / Entrepreneur ]
-               │
-               ▼
-┌─────────────────────────────────────────────────────────┐
-│              SchemeSetu Digital Pipeline                │
-├─────────────────────────────────────────────────────────┤
-│ 1. Smart Scheme Recommender (Voice & Criteria Match)    │
-│    └─ Validates ₹5L income limit & 90% funding split    │
-│                                                         │
-│ 2. Concessional Loan Calculator (4.0% - 8.0% Subsidized)│
-│    └─ Simulates EMI, 3-12 mo moratorium & relief       │
-│                                                         │
-│ 3. Solvency Router & Geo-Spatial Locator (<10% NPA)     │
-│    └─ Routes to solvent SCA, PSB, RRB, or NBFC-MFI      │
-│                                                         │
-│ 4. Verifiable Pre-Screened QR Application Dossier       │
-│    └─ Level-H QR code with FNV-1a cryptographic hash    │
-└─────────────────────────────────────────────────────────┘
-               │
-               ▼
-[ Solvent Channel Partner Branch: Credit Officer Desk ]
-               │
-               ▼
-[ Ministry of Social Justice & Empowerment (MoSJE) Governance ]
-```
+SchemeSetu addresses critical functional gaps across existing government portals and civic-tech apps:
+
+| Key Evaluation Criteria | PM-SURAJ (MoSJE) | myScheme (MeitY) | JanSamarth (DFS) | Haqdarshak (Private) | SchemeSetu (TechBizz) |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **MoSJE Channel Finance Routing** | Partial | No | No | No | **Yes (Full)** |
+| **Operational Partner Solvency Filter (<10% NPA)** | No | No | No | No | **Yes (<10% NPA)** |
+| **Voice-First Vernacular Interaction** | No | No | No | Field Agents Only | **Yes (9 Languages)** |
+| **Subsidized EMI & Moratorium Gestation** | No | No | Basic Commercial | No | **Yes (3-12 Mo Grace)** |
+| **Zero-Intermediary Cryptographic QR Dossier** | No | No | No | No | **Yes (Level-H QR)** |
+| **DPDP Act, 2023 Local Privacy Architecture** | Centralized | Centralized | Centralized | Human Intermediaries | **Yes (Client-Side)** |
+| **Zero Cloud Inference Expense** | N/A | N/A | N/A | High Field Cost | **Yes (Local AI / PWA)** |
+
+### Institutional Insights
+- **PM-SURAJ Portal:** Official MoSJE portal for credit assistance up to ₹15L, but relies on traditional web forms with no voice guidance and does not filter branches by operational NPA/overdue quotas.
+- **myScheme:** Informational directory covering 4,700+ schemes that redirects users to external sites without financial calculation or branch routing.
+- **JanSamarth Portal:** Built around Scheduled Commercial Banks; does not cater to the specialized MoSJE Channel Finance System (SCAs, NBFC-MFIs) or dialect voice accessibility.
+- **Haqdarshak:** Heavy reliance on human field agents (Haqdarshikas) increases operational costs and processing time without institutional lender solvency integration.
 
 ---
 
-## Directory Structure
+## Feasibility, Challenges & Mitigations
 
-```
-src/
-├── app/
-│   ├── layout.tsx             # Root layout with LanguageProvider and global audio
-│   ├── page.tsx               # Homepage: Hero, Recommender, Schemes, Channel Explainer
-│   ├── assistant/             # AI Scheme Assistant (voice & chat pre-screening)
-│   ├── calculator/            # Standalone loan, moratorium, and amortization calculator
-│   ├── locator/               # Interactive Leaflet map and solvent branch router
-│   ├── dossier/               # Verifiable pre-screened application dossier & QR
-│   └── admin/                 # MoSJE governance dashboard and branch officer queue
-├── components/
-│   ├── admin/                 # QrVerificationDesk, BranchLeadQueue, MinistryGovernance
-│   ├── calculator/            # LoanSliders, FinancialSummaryCard, AmortizationTable
-│   ├── chat/                  # ChatContainer, MessageStream, InlineSchemeWidget
-│   ├── dossier/               # DossierQR, DocumentChecklist
-│   ├── home/                  # SmartRecommenderWizard, ChannelFinanceExplainer, SchemesGrid
-│   ├── layout/                # Header, LanguageDropdown, BottomNav, Footer
-│   └── locator/               # PartnerMap, PartnerCard, PartnerFilter
-└── lib/
-    ├── admin/                 # Lead lifecycle management, pre-seeded catalog, KPI engine
-    ├── audio/                 # Web Speech API speech synthesis & single-line audio controller
-    ├── calculator/            # Reducing-balance EMI, moratorium interest, commercial relief
-    ├── chat/                  # State machine and conversational dialog engine
-    ├── dossier/               # Dossier contracts and FNV-1a cryptographic checksum engine
-    ├── i18n/                  # LanguageProvider, locale management, and translation sync
-    ├── partners/              # 30+ pre-seeded branches, Haversine formula, solvency scoring
-    └── schemes/               # NSFDC statutory schemes rules engine and criteria predicates
-```
+| Challenge | Impact | SchemeSetu Mitigation |
+|---|---|---|
+| **Scheme Rules Change Periodically** | Risk of obsolete guidelines | Versioned scheme database with effective dates and admin-editable parameter schemas. |
+| **AI May Provide Incorrect Information** | Hallucinations leading to misrouting | Rule engine + grounded retrieval-augmented generation (RAG) with direct citations to official NSFDC circulars. |
+| **Sensitive Socio-Economic Data** | Privacy compliance violation | DPDP Act, 2023 compliance via client-side data minimization, zero cloud token logging, and cryptographic verification. |
+| **Partner Quotas & NPA Changes** | Outdated branch health | Administrative governance portal allowing real-time adjustments to statutory NPA ceilings (5% to 15%) and lending quotas. |
+| **Low Digital & Literacy Levels** | Application abandonment | Voice-first vernacular interface, read-aloud text-to-speech audio controller, and intuitive icon-driven micro-widgets. |
+| **Limited Internet in Rural Areas** | Connectivity dropouts | Offline-first Progressive Web App (PWA) architecture caching core rule schemas locally for 2G/low-bandwidth resilience. |
+| **Dialect & Language Ambiguity** | Translation misinterpretation | Dual verification engine: multilingual client engine synchronized with native regional Web Speech locales. |
 
 ---
 
@@ -254,9 +217,10 @@ Duration:   ~800ms
 
 ---
 
-## Regulatory Alignment
+## Regulatory & Legal Alignment
 
 - **Governing Ministry:** Ministry of Social Justice and Empowerment (MoSJE), Government of India
 - **Implementing Agency:** National Scheduled Castes Finance and Development Corporation (NSFDC)
 - **Applicable Problem Statement:** Smart India Hackathon 2026, Problem Statement ID 26092
-- **Data Privacy:** Client-side data minimization for sensitive socio-economic and income declarations.
+- **Data Privacy:** Digital Personal Data Protection Act (DPDP Act), 2023 compliance via client-side data minimization.
+- **Integration Ecosystem:** Non-invasive integration with PM-SURAJ and DigiLocker APIs.

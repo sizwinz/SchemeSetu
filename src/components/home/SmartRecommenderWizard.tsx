@@ -375,10 +375,15 @@ export function SmartRecommenderWizard() {
               Matched Scheme Output
             </span>
             {evalResult.isEligible ? (
-              <Badge variant="outline" className="text-emerald-700 bg-emerald-50 border-emerald-200 text-[11px] font-semibold">
-                <CheckCircle2 className="h-3 w-3 mr-1" />
-                Statutorily Eligible
-              </Badge>
+              <div className="flex items-center space-x-1.5">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold border border-emerald-300 shadow-2xs tabular-nums">
+                  {evalResult.matchScore || 96}% Match Score
+                </span>
+                <Badge variant="outline" className="text-emerald-700 bg-emerald-50 border-emerald-200 text-[11px] font-semibold">
+                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                  Eligible
+                </Badge>
+              </div>
             ) : (
               <Badge variant="destructive" className="text-[11px]">
                 <AlertCircle className="h-3 w-3 mr-1" />

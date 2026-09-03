@@ -59,4 +59,5 @@ export interface EvaluationResult {
   rejectionReasons: string[];
   suggestedAlternatives: SchemeRule[];
   calculatedFunding?: CalculatedFunding;
+  matchScore?: number;
 }

@@ -121,6 +121,19 @@ export function evaluateEligibility(
 
     const calculatedFunding = calculateFundingBreakdown(primaryScheme, cost);
 
+    let matchScore = 75;
+    if (income <= 250000) matchScore += 10;
+    else if (income <= 400000) matchScore += 6;
+
+    if (cost <= primaryScheme.maxProjectCost * 0.9) matchScore += 9;
+    else if (cost <= primaryScheme.maxProjectCost) matchScore += 5;
+
+    if (primaryScheme.targetGroup === "SC_WOMEN" && profile.gender === "FEMALE") matchScore += 5;
+    else if (primaryScheme.targetGroup === "SC_STUDENTS") matchScore += 5;
+    else matchScore += 4;
+
+    const normalizedMatchScore = Math.min(99, Math.max(80, matchScore));
+
     return {
       isEligible: true,
       primaryScheme,
@@ -128,6 +141,7 @@ export function evaluateEligibility(
       rejectionReasons: [],
       suggestedAlternatives,
       calculatedFunding,
+      matchScore: normalizedMatchScore,
     };
   }
 
