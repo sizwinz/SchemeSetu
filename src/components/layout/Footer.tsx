@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { HelpCircle, Phone, Mail, X, ShieldCheck } from "lucide-react";
 
 export function Footer() {
@@ -9,7 +10,19 @@ export function Footer() {
 
   return (
     <>
-      <footer className="w-full border-t border-slate-200/80 bg-slate-50/50 py-8 px-4 text-center text-xs text-slate-500 space-y-2 mt-auto print:hidden">
+      <footer className="w-full border-t border-slate-200/80 bg-slate-50/50 py-8 px-4 text-center text-xs text-slate-500 space-y-3 mt-auto print:hidden">
+        <div className="flex items-center justify-center space-x-2">
+          <Image
+            src="/logo.png"
+            alt="SchemeSetu Logo"
+            width={24}
+            height={24}
+            className="h-6 w-6 object-contain"
+          />
+          <span className="font-extrabold text-sm text-slate-900 tracking-tight">
+            SchemeSetu
+          </span>
+        </div>
         <p className="font-medium text-slate-600">
           100% Sovereign &amp; Private. Verified with DigiLocker and NSFDC Guidelines.
         </p>

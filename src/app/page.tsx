@@ -2,9 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { SmartRecommenderWizard } from "@/components/home/SmartRecommenderWizard";
 import { PopularSchemesGrid } from "@/components/home/PopularSchemesGrid";
-import { WorkflowJourney } from "@/components/home/WorkflowJourney";
 import { ChannelFinanceExplainer } from "@/components/home/ChannelFinanceExplainer";
-import { CompetitorComparison } from "@/components/home/CompetitorComparison";
 import { TrustBanner } from "@/components/home/TrustBanner";
 import { Sparkles, ArrowUpRight } from "lucide-react";
 
@@ -73,14 +71,8 @@ export default function HomePage() {
         <PopularSchemesGrid />
       </section>
 
-      {/* The 8-Step SchemeSetu Delivery Journey from PPT */}
-      <WorkflowJourney />
-
       {/* Deliverable 3 Context: Channel Finance Architecture & NPA Routing */}
       <ChannelFinanceExplainer />
-
-      {/* Competitor Analysis: PM-SURAJ vs myScheme vs JanSamarth vs Haqdarshak vs SchemeSetu */}
-      <CompetitorComparison />
 
       {/* Trust & Pre-Screened Verifiable Dossier Banner */}
       <TrustBanner />

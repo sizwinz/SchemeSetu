@@ -23,6 +23,10 @@ export const metadata: Metadata = {
   title: "SchemeSetu: AI-Driven Scheme Matching for Marginalized Entrepreneurs",
   description:
     "Ministry of Social Justice and Empowerment (MoSJE) concessional credit matching and channel partner routing platform for SC beneficiaries.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export const viewport: Viewport = {

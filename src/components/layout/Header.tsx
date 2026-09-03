@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Landmark,
@@ -92,9 +93,16 @@ export function Header() {
           <div className="flex items-center space-x-3">
             <Link
               href="/"
-              className="flex items-center space-x-2 text-slate-900 hover:text-amber-700 transition-colors"
+              className="flex items-center space-x-2.5 text-slate-900 hover:text-amber-700 transition-colors group"
             >
-              <Landmark className="h-6 w-6 text-slate-900" aria-hidden="true" />
+              <Image
+                src="/logo.png"
+                alt="SchemeSetu Logo"
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain transition-transform group-hover:scale-105"
+                priority
+              />
               <span className="font-extrabold text-xl tracking-tight text-slate-900">
                 SchemeSetu
               </span>
