@@ -111,28 +111,28 @@ export function PopularSchemesGrid() {
                       <Icon className="h-5 w-5" />
                     </div>
 
-                    <Badge variant="outline" className="font-mono text-[10px] font-bold">
+                    <Badge variant="outline" className="text-[10px] font-bold">
                       {scheme.code}
                     </Badge>
                   </div>
 
                   <h3 className="font-bold text-sm text-slate-900 group-hover:text-amber-700 transition-colors leading-snug mb-1">
-                    {scheme.title}
+                    {scheme.code} ({scheme.title})
                   </h3>
                   <p className="text-xs text-slate-500 line-clamp-1 mb-4">
                     {scheme.subtitle}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between font-mono text-xs">
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-sans block">Up to</span>
-                    <span className="font-bold text-slate-900">{scheme.maxAmount}</span>
+                    <span className="text-[10px] text-slate-400 block">Up to</span>
+                    <span className="font-bold text-slate-900 font-sans tabular-nums">{scheme.maxAmount}</span>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 font-sans block">Interest</span>
-                    <span className="font-bold text-amber-700">{scheme.interestRate} p.a.</span>
+                    <span className="text-[10px] text-slate-400 block">Interest</span>
+                    <span className="font-bold text-amber-700 font-sans tabular-nums">{scheme.interestRate} p.a.</span>
                   </div>
                 </div>
               </SpotlightCard>

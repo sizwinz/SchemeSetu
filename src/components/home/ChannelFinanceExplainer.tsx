@@ -3,13 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import {
-  Building2,
-  Landmark,
   ShieldCheck,
-  AlertTriangle,
   ArrowRight,
-  TrendingDown,
-  Scale,
   CheckCircle,
   XCircle,
 } from "lucide-react";
@@ -28,7 +23,7 @@ export function ChannelFinanceExplainer() {
             How the Channel Finance System Works
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-            MoSJE and NSFDC do not disburse direct loans to citizens. Concessional credit is strictly routed through authorized Channel Partners. SchemeSetu eliminates misrouted applications by routing only to solvent branches.
+            MoSJE (Ministry of Social Justice and Empowerment) and NSFDC (National Scheduled Castes Finance and Development Corporation) do not disburse direct loans to citizens. Concessional credit is strictly routed through authorized Channel Partners. SchemeSetu eliminates misrouted applications by routing only to solvent branches.
           </p>
         </div>
 
@@ -41,53 +36,65 @@ export function ChannelFinanceExplainer() {
         </Link>
       </div>
 
-      {/* The 4 Authorized Channel Partner Types */}
+      {/* The 4 Authorized Channel Partner Types with Full Forms Beside Short Forms */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-700 flex items-center justify-center font-bold text-xs">
-            SCA
+        {/* 1. SCA */}
+        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2.5">
+          <div className="flex items-center space-x-2">
+            <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 font-bold text-xs border border-blue-200/60 shrink-0">
+              SCA
+            </span>
+            <h3 className="text-xs font-bold text-slate-900 leading-tight">
+              State Channelizing Agencies
+            </h3>
           </div>
-          <h3 className="text-xs font-bold text-slate-900">
-            State Channelizing Agencies
-          </h3>
           <p className="text-[11px] text-slate-500 leading-relaxed">
-            State-level corporations designated for SC socio-economic development, disbursing direct micro-credit and women schemes.
+            State-level government corporations designated for Scheduled Caste development, disbursing direct micro-credit and affirmative women schemes.
           </p>
         </div>
 
-        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold text-xs">
-            PSB
+        {/* 2. PSB */}
+        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2.5">
+          <div className="flex items-center space-x-2">
+            <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 font-bold text-xs border border-emerald-200/60 shrink-0">
+              PSB
+            </span>
+            <h3 className="text-xs font-bold text-slate-900 leading-tight">
+              Public Sector Banks
+            </h3>
           </div>
-          <h3 className="text-xs font-bold text-slate-900">
-            Public Sector Banks
-          </h3>
           <p className="text-[11px] text-slate-500 leading-relaxed">
-            Nationalized commercial banks (SBI, PNB, Canara) processing medium-to-large Term Loans (up to ₹50 Lakhs) and Education Loans.
+            Nationalized commercial banks (SBI, PNB, Canara Bank) processing medium-to-large Term Loans (up to ₹50 Lakhs) and Education Loans.
           </p>
         </div>
 
-        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold text-xs">
-            RRB
+        {/* 3. RRB */}
+        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2.5">
+          <div className="flex items-center space-x-2">
+            <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-700 font-bold text-xs border border-amber-200/60 shrink-0">
+              RRB
+            </span>
+            <h3 className="text-xs font-bold text-slate-900 leading-tight">
+              Regional Rural Banks
+            </h3>
           </div>
-          <h3 className="text-xs font-bold text-slate-900">
-            Regional Rural Banks
-          </h3>
           <p className="text-[11px] text-slate-500 leading-relaxed">
-            Grassroots rural banking institutions servicing agricultural, dairy, and rural transport enterprise loans in semi-urban belts.
+            Grassroots rural banking institutions servicing agricultural, dairy, and rural transport enterprise loans in semi-urban and rural areas.
           </p>
         </div>
 
-        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2">
-          <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-700 flex items-center justify-center font-bold text-xs">
-            MFI
+        {/* 4. NBFC-MFI */}
+        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2.5">
+          <div className="flex items-center space-x-2">
+            <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-700 font-bold text-xs border border-purple-200/60 shrink-0">
+              NBFC-MFI
+            </span>
+            <h3 className="text-xs font-bold text-slate-900 leading-tight">
+              Microfinance Institutions
+            </h3>
           </div>
-          <h3 className="text-xs font-bold text-slate-900">
-            NBFC-MFIs
-          </h3>
           <p className="text-[11px] text-slate-500 leading-relaxed">
-            Accredited microfinance institutions delivering rapid micro-credit (MCF up to ₹1.40L) directly to self-help groups and small vendors.
+            Non-Banking Financial Companies accredited for rapid micro-credit (MCF up to ₹1.40L) directly to self-help groups and small vendors.
           </p>
         </div>
       </div>
@@ -98,7 +105,7 @@ export function ChannelFinanceExplainer() {
           <div className="flex items-center space-x-2">
             <ShieldCheck className="h-4 w-4 text-emerald-600" />
             <span className="text-xs font-bold text-slate-900">
-              Why SchemeSetu Filters High-NPA and Overdue Burdened Branches
+              Why SchemeSetu Filters High-NPA (Non-Performing Assets) and Overdue Burdened Branches
             </span>
           </div>
           <p className="text-xs text-slate-600 leading-relaxed">

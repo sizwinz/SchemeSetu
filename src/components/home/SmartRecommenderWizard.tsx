@@ -390,14 +390,14 @@ export function SmartRecommenderWizard() {
           {primaryScheme && evalResult.isEligible ? (
             <div className="space-y-4">
               <div>
-                <span className="text-[10px] font-mono text-amber-700 uppercase font-semibold">
-                  {primaryScheme.code} • {primaryScheme.category.replace("_", " ")}
+                <span className="text-[10px] text-amber-800 uppercase font-bold">
+                  {primaryScheme.code} ({primaryScheme.name}) • {primaryScheme.category.replace("_", " ")}
                 </span>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-0.5 leading-snug">
                   {primaryScheme.name}
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
-                  Tailored concessional assistance covering up to 90% of your project cost.
+                  Tailored concessional assistance covering up to 90% of your project cost under NSFDC guidelines.
                 </p>
               </div>
 
@@ -405,28 +405,28 @@ export function SmartRecommenderWizard() {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-white p-2.5 rounded-xl border border-slate-200/80">
                   <span className="text-[10px] text-slate-400 block">Concessional Rate</span>
-                  <span className="text-sm font-bold text-emerald-700 tabular-nums font-mono">
+                  <span className="text-sm font-bold text-emerald-700 tabular-nums font-sans">
                     {primaryScheme.interestRateMin}% - {primaryScheme.interestRateMax}% p.a.
                   </span>
                 </div>
 
                 <div className="bg-white p-2.5 rounded-xl border border-slate-200/80">
                   <span className="text-[10px] text-slate-400 block">Grace Moratorium</span>
-                  <span className="text-sm font-bold text-slate-900 tabular-nums">
+                  <span className="text-sm font-bold text-slate-900 tabular-nums font-sans">
                     {primaryScheme.moratoriumMonths} Months
                   </span>
                 </div>
 
                 <div className="bg-white p-2.5 rounded-xl border border-slate-200/80">
                   <span className="text-[10px] text-slate-400 block">Repayment Tenure</span>
-                  <span className="text-sm font-bold text-slate-900 tabular-nums">
+                  <span className="text-sm font-bold text-slate-900 tabular-nums font-sans">
                     {primaryScheme.repaymentTenureYears} Years
                   </span>
                 </div>
 
                 <div className="bg-white p-2.5 rounded-xl border border-slate-200/80">
                   <span className="text-[10px] text-slate-400 block">Max Project Limit</span>
-                  <span className="text-sm font-bold text-slate-900 tabular-nums">
+                  <span className="text-sm font-bold text-slate-900 tabular-nums font-sans">
                     {formatCurrency(primaryScheme.maxProjectCost)}
                   </span>
                 </div>
@@ -440,20 +440,20 @@ export function SmartRecommenderWizard() {
                   </span>
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-500">NSFDC Share (Up to 90%):</span>
-                      <span className="font-bold text-slate-900 tabular-nums">
+                      <span className="text-slate-500">NSFDC (Government Share - Up to 90%):</span>
+                      <span className="font-bold text-slate-900 tabular-nums font-sans">
                         {formatCurrency(funding.nsfdcAmount)}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Channel Partner Share (5%):</span>
-                      <span className="font-medium text-slate-700 tabular-nums">
+                      <span className="text-slate-500">Channel Partner Bank Share (5%):</span>
+                      <span className="font-medium text-slate-700 tabular-nums font-sans">
                         {formatCurrency(funding.channelPartnerAmount)}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Promoter Contribution (5%):</span>
-                      <span className="font-medium text-slate-700 tabular-nums">
+                      <span className="text-slate-500">Promoter / Applicant Share (5%):</span>
+                      <span className="font-medium text-slate-700 tabular-nums font-sans">
                         {formatCurrency(funding.promoterAmount)}
                       </span>
                     </div>

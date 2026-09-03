@@ -25,6 +25,13 @@ interface PartnerCardProps {
   onDesignate: (partner: ChannelPartner) => void;
 }
 
+const INSTITUTION_TYPE_LABELS: Record<string, string> = {
+  SCA: "SCA (State Channelizing Agency)",
+  PUBLIC_SECTOR_BANK: "PSB (Public Sector Bank)",
+  REGIONAL_RURAL_BANK: "RRB (Regional Rural Bank)",
+  NBFC_MFI: "NBFC-MFI (Microfinance)",
+};
+
 export function PartnerCard({
   partner,
   isSelected,
@@ -38,6 +45,9 @@ export function PartnerCard({
 
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${partner.coordinates.lat},${partner.coordinates.lng}`;
 
+  const institutionLabel =
+    INSTITUTION_TYPE_LABELS[partner.institutionType] || partner.institutionType;
+
   return (
     <div
       onClick={onSelect}
@@ -50,12 +60,12 @@ export function PartnerCard({
       {/* Top Header */}
       <div className="flex items-start justify-between gap-2 pb-3 border-b border-slate-100">
         <div className="space-y-0.5">
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="text-[10px] font-mono">
-              {partner.institutionType}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Badge variant="outline" className="text-[10px] font-semibold">
+              {institutionLabel}
             </Badge>
             {partner.distanceKm !== undefined && (
-              <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-mono tabular-nums">
+              <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full tabular-nums">
                 {partner.distanceKm} km away
               </span>
             )}
@@ -69,7 +79,7 @@ export function PartnerCard({
         {/* Health Badge */}
         <Badge
           variant={isSolvent ? "success" : isModerate ? "warning" : "destructive"}
-          className="text-xs font-mono font-bold"
+          className="text-xs font-bold shrink-0 tabular-nums"
           title={`Health Score: ${partner.healthScore}/100`}
         >
           {isSolvent ? (
@@ -82,9 +92,9 @@ export function PartnerCard({
       </div>
 
       {/* Institutional Health & Quota Details */}
-      <div className="grid grid-cols-3 gap-2 py-3 text-xs border-b border-slate-100 font-mono tabular-nums">
+      <div className="grid grid-cols-3 gap-2 py-3 text-xs border-b border-slate-100 tabular-nums">
         <div>
-          <span className="text-[10px] text-slate-400 font-sans block">NPA Ratio</span>
+          <span className="text-[10px] text-slate-400 block">NPA (Non-Performing Assets)</span>
           <span
             className={`font-bold ${
               isHighRisk

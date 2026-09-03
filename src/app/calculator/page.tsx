@@ -174,7 +174,7 @@ function CalculatorContent() {
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-amber-600" />
-            Select MoSJE Statutory Scheme Preset
+            Select MoSJE (Ministry of Social Justice &amp; Empowerment) Scheme Preset
           </span>
           <span className="text-[11px] text-slate-400">
             Presets automatically calibrate statutory rate and grace period
@@ -197,9 +197,9 @@ function CalculatorContent() {
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                    isSelected ? "text-amber-800" : "text-slate-400"
+                    isSelected ? "text-amber-800" : "text-slate-500"
                   }`}>
-                    {scheme.key}
+                    {scheme.key} ({scheme.name})
                   </span>
                   <span className={`text-xs font-bold ${
                     isSelected ? "text-emerald-700" : "text-slate-600"
