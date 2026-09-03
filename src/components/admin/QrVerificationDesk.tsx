@@ -1,55 +1,86 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { QrVerificationResult } from "@/lib/admin/types";
 import { verifyQrToken } from "@/lib/admin/engine";
-import { getSampleDossier, serializeDossierQrPayload } from "@/lib/dossier/engine";
+import { QrVerificationResult, BeneficiaryLead } from "@/lib/admin/types";
 import {
   QrCode,
-  ShieldCheck,
-  AlertTriangle,
-  RefreshCw,
-  Search,
   CheckCircle2,
+  AlertTriangle,
   XCircle,
-  Building2,
-  IndianRupee,
   Camera,
   VideoOff,
+  RefreshCw,
+  Search,
+  ScanLine,
+  ArrowRight,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
-export function QrVerificationDesk() {
+interface QrVerificationDeskProps {
+  leads: BeneficiaryLead[];
+  onVerifyLead: (leadId: string) => void;
+}
+
+function simulateTamperedPayload(rawJson: string): string {
+  try {
+    const parsed = JSON.parse(rawJson);
+    parsed.ca = (parsed.ca || 100000) * 2;
+    return JSON.stringify(parsed);
+  } catch {
+    return rawJson + "_TAMPERED";
+  }
+}
+
+export function QrVerificationDesk({
+  leads,
+  onVerifyLead,
+}: QrVerificationDeskProps) {
   const [tokenInput, setTokenInput] = useState<string>("");
   const [result, setResult] = useState<QrVerificationResult | null>(null);
   const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
-
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  const handleVerify = () => {
-    if (!tokenInput.trim()) return;
-    const res = verifyQrToken(tokenInput.trim());
+  const sampleLead = leads[0];
+  const sampleRawToken = sampleLead
+    ? JSON.stringify({
+        app: sampleLead.applicationId,
+        sc: sampleLead.schemeCode,
+        ca: sampleLead.concessionalAmount,
+        emi: sampleLead.monthlyEmi || 2840,
+        bp: sampleLead.designatedBranchId || "partner-001",
+        chk: "9a2f1b4c",
+        ts: Date.now(),
+      })
+    : "";
+
+  const handleVerify = (tokenToVerify?: string) => {
+    const raw = tokenToVerify !== undefined ? tokenToVerify : tokenInput;
+    if (!raw.trim()) return;
+
+    const res = verifyQrToken(raw);
     setResult(res);
+
+    if (res.isValid && res.payload) {
+      const matchingLead = leads.find((l) => l.applicationId === res.payload?.app);
+      if (matchingLead) {
+        onVerifyLead(matchingLead.id);
+      }
+    }
   };
 
   const handleLoadSample = () => {
-    const sample = getSampleDossier();
-    const token = serializeDossierQrPayload(sample);
-    setTokenInput(token);
-    const res = verifyQrToken(token);
-    setResult(res);
+    setTokenInput(sampleRawToken);
+    handleVerify(sampleRawToken);
   };
 
   const handleSimulateTamper = () => {
-    const sample = getSampleDossier();
-    const raw = JSON.parse(serializeDossierQrPayload(sample));
-    // Manipulate loan sum from ₹1,26,000 to ₹2,50,000 without valid checksum
-    raw.ca = 250000;
-    const tamperedToken = JSON.stringify(raw);
-    setTokenInput(tamperedToken);
-    const res = verifyQrToken(tamperedToken);
-    setResult(res);
+    const tampered = simulateTamperedPayload(sampleRawToken);
+    setTokenInput(tampered);
+    handleVerify(tampered);
   };
 
   const handleReset = () => {
@@ -61,30 +92,29 @@ export function QrVerificationDesk() {
   const startCamera = async () => {
     setCameraError(null);
     try {
-      setIsCameraActive(true);
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
+        }
+        setIsCameraActive(true);
+      } else {
+        setCameraError("Camera access is not supported by your browser environment.");
       }
-    } catch (err: any) {
+    } catch (err) {
+      setCameraError("Unable to access optical camera device. Please verify permissions.");
       setIsCameraActive(false);
-      setCameraError(
-        "Camera permission denied or camera device unavailable. You can paste or type the QR payload directly."
-      );
     }
   };
 
   const stopCamera = () => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
     }
     setIsCameraActive(false);
   };
@@ -96,15 +126,15 @@ export function QrVerificationDesk() {
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-sm space-y-4">
+    <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs space-y-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
         <div className="flex items-center space-x-2">
-          <div className="p-2 bg-amber-500/10 text-amber-600 rounded-lg">
+          <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl">
             <QrCode className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-sm sm:text-base font-bold text-mosje-navy">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900">
               Countertop QR Verification &amp; Tamper Detection Desk
             </h3>
             <p className="text-[11px] text-slate-500">
@@ -115,112 +145,119 @@ export function QrVerificationDesk() {
 
         {/* Demo & Camera Triggers */}
         <div className="flex flex-wrap items-center gap-2 pt-1 sm:pt-0">
-          <button
-            type="button"
+          <Button
+            size="sm"
+            variant={isCameraActive ? "destructive" : "outline"}
             onClick={isCameraActive ? stopCamera : startCamera}
-            className={`text-[11px] font-semibold px-2.5 py-1.5 rounded-xl border transition-colors flex items-center space-x-1.5 cursor-pointer ${
-              isCameraActive
-                ? "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
-                : "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200"
-            }`}
+            className="text-xs rounded-xl"
           >
-            {isCameraActive ? <VideoOff className="h-3.5 w-3.5" /> : <Camera className="h-3.5 w-3.5" />}
+            {isCameraActive ? <VideoOff className="h-3.5 w-3.5 mr-1" /> : <Camera className="h-3.5 w-3.5 mr-1" />}
             <span>{isCameraActive ? "Close Scanner" : "Scan via Camera"}</span>
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            size="sm"
+            variant="outline"
             onClick={handleLoadSample}
-            className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1.5 rounded-xl transition-colors cursor-pointer"
+            className="text-xs rounded-xl border-emerald-300 text-emerald-800 hover:bg-emerald-50"
           >
             Verify Sample QR
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            size="sm"
+            variant="outline"
             onClick={handleSimulateTamper}
-            className="text-[11px] font-semibold text-red-800 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-1.5 rounded-xl transition-colors cursor-pointer"
+            className="text-xs rounded-xl border-red-200 text-red-700 hover:bg-red-50"
           >
             Test Tampered QR
-          </button>
+          </Button>
 
           {result && (
-            <button
-              type="button"
+            <Button
+              size="icon"
+              variant="ghost"
               onClick={handleReset}
-              className="text-[11px] font-semibold text-slate-500 hover:text-slate-700 p-1.5 rounded-xl transition-colors cursor-pointer"
+              className="h-8 w-8 rounded-xl"
               title="Reset Desk"
             >
-              <RefreshCw className="h-3.5 w-3.5" />
-            </button>
+              <RefreshCw className="h-3.5 w-3.5 text-slate-500" />
+            </Button>
           )}
         </div>
       </div>
 
       {/* Live Camera Viewfinder Overlay */}
       {isCameraActive && (
-        <div className="bg-slate-900 rounded-2xl p-4 flex flex-col items-center space-y-3 relative overflow-hidden">
-          <div className="relative w-full max-w-sm aspect-video sm:aspect-square bg-black rounded-xl overflow-hidden flex items-center justify-center">
-            <video
-              ref={videoRef}
-              playsInline
-              className="w-full h-full object-cover"
-            />
-            {/* Target Reticle Viewfinder Box */}
-            <div className="absolute inset-8 sm:inset-12 border-2 border-dashed border-emerald-400/80 rounded-2xl pointer-events-none flex items-center justify-center">
-              <span className="text-[10px] text-emerald-300 font-mono bg-black/60 px-2 py-0.5 rounded">
-                Align QR inside reticle
+        <div className="relative rounded-2xl overflow-hidden bg-black border border-slate-800 flex flex-col items-center justify-center p-4 min-h-[260px] animate-in fade-in">
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full max-w-sm rounded-xl object-cover h-56"
+          />
+
+          {/* Optical Scanner Reticle */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-48 h-48 border-2 border-dashed border-amber-400 rounded-2xl relative flex items-center justify-center animate-pulse">
+              <ScanLine className="h-8 w-8 text-amber-400" />
+              <span className="absolute bottom-2 text-[10px] text-amber-200 font-mono font-semibold bg-black/60 px-2 py-0.5 rounded">
+                Align Dossier QR Code
               </span>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <button
-              type="button"
+          <div className="mt-3 flex items-center space-x-2 z-10">
+            <Button
+              size="sm"
+              variant="sovereign"
               onClick={() => {
                 handleLoadSample();
                 stopCamera();
               }}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs cursor-pointer"
+              className="text-xs"
             >
-              Simulate Scan Capture
-            </button>
-            <button
-              type="button"
+              Capture Dossier QR Frame
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
               onClick={stopCamera}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-xl cursor-pointer"
+              className="text-xs"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       )}
 
       {cameraError && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 flex items-start space-x-2">
-          <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+        <div className="p-3 bg-red-50 border border-red-200 text-red-800 text-xs rounded-xl flex items-center space-x-2">
+          <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
           <span>{cameraError}</span>
         </div>
       )}
 
-      {/* Input Field */}
-      <div className="flex items-center gap-2">
+      {/* Manual Paste/Type Input Bar */}
+      <div className="flex gap-2">
         <div className="relative flex-1">
           <input
             type="text"
             value={tokenInput}
             onChange={(e) => setTokenInput(e.target.value)}
-            placeholder="Scan optical barcode or paste verification token JSON string..."
-            className="w-full text-xs font-mono py-2.5 pl-3 pr-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            onKeyDown={(e) => e.key === "Enter" && handleVerify()}
+            placeholder="Paste raw cryptographic QR JSON token or enter FNV-1a checksum..."
+            className="w-full text-xs font-mono py-2.5 px-3 rounded-xl border border-slate-300 bg-slate-50/50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
         </div>
-        <button
-          type="button"
-          onClick={handleVerify}
-          className="text-xs font-bold bg-mosje-navy hover:bg-slate-800 text-amber-300 px-4 py-2.5 rounded-xl shadow-xs transition-colors shrink-0 cursor-pointer"
+        <Button
+          variant="default"
+          onClick={() => handleVerify()}
+          className="text-xs font-bold rounded-xl shrink-0"
         >
           Verify Token
-        </button>
+        </Button>
       </div>
 
       {/* Verification Result Display */}
@@ -262,7 +299,7 @@ export function QrVerificationDesk() {
                     <span className="text-[9px] text-slate-500 uppercase block font-sans">
                       Scheme Code
                     </span>
-                    <span className="font-bold text-mosje-navy">{result.payload.sc}</span>
+                    <span className="font-bold text-slate-900">{result.payload.sc}</span>
                   </div>
 
                   <div className="bg-white/80 p-2 rounded-lg border border-slate-200/60">

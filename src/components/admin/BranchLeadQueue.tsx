@@ -13,6 +13,8 @@ import {
   Clock,
   Send,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface BranchLeadQueueProps {
   leads: BeneficiaryLead[];
@@ -29,7 +31,6 @@ export function BranchLeadQueue({
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
   const filteredLeads = leads.filter((lead) => {
-    // 1. Search Query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const match =
@@ -40,7 +41,6 @@ export function BranchLeadQueue({
       if (!match) return false;
     }
 
-    // 2. Status Filter
     if (statusFilter !== "ALL" && lead.status !== statusFilter) {
       return false;
     }
@@ -52,183 +52,183 @@ export function BranchLeadQueue({
     switch (status) {
       case "PRE_SCREENED":
         return (
-          <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+          <Badge variant="outline" className="text-[10px] text-blue-700 bg-blue-50/50 border-blue-200">
             Pre-Screened
-          </span>
+          </Badge>
         );
       case "DOCUMENTS_VERIFIED":
         return (
-          <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+          <Badge variant="warning" className="text-[10px]">
             Docs Verified
-          </span>
+          </Badge>
         );
       case "CREDIT_SANCTIONED":
         return (
-          <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+          <Badge variant="success" className="text-[10px]">
             Sanctioned
-          </span>
+          </Badge>
         );
       case "DISBURSED":
         return (
-          <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <Badge variant="default" className="text-[10px] bg-slate-900 text-white">
             Disbursed
-          </span>
+          </Badge>
         );
-      case "REJECTED":
+      default:
+        return null;
+    }
+  };
+
+  const getNextAction = (lead: BeneficiaryLead) => {
+    switch (lead.status) {
+      case "PRE_SCREENED":
         return (
-          <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200">
-            Rejected
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onUpdateStatus(lead.id, "DOCUMENTS_VERIFIED")}
+            className="text-[11px] h-7 px-2.5 rounded-lg border-amber-300 text-amber-800 hover:bg-amber-50"
+          >
+            <FileCheck className="h-3 w-3 mr-1" />
+            Verify Documents
+          </Button>
+        );
+      case "DOCUMENTS_VERIFIED":
+        return (
+          <Button
+            size="sm"
+            variant="accent"
+            onClick={() => onUpdateStatus(lead.id, "CREDIT_SANCTIONED")}
+            className="text-[11px] h-7 px-2.5 rounded-lg"
+          >
+            <CheckCircle2 className="h-3 w-3 mr-1" />
+            Sanction Credit
+          </Button>
+        );
+      case "CREDIT_SANCTIONED":
+        return (
+          <Button
+            size="sm"
+            variant="default"
+            onClick={() => onUpdateStatus(lead.id, "DISBURSED")}
+            className="text-[11px] h-7 px-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white"
+          >
+            <Send className="h-3 w-3 mr-1" />
+            Disburse Funds
+          </Button>
+        );
+      case "DISBURSED":
+        return (
+          <span className="text-[11px] text-slate-400 italic flex items-center gap-1 font-mono">
+            <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+            Completed
           </span>
         );
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden space-y-4 p-4 sm:p-5">
-      {/* Header with Search and Filter Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+    <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden space-y-4">
+      {/* Header with Remaining Quota Tracker */}
+      <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
         <div>
-          <h3 className="text-sm sm:text-base font-bold text-mosje-navy">
-            Designated Incoming Beneficiary Leads
+          <h3 className="text-sm sm:text-base font-bold text-slate-900">
+            Assigned Beneficiary Routing Queue
           </h3>
-          <p className="text-[11px] text-slate-500">
-            Showing {filteredLeads.length} applications assigned to this branch
+          <p className="text-xs text-slate-500">
+            Review pre-screened applications routed to Lucknow District SCA Branch
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Search Input */}
-          <div className="relative min-w-[200px]">
-            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search name, ID, or activity..."
-              className="w-full text-xs pl-8 pr-3 py-1.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
-            />
-          </div>
+        <Badge variant="sovereign" className="text-xs py-1 px-3">
+          <Building2 className="h-3.5 w-3.5 mr-1" />
+          <span>Remaining Quota: ₹{branchQuotaLakhs.toFixed(2)} Lakhs</span>
+        </Badge>
+      </div>
 
-          {/* Status Dropdown */}
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="text-xs font-semibold py-1.5 px-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-700 focus:outline-none"
-          >
-            <option value="ALL">All Statuses</option>
-            <option value="PRE_SCREENED">Pre-Screened</option>
-            <option value="DOCUMENTS_VERIFIED">Docs Verified</option>
-            <option value="CREDIT_SANCTIONED">Sanctioned</option>
-            <option value="DISBURSED">Disbursed</option>
-            <option value="REJECTED">Rejected</option>
-          </select>
+      {/* Filter Toolbar */}
+      <div className="px-4 sm:px-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Search Input */}
+        <div className="relative flex-1 max-w-sm">
+          <Search className="h-3.5 w-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by applicant name, ID, or activity..."
+            className="w-full text-xs py-2 pl-8 pr-3 rounded-xl border border-slate-300 bg-slate-50/50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+        </div>
+
+        {/* Status Stage Segment Pills */}
+        <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 text-xs font-semibold">
+          {[
+            { id: "ALL", label: "All Leads" },
+            { id: "PRE_SCREENED", label: "Pre-Screened" },
+            { id: "DOCUMENTS_VERIFIED", label: "Docs Verified" },
+            { id: "CREDIT_SANCTIONED", label: "Sanctioned" },
+            { id: "DISBURSED", label: "Disbursed" },
+          ].map((stage) => (
+            <button
+              key={stage.id}
+              type="button"
+              onClick={() => setStatusFilter(stage.id)}
+              className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer ${
+                statusFilter === stage.id
+                  ? "bg-slate-900 text-white shadow-2xs font-bold"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {stage.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Leads Table */}
+      {/* Table of Leads */}
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs text-slate-700">
-          <thead className="bg-slate-50 text-[11px] text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+        <table className="w-full text-xs text-left text-slate-600 font-mono tabular-nums">
+          <thead className="text-[11px] text-slate-500 uppercase bg-slate-50/90 font-sans border-y border-slate-200">
             <tr>
-              <th className="py-2.5 px-3">Application ID</th>
-              <th className="py-2.5 px-3">Applicant & Activity</th>
-              <th className="py-2.5 px-3">Scheme & Sum</th>
-              <th className="py-2.5 px-3">Monthly EMI</th>
-              <th className="py-2.5 px-3">Status</th>
-              <th className="py-2.5 px-3 text-right">Workflow Action</th>
+              <th className="px-4 py-3 font-semibold">Applicant &amp; ID</th>
+              <th className="px-4 py-3 font-semibold">Enterprise Activity</th>
+              <th className="px-4 py-3 font-semibold">Scheme Code</th>
+              <th className="px-4 py-3 font-semibold">Sanction Amount</th>
+              <th className="px-4 py-3 font-semibold">Status Stage</th>
+              <th className="px-4 py-3 font-semibold text-right">Workflow Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-mono tabular-nums">
+          <tbody className="divide-y divide-slate-100">
             {filteredLeads.length > 0 ? (
               filteredLeads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="py-3 px-3">
-                    <span className="font-bold text-slate-900 block">{lead.applicationId}</span>
-                    <span className="text-[10px] text-slate-400 font-sans">
-                      {new Date(lead.submissionDate).toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                      })}
-                    </span>
-                  </td>
-
-                  <td className="py-3 px-3 font-sans">
+                <tr key={lead.id} className="hover:bg-slate-50/60 transition-colors">
+                  <td className="px-4 py-3 font-sans">
                     <span className="font-bold text-slate-900 block">{lead.applicantName}</span>
-                    <span className="text-[11px] text-slate-500 block leading-tight">
-                      {lead.enterpriseActivity}
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      {lead.applicationId}
                     </span>
                   </td>
-
-                  <td className="py-3 px-3 font-sans">
-                    <span className="font-semibold text-mosje-navy block">{lead.schemeName}</span>
-                    <span className="font-mono text-emerald-700 font-bold">
-                      ₹{lead.concessionalAmount.toLocaleString("en-IN")}
-                    </span>
+                  <td className="px-4 py-3 font-sans text-slate-700 max-w-xs truncate">
+                    {lead.enterpriseActivity}
                   </td>
-
-                  <td className="py-3 px-3 font-mono font-bold text-slate-800">
-                    ₹{lead.monthlyEmi.toLocaleString("en-IN")}
+                  <td className="px-4 py-3">
+                    <Badge variant="outline" className="text-[10px]">
+                      {lead.schemeCode}
+                    </Badge>
                   </td>
-
-                  <td className="py-3 px-3 font-sans">{getStatusBadge(lead.status)}</td>
-
-                  <td className="py-3 px-3 text-right font-sans">
-                    <div className="flex items-center justify-end space-x-1.5">
-                      {lead.status === "PRE_SCREENED" && (
-                        <button
-                          type="button"
-                          onClick={() => onUpdateStatus(lead.id, "DOCUMENTS_VERIFIED")}
-                          className="text-[11px] font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                        >
-                          Verify Docs
-                        </button>
-                      )}
-
-                      {lead.status === "DOCUMENTS_VERIFIED" && (
-                        <button
-                          type="button"
-                          onClick={() => onUpdateStatus(lead.id, "CREDIT_SANCTIONED")}
-                          className="text-[11px] font-semibold text-purple-800 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                          title="Sanction credit and deduct from branch quota"
-                        >
-                          Sanction Credit
-                        </button>
-                      )}
-
-                      {lead.status === "CREDIT_SANCTIONED" && (
-                        <button
-                          type="button"
-                          onClick={() => onUpdateStatus(lead.id, "DISBURSED")}
-                          className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                        >
-                          Disburse Funds
-                        </button>
-                      )}
-
-                      {lead.status === "DISBURSED" && (
-                        <span className="text-[11px] text-slate-400 font-medium italic">
-                          Completed
-                        </span>
-                      )}
-
-                      {lead.status !== "DISBURSED" && lead.status !== "REJECTED" && (
-                        <button
-                          type="button"
-                          onClick={() => onUpdateStatus(lead.id, "REJECTED")}
-                          className="text-[10px] font-semibold text-slate-400 hover:text-red-600 p-1 transition-colors"
-                          title="Reject application"
-                        >
-                          <XCircle className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
+                  <td className="px-4 py-3 font-bold text-slate-900">
+                    ₹{lead.concessionalAmount.toLocaleString("en-IN")}
                   </td>
+                  <td className="px-4 py-3 font-sans">{getStatusBadge(lead.status)}</td>
+                  <td className="px-4 py-3 font-sans text-right">{getNextAction(lead)}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-slate-400 font-sans">
-                  No beneficiary applications match the current search or filter.
+                <td colSpan={6} className="px-4 py-8 text-center text-slate-400 font-sans">
+                  No applicant leads found matching current search or stage filter.
                 </td>
               </tr>
             )}

@@ -33,6 +33,7 @@ import {
   Languages,
   MessageSquare,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const INITIAL_MESSAGES: Record<AssistantLanguage, ChatMessage[]> = {
   "en-IN": [
@@ -82,6 +83,21 @@ export function ChatContainer({
     isMuted: isAudioMuted(),
   });
 
+  useEffect(() => {
+    const handleAudioEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<AudioPlaybackState>;
+      if (customEvent.detail) {
+        setAudioState(customEvent.detail);
+        setAutoSpeak(!customEvent.detail.isMuted);
+      }
+    };
+
+    window.addEventListener("schemesetu_audio_state", handleAudioEvent);
+    return () => {
+      window.removeEventListener("schemesetu_audio_state", handleAudioEvent);
+    };
+  }, []);
+
   const [dialogState, setDialogState] = useState<DialogState>({
     currentStep: "GREETING",
     collectedProfile: {},
@@ -90,7 +106,20 @@ export function ChatContainer({
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const initialTriggerRef = useRef<boolean>(false);
+
+  // Auto-scroll to bottom of conversation
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isProcessing]);
+
+  // Initial Query Handler
+  useEffect(() => {
+    if (initialQuery && initialQuery.trim()) {
+      submitMessage(initialQuery.trim());
+    } else if (initialScheme) {
+      submitMessage(`Tell me about ${initialScheme} scheme`);
+    }
+  }, [initialQuery, initialScheme]);
 
   const handleAudioPlayback = (text: string, lang: AssistantLanguage) => {
     if (onReplayAudio) {
@@ -100,78 +129,40 @@ export function ChatContainer({
     }
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  // Sync language with global header event
-  useEffect(() => {
-    const handleLangChange = (e: any) => {
-      const targetLang: AssistantLanguage = e.detail === "hi" ? "hi-IN" : "en-IN";
-      setLanguage(targetLang);
-      setDialogState((prev) => ({ ...prev, language: targetLang }));
-      setMessages(INITIAL_MESSAGES[targetLang]);
-      setPrompts(DIALOG_PROMPTS[targetLang].GREETING.quickPrompts);
-    };
-
-    const handleAudio = (e: any) => {
-      setAudioState(e.detail);
-      if (e.detail.isMuted) {
-        setAutoSpeak(false);
-      }
-    };
-
-    window.addEventListener("schemesetu_language_changed", handleLangChange);
-    window.addEventListener("schemesetu_audio_state", handleAudio);
-    return () => {
-      window.removeEventListener("schemesetu_language_changed", handleLangChange);
-      window.removeEventListener("schemesetu_audio_state", handleAudio);
-    };
-  }, []);
-
   const handleLanguageToggle = () => {
     const nextLang: AssistantLanguage = language === "en-IN" ? "hi-IN" : "en-IN";
     setLanguage(nextLang);
-    setDialogState((prev) => ({
-      ...prev,
-      language: nextLang,
-    }));
-    setMessages(INITIAL_MESSAGES[nextLang]);
-    setPrompts(DIALOG_PROMPTS[nextLang].GREETING.quickPrompts);
-  };
+    setDialogState((prev) => ({ ...prev, language: nextLang }));
 
-  const handleResetChat = () => {
-    const confirmed = window.confirm(
-      language === "hi-IN"
-        ? "क्या आप अपनी पिछली बातचीत मिटाकर नई शुरुआत करना चाहते हैं?"
-        : "Clear Conversation: Are you sure you want to reset the chat and clear your inputs?"
-    );
-    if (confirmed) {
-      cancelSpeech();
-      setDialogState({
-        currentStep: "GREETING",
-        collectedProfile: {},
-        language,
-        autoSpeak,
-      });
-      setMessages(INITIAL_MESSAGES[language]);
-      setPrompts(DIALOG_PROMPTS[language].GREETING.quickPrompts);
+    if (messages.length <= 1) {
+      setMessages(INITIAL_MESSAGES[nextLang]);
+      setPrompts(DIALOG_PROMPTS[nextLang].GREETING.quickPrompts);
+      if (autoSpeak) {
+        handleAudioPlayback(DIALOG_PROMPTS[nextLang].GREETING.promptText, nextLang);
+      }
     }
   };
 
-  const submitMessage = (rawText: string) => {
-    const trimmed = rawText.trim();
-    if (!trimmed || isProcessing) return;
+  const handleResetChat = () => {
+    cancelSpeech();
+    setMessages(INITIAL_MESSAGES[language]);
+    setPrompts(DIALOG_PROMPTS[language].GREETING.quickPrompts);
+    setDialogState({
+      currentStep: "GREETING",
+      collectedProfile: {},
+      language: language,
+      autoSpeak: autoSpeak,
+    });
+  };
+
+  const submitMessage = async (text: string) => {
+    if (!text.trim() || isProcessing) return;
 
     const userMsg: ChatMessage = {
-      id: `user-${Date.now()}`,
+      id: `msg-${Date.now()}-user`,
       sender: "USER",
-      text: trimmed,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      text: text.trim(),
+      timestamp: "Just now",
       type: "TEXT",
     };
 
@@ -180,59 +171,43 @@ export function ChatContainer({
     setIsProcessing(true);
 
     try {
-      const stepResult = advanceDialog(dialogState, trimmed);
-      setDialogState(stepResult.nextState);
+      const response = advanceDialog(
+        { ...dialogState, language },
+        text.trim()
+      );
 
       const assistantMsg: ChatMessage = {
-        id: `asst-${Date.now()}`,
+        id: `msg-${Date.now()}-bot`,
         sender: "ASSISTANT",
-        text: stepResult.assistantReply,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        type: stepResult.widgetData ? "SCHEME_WIDGET" : "TEXT",
-        widgetData: stepResult.widgetData,
+        text: response.assistantReply,
+        timestamp: "Just now",
+        type: response.widgetData ? "SCHEME_WIDGET" : "TEXT",
+        widgetData: response.widgetData,
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-      setPrompts(stepResult.newPrompts);
+      setPrompts(response.newPrompts);
+      setDialogState(response.nextState);
 
-      if (autoSpeak && !isAudioMuted()) {
-        handleAudioPlayback(stepResult.assistantReply, language);
+      if (autoSpeak && response.assistantReply) {
+        handleAudioPlayback(response.assistantReply, language);
       }
-    } catch {
+    } catch (err) {
       const errorMsg: ChatMessage = {
-        id: `err-${Date.now()}`,
-        sender: "SYSTEM",
+        id: `msg-${Date.now()}-err`,
+        sender: "ASSISTANT",
         text:
           language === "hi-IN"
-            ? "संदेश संसाधित करने में त्रुटि। कृपया पुनः प्रयास करें।"
-            : "Unable to evaluate criteria. Please enter valid amounts or choose a suggested prompt.",
-        timestamp: "Now",
-        type: "ERROR",
+            ? "क्षमा करें, एक तकनीकी त्रुटि हुई। कृपया पुनः प्रयास करें।"
+            : "Sorry, I encountered a technical error. Please try again.",
+        timestamp: "Just now",
+        type: "TEXT",
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsProcessing(false);
     }
   };
-
-  // Process initial query or scheme from URL
-  useEffect(() => {
-    if (!initialTriggerRef.current) {
-      initialTriggerRef.current = true;
-      if (initialQuery && initialQuery.trim()) {
-        submitMessage(initialQuery.trim());
-      } else if (initialScheme && initialScheme.trim()) {
-        const schemePrompts: Record<string, string> = {
-          MSY: "Tell me about Mahila Samriddhi Yojana (MSY) for women entrepreneurs",
-          MCF: "I need micro credit finance for small business",
-          TERM_LOAN: "I need a term loan for transport/manufacturing machinery",
-          ELS: "I need educational loan for higher studies",
-        };
-        const queryText = schemePrompts[initialScheme] || `Tell me about ${initialScheme} scheme`;
-        submitMessage(queryText);
-      }
-    }
-  }, [initialQuery, initialScheme]);
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -248,12 +223,12 @@ export function ChatContainer({
   };
 
   return (
-    <div className="flex flex-col h-[75vh] min-h-[500px] max-h-[850px] bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+    <div className="flex flex-col h-[75vh] min-h-[500px] max-h-[850px] bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
       {/* Chat Sub-Header Controls */}
       <div className="flex items-center justify-between px-3 sm:px-4 py-3 bg-slate-50/90 border-b border-slate-200 text-xs gap-2">
         <div className="flex items-center space-x-2 text-slate-700 shrink-0">
-          <MessageSquare className="h-4 w-4 text-mosje-saffron" />
-          <span className="font-bold">
+          <MessageSquare className="h-4 w-4 text-amber-600" />
+          <span className="font-bold text-slate-900">
             {language === "hi-IN" ? "योजना सेतु सहायक" : "SchemeSetu Advisor"}
           </span>
         </div>
@@ -385,7 +360,7 @@ export function ChatContainer({
         ))}
 
         {isProcessing && (
-          <div className="flex items-center space-x-2 text-xs text-slate-400 bg-white p-3 rounded-2xl w-fit border border-slate-200">
+          <div className="flex items-center space-x-2 text-xs text-slate-500 bg-white p-3 rounded-2xl w-fit border border-slate-200">
             <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
             <span>
               {language === "hi-IN"
@@ -428,13 +403,13 @@ export function ChatContainer({
             className="flex-1 text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
           />
 
-          <button
+          <Button
             type="submit"
             disabled={!inputText.trim() || isProcessing}
-            className="p-2.5 rounded-xl bg-mosje-navy hover:bg-slate-800 text-amber-300 font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 shadow-xs cursor-pointer"
+            className="rounded-xl px-4 font-bold"
           >
             <Send className="h-4 w-4" />
-          </button>
+          </Button>
         </form>
       </div>
     </div>

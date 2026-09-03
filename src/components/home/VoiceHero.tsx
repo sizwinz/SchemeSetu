@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSpeechRecognition } from "@/lib/audio/speechRecognition";
 import { Search, Mic, Megaphone, Loader2, ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ShinyText } from "@/components/reactbits/ShinyText";
 
 interface KeywordSuggestion {
   keyword: string;
@@ -65,13 +68,13 @@ export function VoiceHero() {
 
   return (
     <section className="flex flex-col items-center justify-center text-center pt-6 pb-4 px-4 max-w-2xl mx-auto space-y-6">
-      {/* Title & Subtitle */}
+      {/* Title & Subtitle with Modern Typography */}
       <div className="space-y-2">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           How can we help you today?
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 max-w-lg mx-auto">
-          Speak directly or search to find the right financial support for your needs.
+        <p className="text-xs sm:text-sm text-slate-500 max-w-lg mx-auto leading-relaxed">
+          Speak directly in Hindi or English, or search to discover concessional credit programs.
         </p>
       </div>
 
@@ -99,8 +102,8 @@ export function VoiceHero() {
             >
               {/* Center dark core button */}
               <div
-                className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-white shadow-sm transition-transform duration-200 active:scale-95 ${
-                  isListening ? "bg-amber-600" : "bg-[#1E293B] group-hover:bg-slate-800"
+                className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-white shadow-xs transition-transform duration-200 active:scale-95 ${
+                  isListening ? "bg-amber-600" : "bg-slate-900 group-hover:bg-slate-800"
                 }`}
               >
                 {isListening ? (
@@ -166,18 +169,20 @@ export function VoiceHero() {
               placeholder="Describe your business need, project cost, or course..."
               className="w-full text-xs sm:text-sm px-3 py-2 text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none"
             />
-            <button
+            <Button
               type="submit"
-              className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2 rounded-xl transition-colors shrink-0 cursor-pointer"
+              variant="secondary"
+              size="sm"
+              className="rounded-xl font-semibold shrink-0"
             >
               Search
-            </button>
+            </Button>
           </div>
         </form>
 
         {/* Live Matched Suggestions */}
         {matchedSuggestions.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-xl p-2.5 shadow-sm text-left space-y-1.5 animate-in fade-in">
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-2.5 shadow-xs text-left space-y-1.5 animate-in fade-in">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block px-1">
               Recommended Schemes Matching Your Input:
             </span>
@@ -186,10 +191,12 @@ export function VoiceHero() {
                 key={idx}
                 type="button"
                 onClick={() => router.push(`/calculator?scheme=${sug.schemeCode}`)}
-                className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-amber-50 text-xs text-slate-800 transition-colors group cursor-pointer"
+                className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-amber-50 text-xs text-slate-800 transition-colors group cursor-pointer"
               >
                 <div className="flex items-center space-x-2">
-                  <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+                  <Badge variant="sovereign" className="text-[10px]">
+                    {sug.schemeCode}
+                  </Badge>
                   <span className="font-semibold text-slate-900 group-hover:text-amber-800">
                     {sug.schemeName}
                   </span>
@@ -204,13 +211,15 @@ export function VoiceHero() {
         )}
       </div>
 
-      {/* Announcement / Updates Ticker */}
-      <div className="w-full max-w-xl bg-slate-50 border border-slate-200/80 rounded-xl px-3.5 py-2 flex items-center space-x-2 text-xs text-slate-600">
+      {/* Announcement / Updates Ticker with ReactBits ShinyText */}
+      <div className="w-full max-w-xl bg-white border border-slate-200/90 rounded-2xl px-4 py-2.5 flex items-center space-x-2 text-xs text-slate-600 shadow-2xs">
         <Megaphone className="h-3.5 w-3.5 text-amber-600 shrink-0" />
-        <span className="font-bold text-slate-700 shrink-0">Latest Updates:</span>
-        <span className="truncate text-[11px] text-slate-500">
-          MoSJE NSFDC Concessional Credit Window 2026 active. Concessional rates from 4.0% p.a.
-        </span>
+        <span className="font-bold text-slate-900 shrink-0">Latest Updates:</span>
+        <ShinyText
+          text="MoSJE NSFDC Concessional Credit Window 2026 active. Concessional rates from 4.0% p.a."
+          className="truncate text-xs font-medium text-slate-600"
+          shineColor="#d97706"
+        />
       </div>
     </section>
   );

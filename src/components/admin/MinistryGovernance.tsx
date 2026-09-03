@@ -14,6 +14,10 @@ import {
   Building2,
   Filter,
 } from "lucide-react";
+import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
+import { CountUp } from "@/components/reactbits/CountUp";
+import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/components/ui/badge";
 
 interface MinistryGovernanceProps {
   initialPartners: ChannelPartner[];
@@ -44,66 +48,86 @@ export function MinistryGovernance({
 
   return (
     <div className="space-y-6">
-      {/* 4 Macro KPI Cards */}
+      {/* 4 Macro KPI Cards with ReactBits SpotlightCard & CountUp */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono tabular-nums">
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm space-y-1">
+        <SpotlightCard
+          spotlightColor="rgba(217, 119, 6, 0.08)"
+          className="p-4 sm:p-5 space-y-1"
+        >
           <div className="flex items-center justify-between">
             <span className="text-xs text-slate-500 font-sans">National Pre-Screened Leads</span>
-            <Users className="h-4 w-4 text-mosje-saffron" />
+            <Users className="h-4 w-4 text-amber-600" />
           </div>
-          <div className="text-xl sm:text-2xl font-black text-mosje-navy">
-            {(totalLeadsCount * 142).toLocaleString("en-IN")}
+          <div className="text-xl sm:text-2xl font-black text-slate-900">
+            <CountUp to={totalLeadsCount * 142} duration={1.2} />
           </div>
           <span className="text-[10px] text-emerald-600 font-sans font-semibold">
             +18.4% month-over-month
           </span>
-        </div>
+        </SpotlightCard>
 
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm space-y-1">
+        <SpotlightCard
+          spotlightColor="rgba(16, 185, 129, 0.08)"
+          className="p-4 sm:p-5 space-y-1"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-sans">Total Sanctioned Credit</span>
+            <span className="text-xs text-slate-500 font-sans">Total Credit Sanctioned</span>
             <IndianRupee className="h-4 w-4 text-emerald-600" />
           </div>
+          <div className="text-xl sm:text-2xl font-black text-emerald-700">
+            ₹{totalSanctionedCr.toFixed(2)} Cr
+          </div>
+          <span className="text-[10px] text-slate-400 font-sans">
+            Under 6.5% - 8% Statutory Cap
+          </span>
+        </SpotlightCard>
+
+        <SpotlightCard
+          spotlightColor="rgba(37, 99, 235, 0.08)"
+          className="p-4 sm:p-5 space-y-1"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-sans">Network Solvency Index</span>
+            <TrendingUp className="h-4 w-4 text-blue-600" />
+          </div>
           <div className="text-xl sm:text-2xl font-black text-slate-900">
-            ₹{(totalSanctionedCr + 54.8).toFixed(2)} Cr
+            <CountUp
+              to={Math.round((healthSummary.solventCount / Math.max(1, initialPartners.length)) * 100)}
+              duration={1}
+              suffix="%"
+            />
           </div>
-          <span className="text-[10px] text-slate-400 font-sans">
-            Under NSFDC Concessional Quota
-          </span>
-        </div>
-
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-sans">Average Turnaround Speed</span>
-            <Clock className="h-4 w-4 text-amber-600" />
-          </div>
-          <div className="text-xl sm:text-2xl font-black text-slate-900">14.2 Days</div>
           <span className="text-[10px] text-emerald-600 font-sans font-semibold">
-            Down from 45+ days legacy
+            {healthSummary.solventCount} of {initialPartners.length} Branches Solvent
           </span>
-        </div>
+        </SpotlightCard>
 
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm space-y-1">
+        <SpotlightCard
+          spotlightColor="rgba(99, 102, 241, 0.08)"
+          className="p-4 sm:p-5 space-y-1"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-sans">National Quota Utilization</span>
-            <TrendingUp className="h-4 w-4 text-purple-600" />
+            <span className="text-xs text-slate-500 font-sans">Avg Verification Velocity</span>
+            <Clock className="h-4 w-4 text-indigo-600" />
           </div>
-          <div className="text-xl sm:text-2xl font-black text-slate-900">68.5%</div>
-          <span className="text-[10px] text-slate-400 font-sans">
-            ₹31.5 Cr remaining allocation
+          <div className="text-xl sm:text-2xl font-black text-slate-900">
+            <CountUp to={6.4} duration={0.8} suffix=" Days" />
+          </div>
+          <span className="text-[10px] text-emerald-600 font-sans font-semibold">
+            -4.2 days vs manual paper flow
           </span>
-        </div>
+        </SpotlightCard>
       </div>
 
-      {/* Statutory NPA Ceiling Policy Governor */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm space-y-4">
+      {/* Statutory NPA Ceiling Policy Governor Slider */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
           <div className="flex items-center space-x-2">
-            <div className="p-2 bg-amber-500/10 text-amber-600 rounded-lg">
+            <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl">
               <SlidersHorizontal className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-mosje-navy">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900">
                 Statutory NPA Ceiling Policy Governor
               </h3>
               <p className="text-[11px] text-slate-500">
@@ -120,16 +144,14 @@ export function MinistryGovernance({
           </div>
         </div>
 
-        {/* Interactive Slider */}
-        <div className="space-y-2">
-          <input
-            type="range"
-            min="5.0"
-            max="15.0"
-            step="0.5"
-            value={npaCeiling}
-            onChange={(e) => setNpaCeiling(Number(e.target.value))}
-            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+        {/* Interactive Shadcn Slider */}
+        <div className="space-y-2.5 pt-2">
+          <Slider
+            min={5.0}
+            max={15.0}
+            step={0.5}
+            value={[npaCeiling]}
+            onValueChange={([val]) => setNpaCeiling(val)}
           />
 
           <div className="flex justify-between text-[10px] font-mono text-slate-400">
@@ -139,48 +161,60 @@ export function MinistryGovernance({
           </div>
         </div>
 
-        {/* Real-time Impact Readout */}
+        {/* Real-time Impact Readout with Badges */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs flex flex-wrap items-center justify-between gap-3 font-mono tabular-nums">
           <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-600 shrink-0" />
-            <span className="text-slate-700 font-sans">Solvent Partners:</span>
-            <span className="font-bold text-slate-900">{healthSummary.solventCount} Active</span>
+            <Badge variant="success" className="text-[11px]">
+              {healthSummary.solventCount} Active
+            </Badge>
+            <span className="text-slate-700 font-sans">Solvent Partners</span>
           </div>
 
           <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-amber-500 shrink-0" />
-            <span className="text-slate-700 font-sans">Moderate Health:</span>
-            <span className="font-bold text-slate-900">{healthSummary.moderateCount} Branches</span>
+            <Badge variant="warning" className="text-[11px]">
+              {healthSummary.moderateCount} Branches
+            </Badge>
+            <span className="text-slate-700 font-sans">Moderate Health</span>
           </div>
 
           <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-600 shrink-0" />
-            <span className="text-slate-700 font-sans">High-Risk (Filtered):</span>
-            <span className="font-bold text-red-600">{healthSummary.highRiskCount} Excluded</span>
+            <Badge variant="destructive" className="text-[11px]">
+              {healthSummary.highRiskCount} Excluded
+            </Badge>
+            <span className="text-slate-700 font-sans">High-Risk (Filtered Out)</span>
+          </div>
+
+          <div className="text-slate-600 text-[11px] font-sans">
+            Filtered Rate:{" "}
+            <strong className="text-slate-900 font-mono">
+              {((healthSummary.highRiskCount / Math.max(1, initialPartners.length)) * 100).toFixed(0)}%
+            </strong>
           </div>
         </div>
       </div>
 
-      {/* National Partner Solvency Table */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+      {/* National Channel Partner Network Solvency Table */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
           <div>
-            <h3 className="text-sm font-bold text-mosje-navy">
-              National Channel Partner Solvency & Quota Utilization
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+              <Building2 className="h-4 w-4 text-amber-600" />
+              National Channel Partner Solvency Table
             </h3>
-            <p className="text-[11px] text-slate-500">
-              Reviewing {filteredPartners.length} institutions under {npaCeiling.toFixed(1)}% statutory ceiling
+            <p className="text-xs text-slate-500">
+              Live solvency health tiers computed dynamically against current {npaCeiling.toFixed(1)}% statutory ceiling
             </p>
           </div>
 
+          {/* State Filter Dropdown */}
           <div className="flex items-center space-x-2">
             <Filter className="h-3.5 w-3.5 text-slate-400" />
             <select
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="text-xs font-semibold py-1.5 px-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-700 focus:outline-none"
+              className="text-xs py-1.5 px-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             >
-              <option value="ALL">All States & Union Territories</option>
+              <option value="ALL">All States ({initialPartners.length})</option>
               {availableStates.map((st) => (
                 <option key={st} value={st}>
                   {st}
@@ -191,72 +225,84 @@ export function MinistryGovernance({
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-50 text-[11px] text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+          <table className="w-full text-xs text-left text-slate-600 font-mono tabular-nums">
+            <thead className="text-[11px] text-slate-500 uppercase bg-slate-50/90 font-sans border-b border-slate-200">
               <tr>
-                <th className="py-2.5 px-3">Institution Name</th>
-                <th className="py-2.5 px-3">Type</th>
-                <th className="py-2.5 px-3">District & State</th>
-                <th className="py-2.5 px-3 font-mono">NPA %</th>
-                <th className="py-2.5 px-3 font-mono">Available Quota</th>
-                <th className="py-2.5 px-3">Health Status</th>
+                <th className="px-4 py-3 font-semibold">Institution / Branch</th>
+                <th className="px-4 py-3 font-semibold">State</th>
+                <th className="px-4 py-3 font-semibold">Type</th>
+                <th className="px-4 py-3 font-semibold">NPA Ratio</th>
+                <th className="px-4 py-3 font-semibold">Lending Quota</th>
+                <th className="px-4 py-3 font-semibold">Turnaround</th>
+                <th className="px-4 py-3 font-semibold">Solvency Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-mono tabular-nums">
-              {filteredPartners.map((partner) => (
-                <tr key={partner.id} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="py-2.5 px-3 font-sans font-bold text-slate-900">
-                    {partner.name}
-                    <span className="text-[10px] text-slate-400 font-mono block font-normal">
-                      {partner.branchName}
-                    </span>
-                  </td>
+            <tbody className="divide-y divide-slate-100">
+              {filteredPartners.map((partner) => {
+                const isSolvent = partner.healthTier === "SOLVENT";
+                const isModerate = partner.healthTier === "MODERATE";
 
-                  <td className="py-2.5 px-3 font-sans">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
-                      {partner.institutionType}
-                    </span>
-                  </td>
-
-                  <td className="py-2.5 px-3 font-sans text-slate-600">
-                    {partner.district}, {partner.state}
-                  </td>
-
-                  <td className="py-2.5 px-3">
-                    <span
-                      className={`font-bold ${
-                        partner.npaPercentage > npaCeiling
-                          ? "text-red-600"
-                          : partner.npaPercentage < 5.0
-                          ? "text-emerald-700"
-                          : "text-amber-600"
-                      }`}
-                    >
-                      {partner.npaPercentage}%
-                    </span>
-                  </td>
-
-                  <td className="py-2.5 px-3 text-slate-900 font-bold">
-                    ₹{partner.remainingQuotaLakhs}L
-                  </td>
-
-                  <td className="py-2.5 px-3 font-sans">
-                    {partner.dynamicHealthTier === "SOLVENT" ? (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        Solvent ({partner.healthScore})
+                return (
+                  <tr key={partner.id} className="hover:bg-slate-50/60 transition-colors">
+                    <td className="px-4 py-3">
+                      <span className="font-bold text-slate-900 font-sans block">
+                        {partner.name}
                       </span>
-                    ) : partner.dynamicHealthTier === "MODERATE" ? (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                        Moderate ({partner.healthScore})
+                      <span className="text-[11px] text-slate-400 font-sans">
+                        {partner.branchName}
                       </span>
-                    ) : (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200">
-                        High-Risk / Filtered
+                    </td>
+                    <td className="px-4 py-3 font-sans text-slate-700">{partner.state}</td>
+                    <td className="px-4 py-3">
+                      <Badge variant="outline" className="text-[10px] font-mono">
+                        {partner.institutionType}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 font-bold text-slate-800">
+                      <span
+                        className={
+                          partner.npaPercentage > npaCeiling
+                            ? "text-red-600"
+                            : partner.npaPercentage > npaCeiling * 0.7
+                            ? "text-amber-600"
+                            : "text-emerald-700"
+                        }
+                      >
+                        {partner.npaPercentage}%
                       </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-4 py-3 font-semibold text-slate-800">
+                      ₹{partner.remainingQuotaLakhs} Lakhs
+                    </td>
+                    <td className="px-4 py-3 text-slate-600 font-sans">
+                      {partner.averageTurnaroundDays} days
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge
+                        variant={isSolvent ? "success" : isModerate ? "warning" : "destructive"}
+                        className="text-[10px] font-sans"
+                      >
+                        {isSolvent ? (
+                          <>
+                            <ShieldCheck className="h-3 w-3 mr-1" />
+                            Solvent ({partner.healthScore}/100)
+                          </>
+                        ) : isModerate ? (
+                          <>
+                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            Moderate ({partner.healthScore}/100)
+                          </>
+                        ) : (
+                          <>
+                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            High Risk ({partner.healthScore}/100)
+                          </>
+                        )}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

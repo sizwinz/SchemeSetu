@@ -23,6 +23,8 @@ import {
   CheckCircle2,
   User,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default function DossierPage() {
   const [dossier, setDossier] = useState<ApplicationDossier>(getSampleDossier());
@@ -74,40 +76,9 @@ export default function DossierPage() {
         applicant: updatedApplicant,
         branch: updatedBranch,
         checksum: newChecksum,
-        verificationUrl: `https://schemesetu.gov.in/verify?dossierId=${prev.applicationId}&chk=${newChecksum}`,
       };
     });
-
-    const handleProfileUpdate = (e: any) => {
-      const updated = e.detail;
-      setDossier((prev) => ({
-        ...prev,
-        applicant: {
-          ...prev.applicant,
-          fullName: updated.fullName,
-          casteCategory: updated.casteCategory,
-          annualIncome: updated.annualIncome,
-          district: updated.district,
-          state: updated.state,
-          enterpriseActivity: updated.enterpriseActivity,
-        },
-      }));
-    };
-
-    window.addEventListener("schemesetu_profile_updated", handleProfileUpdate);
-    return () => {
-      window.removeEventListener("schemesetu_profile_updated", handleProfileUpdate);
-    };
   }, []);
-
-  const handleToggleDocument = (docId: string) => {
-    setDossier((prev) => ({
-      ...prev,
-      documents: prev.documents.map((doc) =>
-        doc.id === docId ? { ...doc, isVerified: !doc.isVerified } : doc
-      ),
-    }));
-  };
 
   const handlePrint = () => {
     window.print();
@@ -117,15 +88,32 @@ export default function DossierPage() {
     setDossier(getSampleDossier());
   };
 
+  const handleToggleDocument = (docId: string) => {
+    setDossier((prev) => ({
+      ...prev,
+      documents: prev.documents.map((d) =>
+        d.id === docId ? { ...d, isVerified: !d.isVerified } : d
+      ),
+    }));
+  };
+
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(val);
+  };
+
   const qrPayloadString = serializeDossierQrPayload(dossier);
 
   return (
-    <div className="max-w-4xl mx-auto pb-16 space-y-6">
+    <div className="max-w-4xl mx-auto pb-16 px-4 sm:px-6 pt-4 space-y-6">
       {/* Screen Action Bar (Hidden during @media print) */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
         <div>
-          <h2 className="text-base font-bold text-mosje-navy flex items-center gap-2">
-            <FileText className="h-5 w-5 text-mosje-saffron" />
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <FileText className="h-5 w-5 text-amber-600" />
             <span>Pre-Screened Application Dossier &amp; Routing Slip</span>
           </h2>
           <p className="text-xs text-slate-500">
@@ -134,38 +122,40 @@ export default function DossierPage() {
         </div>
 
         <div className="flex items-center space-x-2">
-          <button
-            type="button"
+          <Button
+            size="sm"
+            variant="outline"
             onClick={handleResetSample}
-            className="text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer"
+            className="text-xs rounded-xl"
             title="Reset to statutory sample application"
           >
-            <RefreshCw className="h-3.5 w-3.5" />
+            <RefreshCw className="h-3.5 w-3.5 mr-1" />
             <span>Load Sample</span>
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            size="sm"
+            variant="accent"
             onClick={handlePrint}
-            className="text-xs font-semibold text-white bg-mosje-saffron hover:bg-amber-600 px-4 py-2 rounded-xl shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
+            className="text-xs rounded-xl font-bold"
           >
-            <Printer className="h-4 w-4" />
+            <Printer className="h-4 w-4 mr-1" />
             <span>Print Official Slip</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Formal A4 Document Card (Prints cleanly on A4 paper) */}
-      <div className="bg-white border-2 border-slate-900/90 rounded-2xl p-6 sm:p-8 shadow-md space-y-6 print:border-none print:shadow-none print:p-0 print:m-0 text-slate-900">
+      <div className="bg-white border-2 border-slate-900/90 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 print:border-none print:shadow-none print:p-0 print:m-0 text-slate-900">
         {/* Document Header with MoSJE Emblem */}
         <div className="text-center pb-4 border-b-2 border-slate-900 space-y-1">
           <div className="flex items-center justify-center space-x-2">
-            <Landmark className="h-7 w-7 text-mosje-navy" />
+            <Landmark className="h-7 w-7 text-slate-900" />
             <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
               Government of India &bull; Ministry of Social Justice and Empowerment
             </div>
           </div>
-          <h1 className="text-lg sm:text-xl font-black uppercase tracking-tight text-mosje-navy pt-1">
+          <h1 className="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 pt-1">
             Pre-Screened Concessional Credit Application Dossier
           </h1>
           <p className="text-xs font-medium text-slate-600">
@@ -173,199 +163,181 @@ export default function DossierPage() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300">
-              VERIFIED PRE-SCREENED &bull; AFFIRMATIVE ACTION PRIORITY
-            </span>
+            <Badge variant="success" className="text-[10px] font-bold uppercase">
+              Verified Pre-Screened &bull; Affirmative Action Priority
+            </Badge>
             <span className="font-mono text-xs font-bold text-slate-800">
               Application ID: {dossier.applicationId}
-            </span>
-            <span className="text-xs text-slate-500">
-              Date: {new Date(dossier.submissionDate).toLocaleDateString("en-IN", { dateStyle: "long" })}
             </span>
           </div>
         </div>
 
-        {/* 2-Column Split: Left Summary Table, Right Scannable QR */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start pb-4 border-b border-slate-200">
-          {/* Left Table: Applicant & Financing */}
-          <div className="md:col-span-8 space-y-4">
-            {/* Applicant Details */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                  1. Applicant Profile
-                </h3>
-                <span className="text-[10px] text-slate-400 italic">
-                  (Auto-populated from citizen profile)
-                </span>
-              </div>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs grid grid-cols-2 gap-2">
+        {/* 2-Column Split: Key Info & Cryptographic QR Slip */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Applicant & Financing Profile */}
+          <div className="md:col-span-8 space-y-5">
+            {/* Applicant Identity Card */}
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <User className="h-4 w-4 text-amber-600" />
+                <span>1. Verified Applicant Profile</span>
+              </h3>
+
+              <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-400 block">Full Name:</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">Full Name</span>
                   <span className="font-bold text-slate-900">{dossier.applicant.fullName}</span>
                 </div>
+
                 <div>
-                  <span className="text-[10px] text-slate-400 block">Socio-Economic Category:</span>
-                  <span className="font-bold text-emerald-700">{dossier.applicant.casteCategory}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 block">Certified Annual Income:</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">Socio-Economic Category</span>
                   <span className="font-bold text-slate-900 font-mono">
-                    ₹{dossier.applicant.annualIncome.toLocaleString("en-IN")} (&le; ₹5.00L Limit)
+                    {dossier.applicant.casteCategory}
                   </span>
                 </div>
+
                 <div>
-                  <span className="text-[10px] text-slate-400 block">Enterprise Activity:</span>
-                  <span className="font-medium text-slate-800">{dossier.applicant.enterpriseActivity}</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">Declared Family Income</span>
+                  <span className="font-bold text-slate-900 font-mono">
+                    {formatCurrency(dossier.applicant.annualIncome)} / year
+                  </span>
                 </div>
+
                 <div>
-                  <span className="text-[10px] text-slate-400 block">Location:</span>
-                  <span className="font-medium text-slate-700">
+                  <span className="text-[10px] text-slate-400 block uppercase">Jurisdiction</span>
+                  <span className="font-bold text-slate-900">
                     {dossier.applicant.district}, {dossier.applicant.state}
+                  </span>
+                </div>
+
+                <div className="col-span-2 pt-1 border-t border-slate-200">
+                  <span className="text-[10px] text-slate-400 block uppercase">Target Enterprise / Purpose</span>
+                  <span className="font-semibold text-slate-800">
+                    {dossier.applicant.enterpriseActivity}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Financing Breakdown */}
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                2. Concessional Financing Structure
+            {/* Concessional Financing Details */}
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                <span>2. Matched Concessional Credit Parameters</span>
               </h3>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs grid grid-cols-2 sm:grid-cols-3 gap-2.5 font-mono tabular-nums">
-                <div>
-                  <span className="text-[10px] text-slate-400 font-sans block">Matched Scheme</span>
-                  <span className="font-bold text-mosje-navy font-sans block">
-                    {dossier.financing.schemeName}
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-mono tabular-nums">
+                <div className="col-span-2 sm:col-span-3 pb-1 border-b border-slate-200">
+                  <span className="text-[10px] text-slate-400 block uppercase font-sans">Matched Scheme</span>
+                  <span className="font-bold text-slate-900 font-sans text-sm">
+                    {dossier.financing.schemeName} ({dossier.financing.schemeCode})
                   </span>
                 </div>
+
                 <div>
-                  <span className="text-[10px] text-slate-400 font-sans block">Total Project Cost</span>
-                  <span className="font-bold text-slate-900">
-                    ₹{dossier.financing.totalCost.toLocaleString("en-IN")}
+                  <span className="text-[10px] text-slate-400 block uppercase font-sans">Total Project Cost</span>
+                  <span className="font-semibold text-slate-800">{formatCurrency(dossier.financing.totalCost)}</span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-slate-400 block uppercase font-sans">Concessional Loan (90%)</span>
+                  <span className="font-bold text-slate-900">{formatCurrency(dossier.financing.concessionalAmount)}</span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-slate-400 block uppercase font-sans">Promoter Share (10%)</span>
+                  <span className="font-semibold text-slate-700">{formatCurrency(dossier.financing.promoterContribution)}</span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-slate-400 block uppercase font-sans">Interest Rate</span>
+                  <span className="font-bold text-amber-700">{dossier.financing.interestRate}% p.a.</span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-slate-400 block uppercase font-sans">Gestation Period</span>
+                  <span className="font-semibold text-slate-800 font-sans">
+                    {dossier.financing.moratoriumMonths} Months Grace
                   </span>
                 </div>
+
                 <div>
-                  <span className="text-[10px] text-slate-400 font-sans block">NSFDC Loan Share (90%)</span>
-                  <span className="font-bold text-emerald-700">
-                    ₹{dossier.financing.concessionalAmount.toLocaleString("en-IN")}
+                  <span className="text-[10px] text-slate-400 block uppercase font-sans">Effective Monthly EMI</span>
+                  <span className="font-bold text-emerald-700 text-sm">
+                    {formatCurrency(dossier.financing.monthlyEmi)}
                   </span>
                 </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 font-sans block">Interest Rate</span>
-                  <span className="font-bold text-amber-600">
-                    {dossier.financing.interestRate}% p.a.
-                  </span>
+              </div>
+            </div>
+
+            {/* Designated Branch Routing Details */}
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                  <Building2 className="h-4 w-4 text-amber-600" />
+                  <span>3. Designated Solvent Processing Branch</span>
+                </h3>
+                <Badge variant="success" className="text-[10px] font-mono">
+                  Score: {dossier.branch.healthScore}/100 Solvent
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="col-span-2">
+                  <span className="font-bold text-slate-900 block">{dossier.branch.name}</span>
+                  <span className="text-slate-600 text-[11px]">{dossier.branch.address}</span>
                 </div>
+
                 <div>
-                  <span className="text-[10px] text-slate-400 font-sans block">Repayment Tenure</span>
-                  <span className="font-bold text-slate-900">
-                    {dossier.financing.tenureMonths / 12} Years ({dossier.financing.tenureMonths}m)
-                  </span>
+                  <span className="text-[10px] text-slate-400 block uppercase">Nodal Officer</span>
+                  <span className="font-semibold text-slate-800">{dossier.branch.nodalOfficer}</span>
                 </div>
+
                 <div>
-                  <span className="text-[10px] text-slate-400 font-sans block">Projected Monthly EMI</span>
-                  <span className="font-black text-mosje-navy text-sm">
-                    ₹{dossier.financing.monthlyEmi.toLocaleString("en-IN")}
-                  </span>
+                  <span className="text-[10px] text-slate-400 block uppercase">Direct Desk Contact</span>
+                  <span className="font-mono text-slate-800 font-semibold">{dossier.branch.contactPhone}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Verifiable QR Code */}
-          <div className="md:col-span-4 flex flex-col items-center justify-center p-3 bg-slate-50 border border-slate-200 rounded-2xl">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-              Verifiable Application QR
-            </h4>
+          {/* Right Column: Verifiable Tamper-Evident QR Code */}
+          <div className="md:col-span-4 flex flex-col items-center">
             <DossierQR
               value={qrPayloadString}
-              applicationId={dossier.applicationId}
               checksum={dossier.checksum}
+              applicationId={dossier.applicationId}
             />
           </div>
         </div>
 
-        {/* Designated Channel Partner Routing Slip */}
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-            3. Designated Channel Partner Routing Slip
-          </h3>
-          <div className="bg-amber-50/50 border border-amber-200/80 rounded-xl p-4 text-xs space-y-2">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-              <div>
-                <span className="font-bold text-sm text-mosje-navy block">
-                  {dossier.branch.name}
-                </span>
-                <span className="text-slate-600 text-[11px] font-medium">
-                  {dossier.branch.branchName} ({dossier.branch.institutionType})
-                </span>
-              </div>
-
-              <div className="flex items-center space-x-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-bold font-mono">
-                <ShieldCheck className="h-3.5 w-3.5" />
-                <span>Health Score: {dossier.branch.healthScore}/100 Solvent</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-amber-200/60 text-[11px] text-slate-600">
-              <div>
-                <span className="font-semibold text-slate-700">Branch Address: </span>
-                {dossier.branch.address}
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="font-semibold text-slate-700">Nodal Officer: </span>
-                <span>{dossier.branch.nodalOfficer}</span>
-                <a href={`tel:${dossier.branch.contactPhone}`} className="text-amber-700 font-semibold underline">
-                  {dossier.branch.contactPhone}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Statutory Document Compliance Checklist */}
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-            4. Statutory Document Verification Checklist
-          </h3>
+        {/* Statutory Document Checklist Component */}
+        <div className="pt-2 border-t border-slate-200">
           <DocumentChecklist
             documents={dossier.documents}
             onToggleDocument={handleToggleDocument}
           />
         </div>
 
-        {/* Branch Official Sanction & Seal Block (For Bank / SCA Use Only) */}
-        <div className="pt-3 border-t-2 border-slate-900 space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-              5. Branch Acknowledgment &amp; Sanction Seal (For Official Bank / SCA Use Only)
-            </h4>
-            <span className="text-[10px] text-slate-500 italic">
-              To be stamped &amp; signed upon physical verification
-            </span>
+        {/* Statutory Official Signoff Block */}
+        <div className="pt-6 border-t-2 border-slate-900 grid grid-cols-2 sm:grid-cols-3 gap-6 text-xs">
+          <div className="space-y-6">
+            <span className="text-[10px] text-slate-400 block uppercase font-mono">Beneficiary Declaration</span>
+            <div className="h-10 border-b border-dashed border-slate-400" />
+            <span className="text-[11px] text-slate-700 block">Applicant Signature / Thumb Impression</span>
           </div>
 
-          <div className="border border-slate-300 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-12 gap-4 text-xs font-mono">
-            <div className="sm:col-span-7 space-y-3">
-              <div>
-                <span className="text-[10px] text-slate-400 font-sans block">Date of Application Receipt:</span>
-                <span className="border-b border-slate-400 inline-block w-48 h-5"></span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 font-sans block">Branch Credit File Reference No:</span>
-                <span className="border-b border-slate-400 inline-block w-48 h-5"></span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 font-sans block">Verified By (Nodal Officer Signature):</span>
-                <span className="border-b border-slate-400 inline-block w-60 h-6"></span>
-              </div>
-            </div>
+          <div className="space-y-6">
+            <span className="text-[10px] text-slate-400 block uppercase font-mono">Processing Branch Officer</span>
+            <div className="h-10 border-b border-dashed border-slate-400" />
+            <span className="text-[11px] text-slate-700 block">Officer Signature &amp; Branch Stamp</span>
+          </div>
 
-            <div className="sm:col-span-5 border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center p-6 text-center text-slate-400 text-[11px] font-sans">
-              <Building2 className="h-8 w-8 mb-1 opacity-40" />
-              <span>Official Bank / SCA Rubber Stamp</span>
-            </div>
+          <div className="col-span-2 sm:col-span-1 space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-[10px] font-mono">
+            <span className="font-bold uppercase text-slate-600 block font-sans">Statutory Integrity Seal</span>
+            <div>Generated: {new Date(dossier.submissionDate).toLocaleDateString("en-IN")}</div>
+            <div>Checksum: {dossier.checksum}</div>
+            <div className="text-emerald-700 font-semibold">Status: MoSJE Pre-Screened</div>
           </div>
         </div>
       </div>
