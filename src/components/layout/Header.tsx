@@ -277,22 +277,16 @@ export function Header() {
               )}
             </div>
 
-            {/* Live Online / Offline State Indicator */}
-            <div
-              className={`hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors ${
-                isOnline
-                  ? "bg-slate-100/90 text-slate-600 border-slate-200"
-                  : "bg-amber-50 text-amber-800 border-amber-300"
-              }`}
-              title={isOnline ? "Network active with local offline fallback" : "Operating in offline cached mode"}
-            >
-              <span
-                className={`h-2 w-2 rounded-full ${
-                  isOnline ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
-                }`}
-              />
-              <span>{isOnline ? "Offline Mode Available" : "Offline Mode Active"}</span>
-            </div>
+            {/* Offline Alert Indicator (Only displayed if network disconnects) */}
+            {!isOnline && (
+              <div
+                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full border text-xs font-medium bg-amber-50 text-amber-800 border-amber-300 shadow-2xs whitespace-nowrap"
+                title="Internet connection is offline"
+              >
+                <span className="h-2 w-2 rounded-full bg-amber-500" />
+                <span>Offline</span>
+              </div>
+            )}
 
             {/* Interactive Language Toggle Pill */}
             <button
