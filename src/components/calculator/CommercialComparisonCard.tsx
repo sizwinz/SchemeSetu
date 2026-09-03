@@ -2,8 +2,7 @@
 
 import React from "react";
 import { CommercialComparison } from "@/lib/calculator/types";
-import { Building2, Landmark, TrendingDown, ArrowUpRight } from "lucide-react";
-import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
+import { Building2, Landmark, TrendingDown } from "lucide-react";
 import { CountUp } from "@/components/reactbits/CountUp";
 import { Badge } from "@/components/ui/badge";
 
@@ -37,18 +36,15 @@ export function CommercialComparisonCard({
             MoSJE concessional finance eliminates predatory high-interest debt traps
           </p>
         </div>
-        <Badge variant="success" className="text-[11px]">
+        <Badge variant="outline" className="text-emerald-700 bg-emerald-50 border-emerald-200 text-xs font-semibold">
           <TrendingDown className="h-3 w-3 mr-1" />
-          Statutory Savings
+          Statutory Relief
         </Badge>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Commercial Bank Card */}
-        <SpotlightCard
-          spotlightColor="rgba(37, 99, 235, 0.08)"
-          className="p-4 border-slate-200/80 bg-slate-50/50 flex flex-col justify-between space-y-3"
-        >
+        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="p-1.5 bg-blue-100 text-blue-700 rounded-lg">
@@ -64,31 +60,28 @@ export function CommercialComparisonCard({
             </Badge>
           </div>
 
-          <div className="space-y-1.5 text-xs font-mono tabular-nums">
+          <div className="space-y-1.5 text-xs">
             <div className="flex justify-between text-slate-600">
-              <span className="font-sans text-[11px]">Commercial EMI:</span>
-              <span className="font-bold text-slate-900">{formatCurrency(bank.monthlyEMI)}</span>
+              <span className="text-[11px]">Commercial EMI:</span>
+              <span className="font-bold text-slate-900 font-sans tabular-nums">{formatCurrency(bank.monthlyEMI)}</span>
             </div>
             <div className="flex justify-between text-slate-600">
-              <span className="font-sans text-[11px]">Concessional EMI:</span>
-              <span className="font-semibold text-emerald-700">
+              <span className="text-[11px]">Concessional EMI:</span>
+              <span className="font-semibold text-emerald-700 font-sans tabular-nums">
                 {formatCurrency(effectiveConcessionalEMI)}
               </span>
             </div>
             <div className="flex justify-between text-emerald-700 pt-1 border-t border-slate-200/60 font-bold">
-              <span className="font-sans text-[11px]">Lifetime Relief:</span>
-              <span>
-                <CountUp to={bank.lifetimeSavings} prefix="₹" duration={1} />
+              <span className="text-[11px]">Lifetime Relief:</span>
+              <span className="font-sans tabular-nums">
+                <CountUp to={bank.lifetimeSavings} prefix="₹" duration={0.8} />
               </span>
             </div>
           </div>
-        </SpotlightCard>
+        </div>
 
         {/* Commercial NBFC / MFI Card */}
-        <SpotlightCard
-          spotlightColor="rgba(220, 38, 38, 0.08)"
-          className="p-4 border-slate-200/80 bg-slate-50/50 flex flex-col justify-between space-y-3"
-        >
+        <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="p-1.5 bg-red-100 text-red-700 rounded-lg">
@@ -104,25 +97,25 @@ export function CommercialComparisonCard({
             </Badge>
           </div>
 
-          <div className="space-y-1.5 text-xs font-mono tabular-nums">
+          <div className="space-y-1.5 text-xs">
             <div className="flex justify-between text-slate-600">
-              <span className="font-sans text-[11px]">NBFC / MFI EMI:</span>
-              <span className="font-bold text-red-900">{formatCurrency(nbfc.monthlyEMI)}</span>
+              <span className="text-[11px]">NBFC / MFI EMI:</span>
+              <span className="font-bold text-slate-900 font-sans tabular-nums">{formatCurrency(nbfc.monthlyEMI)}</span>
             </div>
             <div className="flex justify-between text-slate-600">
-              <span className="font-sans text-[11px]">Concessional EMI:</span>
-              <span className="font-semibold text-emerald-700">
+              <span className="text-[11px]">Concessional EMI:</span>
+              <span className="font-semibold text-emerald-700 font-sans tabular-nums">
                 {formatCurrency(effectiveConcessionalEMI)}
               </span>
             </div>
             <div className="flex justify-between text-emerald-700 pt-1 border-t border-slate-200/60 font-bold">
-              <span className="font-sans text-[11px]">Lifetime Relief:</span>
-              <span>
-                <CountUp to={nbfc.lifetimeSavings} prefix="₹" duration={1} />
+              <span className="text-[11px]">Lifetime Relief:</span>
+              <span className="font-sans tabular-nums">
+                <CountUp to={nbfc.lifetimeSavings} prefix="₹" duration={0.8} />
               </span>
             </div>
           </div>
-        </SpotlightCard>
+        </div>
       </div>
     </div>
   );

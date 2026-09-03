@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { LoanParameters } from "@/lib/calculator/types";
 import {
   calculateConcessionalLoan,
@@ -12,116 +12,144 @@ import { LoanSliders } from "@/components/calculator/LoanSliders";
 import { FinancialSummaryCard } from "@/components/calculator/FinancialSummaryCard";
 import { CommercialComparisonCard } from "@/components/calculator/CommercialComparisonCard";
 import { AmortizationTable } from "@/components/calculator/AmortizationTable";
-import { Calculator, ShieldCheck, MapPin, MessageSquareText, Sparkles, ArrowRight } from "lucide-react";
+import { Calculator, ShieldCheck, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
-const SCHEME_PRESETS: Record<string, { name: string; params: LoanParameters; note: string }> = {
-  MSY: {
-    name: "Mahila Samriddhi Yojana (MSY)",
-    params: {
-      principal: 126000,
-      annualInterestRate: 4.0,
-      tenureYears: 3,
-      moratoriumMonths: 6,
-    },
-    note: "4.0% Subsidized Interest Rate for Women Entrepreneurs (90% NSFDC Funding)",
+interface SchemeConfig {
+  key: string;
+  name: string;
+  code: string;
+  rate: number;
+  tenure: number;
+  moratorium: number;
+  maxPrincipal: number;
+  defaultPrincipal: number;
+  description: string;
+}
+
+const SCHEMES: SchemeConfig[] = [
+  {
+    key: "MSY",
+    name: "Mahila Samriddhi",
+    code: "MSY",
+    rate: 4.0,
+    tenure: 3,
+    moratorium: 6,
+    maxPrincipal: 140000,
+    defaultPrincipal: 126000,
+    description: "4.0% Subsidized rate for SC women micro-entrepreneurs covering up to 90% of costs.",
   },
-  MCF: {
-    name: "Micro Credit Finance (MCF)",
-    params: {
-      principal: 126000,
-      annualInterestRate: 6.5,
-      tenureYears: 3,
-      moratoriumMonths: 3,
-    },
-    note: "6.5% Concessional Rate for Micro-Enterprises and Small Vendors",
+  {
+    key: "MCF",
+    name: "Micro Credit Finance",
+    code: "MCF",
+    rate: 6.5,
+    tenure: 3,
+    moratorium: 3,
+    maxPrincipal: 140000,
+    defaultPrincipal: 126000,
+    description: "6.5% Concessional rate for small kiosks, vendors, and micro-business units.",
   },
-  TERM_LOAN: {
-    name: "Term Loan Scheme (TLS)",
-    params: {
-      principal: 500000,
-      annualInterestRate: 8.0,
-      tenureYears: 5,
-      moratoriumMonths: 6,
-    },
-    note: "8.0% Rate for Medium Enterprises, Transport Vehicles, and Machinery",
+  {
+    key: "TLS",
+    name: "Term Loan Scheme",
+    code: "TERM_LOAN",
+    rate: 8.0,
+    tenure: 5,
+    moratorium: 6,
+    maxPrincipal: 5000000,
+    defaultPrincipal: 500000,
+    description: "8.0% Rate for transport vehicles, machinery, and larger capital projects up to ₹50 Lakhs.",
   },
-  ELS: {
-    name: "Education Loan Scheme (ELS)",
-    params: {
-      principal: 400000,
-      annualInterestRate: 6.5,
-      tenureYears: 5,
-      moratoriumMonths: 12,
-    },
-    note: "6.5% Rate with extended 12-Month Gestation Moratorium for Higher Studies",
+  {
+    key: "ELS",
+    name: "Education Loan",
+    code: "ELS",
+    rate: 6.5,
+    tenure: 5,
+    moratorium: 12,
+    maxPrincipal: 4000000,
+    defaultPrincipal: 800000,
+    description: "6.5% Concessional rate with extended 12-month gestation moratorium for professional higher studies.",
   },
-};
+];
 
 function CalculatorContent() {
   const searchParams = useSearchParams();
-  const schemeCode = searchParams.get("scheme")?.toUpperCase() || "";
+  const router = useRouter();
+
+  const schemeParam = searchParams.get("scheme")?.toUpperCase() || "";
   const amountParam = searchParams.get("amount") || searchParams.get("cost");
   const rateParam = searchParams.get("rate");
   const tenureParam = searchParams.get("tenure");
 
+  // Determine active scheme tab
+  const matchedScheme = SCHEMES.find(
+    (s) => s.key === schemeParam || s.code === schemeParam
+  );
+
+  const [activeTab, setActiveTab] = useState<string>(
+    matchedScheme ? matchedScheme.key : "TLS"
+  );
+
   const [params, setParams] = useState<LoanParameters>(() => {
-    let baseParams: LoanParameters = {
-      principal: 140000,
-      annualInterestRate: 6.5,
-      tenureYears: 5,
-      moratoriumMonths: 6,
+    const base = matchedScheme || SCHEMES[2]; // Default to TLS
+    const p: LoanParameters = {
+      principal: base.defaultPrincipal,
+      annualInterestRate: base.rate,
+      tenureYears: base.tenure,
+      moratoriumMonths: base.moratorium,
     };
 
-    if (schemeCode && SCHEME_PRESETS[schemeCode]) {
-      baseParams = { ...SCHEME_PRESETS[schemeCode].params };
-    }
-
     if (amountParam && !isNaN(Number(amountParam))) {
-      baseParams.principal = Number(amountParam);
+      p.principal = Number(amountParam);
     }
     if (rateParam && !isNaN(Number(rateParam))) {
-      baseParams.annualInterestRate = Number(rateParam);
+      p.annualInterestRate = Number(rateParam);
     }
     if (tenureParam && !isNaN(Number(tenureParam))) {
-      baseParams.tenureYears = Number(tenureParam);
+      p.tenureYears = Number(tenureParam);
     }
 
-    return baseParams;
+    return p;
   });
 
+  // Sync when URL params change
   useEffect(() => {
-    if (schemeCode && SCHEME_PRESETS[schemeCode]) {
-      const preset = SCHEME_PRESETS[schemeCode].params;
-      const updated = { ...preset };
-      if (amountParam && !isNaN(Number(amountParam))) {
-        updated.principal = Number(amountParam);
-      }
-      if (rateParam && !isNaN(Number(rateParam))) {
-        updated.annualInterestRate = Number(rateParam);
-      }
-      if (tenureParam && !isNaN(Number(tenureParam))) {
-        updated.tenureYears = Number(tenureParam);
-      }
-      setParams(updated);
+    if (matchedScheme) {
+      setActiveTab(matchedScheme.key);
+      setParams({
+        principal: amountParam ? Number(amountParam) : matchedScheme.defaultPrincipal,
+        annualInterestRate: rateParam ? Number(rateParam) : matchedScheme.rate,
+        tenureYears: tenureParam ? Number(tenureParam) : matchedScheme.tenure,
+        moratoriumMonths: matchedScheme.moratorium,
+      });
     }
-  }, [schemeCode, amountParam, rateParam, tenureParam]);
+  }, [matchedScheme, amountParam, rateParam, tenureParam]);
 
-  const activePreset = schemeCode && SCHEME_PRESETS[schemeCode] ? SCHEME_PRESETS[schemeCode] : null;
+  const handleTabSwitch = (scheme: SchemeConfig) => {
+    setActiveTab(scheme.key);
+    setParams({
+      principal: Math.min(params.principal, scheme.maxPrincipal) || scheme.defaultPrincipal,
+      annualInterestRate: scheme.rate,
+      tenureYears: scheme.tenure,
+      moratoriumMonths: scheme.moratorium,
+    });
+  };
+
+  const currentConfig = SCHEMES.find((s) => s.key === activeTab) || SCHEMES[2];
 
   const result = calculateConcessionalLoan(params);
   const monthlySchedule = generateAmortizationSchedule(params);
   const annualSummary = generateAnnualSummary(monthlySchedule);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 pt-4">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16 px-4 sm:px-6 lg:px-8 pt-4">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div className="flex items-center space-x-2">
-            <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-2 bg-amber-500/10 text-amber-700 rounded-xl">
               <Calculator className="h-6 w-6" />
             </div>
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
@@ -129,94 +157,94 @@ function CalculatorContent() {
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Simulate monthly EMIs, 3 to 12 month gestation periods, and total interest savings under MoSJE affirmative credit programs.
+            Deliverable 2: Dynamic financial engine modeling concessional EMIs, 3 to 12 month gestation grace periods, and commercial savings.
           </p>
         </div>
 
         <div className="flex items-center space-x-2 shrink-0">
-          <Badge variant="sovereign" className="text-xs py-1 px-3">
+          <Badge variant="outline" className="text-xs py-1 px-3 text-emerald-800 bg-emerald-50 border-emerald-200 font-semibold">
             <ShieldCheck className="h-3.5 w-3.5 mr-1 text-emerald-600" />
-            <span>NSFDC Subsidized Rates (4% - 8%)</span>
+            <span>NSFDC Subsidized Rates (4.0% - 8.0%)</span>
           </Badge>
         </div>
       </div>
 
-      {/* Preset Indicator Banner */}
-      {activePreset && (
-        <div className="bg-amber-50/80 border border-amber-200/90 rounded-2xl p-4 flex items-center justify-between gap-3 text-xs shadow-2xs">
-          <div className="flex items-center space-x-2.5">
-            <Sparkles className="h-4 w-4 text-amber-700 shrink-0" />
-            <div>
-              <span className="font-bold text-slate-900 block">{activePreset.name}</span>
-              <span className="text-slate-600">{activePreset.note}</span>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className="text-xs font-semibold text-slate-600 hover:text-slate-900"
-          >
-            <Link href="/calculator">Reset to Custom</Link>
-          </Button>
-        </div>
-      )}
-
-      {/* Main 2-Column Split View */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Sliders & Controls */}
-        <div className="lg:col-span-7 space-y-6">
-          <LoanSliders params={params} onChange={setParams} />
-
-          {/* Direct Actions to Next Steps */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Next Steps for Beneficiary
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Link
-                href={`/locator?amount=${params.principal}`}
-                className="p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs text-slate-800 flex items-center justify-between transition-colors group"
-              >
-                <div className="flex items-center space-x-2.5">
-                  <MapPin className="h-4 w-4 text-amber-600" />
-                  <div>
-                    <span className="font-bold block">Find Solvent Branch</span>
-                    <span className="text-[10px] text-slate-400">Route to nearby low-NPA partner</span>
-                  </div>
-                </div>
-                <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-700 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-
-              <Link
-                href={`/assistant?q=${encodeURIComponent(`I want to apply for a ₹${params.principal.toLocaleString("en-IN")} loan at ${params.annualInterestRate}% interest`)}`}
-                className="p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs text-slate-800 flex items-center justify-between transition-colors group"
-              >
-                <div className="flex items-center space-x-2.5">
-                  <MessageSquareText className="h-4 w-4 text-amber-600" />
-                  <div>
-                    <span className="font-bold text-slate-900 block">Pre-Screen in Chat</span>
-                    <span className="text-[10px] text-slate-400">Voice-guided application</span>
-                  </div>
-                </div>
-                <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-700 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </div>
-          </div>
+      {/* Unified Scheme Selector Segmented Tab Bar */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+            Select MoSJE Statutory Scheme Preset
+          </span>
+          <span className="text-[11px] text-slate-400">
+            Presets automatically calibrate statutory rate and grace period
+          </span>
         </div>
 
-        {/* Right Column: Financial Summaries & Comparison */}
-        <div className="lg:col-span-5 space-y-6">
-          <FinancialSummaryCard result={result} />
-          <CommercialComparisonCard
-            bank={result.comparisons.bank}
-            nbfc={result.comparisons.nbfc}
-            effectiveConcessionalEMI={result.effectiveMonthlyEMI}
-          />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {SCHEMES.map((scheme) => {
+            const isSelected = activeTab === scheme.key;
+            return (
+              <button
+                key={scheme.key}
+                type="button"
+                onClick={() => handleTabSwitch(scheme)}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  isSelected
+                    ? "border-amber-500 bg-amber-50/50 shadow-2xs"
+                    : "border-slate-200 bg-slate-50/40 hover:bg-slate-50 text-slate-700"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className={`text-[10px] font-bold uppercase tracking-wider ${
+                    isSelected ? "text-amber-800" : "text-slate-400"
+                  }`}>
+                    {scheme.key}
+                  </span>
+                  <span className={`text-xs font-bold ${
+                    isSelected ? "text-emerald-700" : "text-slate-600"
+                  }`}>
+                    {scheme.rate}% p.a.
+                  </span>
+                </div>
+                <span className={`text-xs font-bold block leading-tight ${
+                  isSelected ? "text-slate-900" : "text-slate-800"
+                }`}>
+                  {scheme.name}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+          <p className="text-[11px] leading-relaxed">
+            <strong className="text-slate-900">{currentConfig.name}:</strong> {currentConfig.description}
+          </p>
         </div>
       </div>
 
-      {/* Full-Width Amortization Schedule Table */}
+      {/* Main Simulation Workspace Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Loan Sliders */}
+        <div className="lg:col-span-7">
+          <LoanSliders params={params} onChange={setParams} />
+        </div>
+
+        {/* Right Column: Financial Summary Card */}
+        <div className="lg:col-span-5">
+          <FinancialSummaryCard result={result} />
+        </div>
+      </div>
+
+      {/* Commercial Lending Comparison */}
+      <CommercialComparisonCard
+        bank={result.comparisons.bank}
+        nbfc={result.comparisons.nbfc}
+        effectiveConcessionalEMI={result.effectiveMonthlyEMI}
+      />
+
+      {/* Repayment Amortization Schedule Table */}
       <AmortizationTable
         monthlySchedule={monthlySchedule}
         annualSummary={annualSummary}

@@ -1,10 +1,21 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { CalculationResult } from "@/lib/calculator/types";
-import { ShieldCheck, TrendingDown, Clock, ArrowDownRight } from "lucide-react";
+import {
+  ShieldCheck,
+  TrendingDown,
+  Clock,
+  ArrowRight,
+  MapPin,
+  FileCheck,
+  Building2,
+  Landmark,
+} from "lucide-react";
 import { CountUp } from "@/components/reactbits/CountUp";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface FinancialSummaryCardProps {
   result: CalculationResult;
@@ -41,7 +52,7 @@ export function FinancialSummaryCard({ result }: FinancialSummaryCardProps) {
               Projected Monthly EMI
             </h3>
             <p className="text-xs text-slate-500">
-              Concessional repayment after grace period
+              Statutory repayment calculated after grace period
             </p>
           </div>
         </div>
@@ -52,13 +63,13 @@ export function FinancialSummaryCard({ result }: FinancialSummaryCardProps) {
         </Badge>
       </div>
 
-      {/* Primary Display Number */}
+      {/* Hero Display Number */}
       <div className="space-y-1.5">
         <div className="flex items-baseline space-x-2">
-          <span className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight tabular-nums">
+          <span className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight tabular-nums font-sans">
             <CountUp to={result.effectiveMonthlyEMI} prefix="₹" duration={0.8} />
           </span>
-          <span className="text-xs sm:text-sm text-slate-500 font-normal">/ month</span>
+          <span className="text-sm text-slate-500 font-normal">/ month</span>
         </div>
 
         {result.moratoriumMonths > 0 ? (
@@ -73,42 +84,58 @@ export function FinancialSummaryCard({ result }: FinancialSummaryCardProps) {
         )}
       </div>
 
-      {/* Clean Breakdown Metrics Grid */}
+      {/* 4-Item Breakdown Grid */}
       <div className="grid grid-cols-2 gap-2.5">
         <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
           <span className="text-[11px] text-slate-500 block mb-0.5">Sanctioned Principal</span>
-          <span className="text-sm font-bold text-slate-900 tabular-nums">
+          <span className="text-sm font-bold text-slate-900 tabular-nums font-sans">
             <CountUp to={result.principal} prefix="₹" duration={0.6} />
           </span>
         </div>
 
         <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
           <span className="text-[11px] text-slate-500 block mb-0.5">Total Concessional Interest</span>
-          <span className="text-sm font-bold text-slate-900 tabular-nums">
+          <span className="text-sm font-bold text-slate-900 tabular-nums font-sans">
             <CountUp to={result.totalConcessionalInterest} prefix="₹" duration={0.6} />
           </span>
         </div>
 
         <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
           <span className="text-[11px] text-slate-500 block mb-0.5">Accrued Gestation Interest</span>
-          <span className="text-sm font-bold text-slate-700 tabular-nums">
+          <span className="text-sm font-bold text-slate-700 tabular-nums font-sans">
             <CountUp to={result.accruedGestationInterest} prefix="₹" duration={0.6} />
           </span>
         </div>
 
         <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
           <span className="text-[11px] text-slate-500 block mb-0.5">Total Loan Lifetime Cost</span>
-          <span className="text-sm font-bold text-slate-900 tabular-nums">
+          <span className="text-sm font-bold text-slate-900 tabular-nums font-sans">
             <CountUp to={result.totalPayable} prefix="₹" duration={0.6} />
           </span>
         </div>
       </div>
 
-      {/* Visual Composition Stacked Bar */}
+      {/* Commercial Lending Savings Highlight */}
+      <div className="p-3.5 bg-emerald-50/70 border border-emerald-200/80 rounded-xl space-y-2 text-xs">
+        <div className="flex items-center justify-between text-emerald-900">
+          <span className="font-bold flex items-center gap-1.5">
+            <TrendingDown className="h-4 w-4 text-emerald-700" />
+            Lifetime Subsidy Relief vs Commercial
+          </span>
+          <span className="font-bold text-emerald-700 font-sans tabular-nums text-sm">
+            Save {formatCurrency(result.comparisons.bank.lifetimeSavings)}
+          </span>
+        </div>
+        <p className="text-[11px] text-emerald-800 leading-relaxed">
+          Commercial banks charge 14% p.a. (EMI: {formatCurrency(result.comparisons.bank.monthlyEMI)}). MoSJE affirmative credit saves you {formatCurrency(result.comparisons.bank.lifetimeSavings)} in lifetime interest.
+        </p>
+      </div>
+
+      {/* Cost Composition Stacked Bar */}
       <div className="space-y-2 pt-1 border-t border-slate-100">
         <div className="flex items-center justify-between text-xs text-slate-500">
           <span>Cost Composition vs Commercial</span>
-          <span className="text-emerald-700 font-semibold">{savingsPct}% Savings</span>
+          <span className="text-emerald-700 font-semibold font-sans">{savingsPct}% Savings</span>
         </div>
 
         <div className="h-2 rounded-full bg-slate-100 overflow-hidden flex">
@@ -136,13 +163,36 @@ export function FinancialSummaryCard({ result }: FinancialSummaryCardProps) {
           </div>
           <div className="flex items-center space-x-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
-            <span>Concessional ({interestPct}%)</span>
+            <span>Interest ({interestPct}%)</span>
           </div>
           <div className="flex items-center space-x-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-600 inline-block" />
             <span>Subsidy ({savingsPct}%)</span>
           </div>
         </div>
+      </div>
+
+      {/* Direct Action Buttons to Advance User in Pipeline */}
+      <div className="space-y-2 pt-2 border-t border-slate-100">
+        <Button asChild className="w-full rounded-xl py-2.5 text-xs font-semibold justify-between shadow-2xs">
+          <Link href={`/locator?amount=${result.principal}`}>
+            <div className="flex items-center space-x-2">
+              <MapPin className="h-4 w-4" />
+              <span>Find Nearest Solvent Channel Partner</span>
+            </div>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </Button>
+
+        <Button variant="outline" asChild className="w-full rounded-xl py-2.5 text-xs font-semibold justify-between">
+          <Link href="/dossier">
+            <div className="flex items-center space-x-2">
+              <FileCheck className="h-4 w-4 text-slate-600" />
+              <span>Generate Application Packet &amp; QR Dossier</span>
+            </div>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </Button>
       </div>
     </div>
   );
