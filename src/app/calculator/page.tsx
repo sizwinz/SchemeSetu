@@ -63,34 +63,51 @@ const SCHEME_PRESETS: Record<string, { name: string; params: LoanParameters; not
 function CalculatorContent() {
   const searchParams = useSearchParams();
   const schemeCode = searchParams.get("scheme")?.toUpperCase() || "";
-  const costParam = searchParams.get("cost");
+  const amountParam = searchParams.get("amount") || searchParams.get("cost");
+  const rateParam = searchParams.get("rate");
+  const tenureParam = searchParams.get("tenure");
 
   const [params, setParams] = useState<LoanParameters>(() => {
-    if (schemeCode && SCHEME_PRESETS[schemeCode]) {
-      const preset = SCHEME_PRESETS[schemeCode].params;
-      if (costParam && !isNaN(Number(costParam))) {
-        return { ...preset, principal: Math.round(Number(costParam) * 0.9) };
-      }
-      return preset;
-    }
-    return {
+    let baseParams: LoanParameters = {
       principal: 140000,
       annualInterestRate: 6.5,
       tenureYears: 5,
       moratoriumMonths: 6,
     };
+
+    if (schemeCode && SCHEME_PRESETS[schemeCode]) {
+      baseParams = { ...SCHEME_PRESETS[schemeCode].params };
+    }
+
+    if (amountParam && !isNaN(Number(amountParam))) {
+      baseParams.principal = Number(amountParam);
+    }
+    if (rateParam && !isNaN(Number(rateParam))) {
+      baseParams.annualInterestRate = Number(rateParam);
+    }
+    if (tenureParam && !isNaN(Number(tenureParam))) {
+      baseParams.tenureYears = Number(tenureParam);
+    }
+
+    return baseParams;
   });
 
   useEffect(() => {
     if (schemeCode && SCHEME_PRESETS[schemeCode]) {
       const preset = SCHEME_PRESETS[schemeCode].params;
-      if (costParam && !isNaN(Number(costParam))) {
-        setParams({ ...preset, principal: Math.round(Number(costParam) * 0.9) });
-      } else {
-        setParams(preset);
+      const updated = { ...preset };
+      if (amountParam && !isNaN(Number(amountParam))) {
+        updated.principal = Number(amountParam);
       }
+      if (rateParam && !isNaN(Number(rateParam))) {
+        updated.annualInterestRate = Number(rateParam);
+      }
+      if (tenureParam && !isNaN(Number(tenureParam))) {
+        updated.tenureYears = Number(tenureParam);
+      }
+      setParams(updated);
     }
-  }, [schemeCode, costParam]);
+  }, [schemeCode, amountParam, rateParam, tenureParam]);
 
   const activePreset = schemeCode && SCHEME_PRESETS[schemeCode] ? SCHEME_PRESETS[schemeCode] : null;
 

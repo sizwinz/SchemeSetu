@@ -125,7 +125,40 @@ export function Header() {
                   : "hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Schemes
+              Scheme Recommender
+            </Link>
+
+            <Link
+              href="/calculator"
+              className={`px-3 py-1.5 rounded-lg transition-colors ${
+                pathname === "/calculator"
+                  ? "bg-slate-100 text-slate-900 font-bold"
+                  : "hover:text-slate-900 hover:bg-slate-50"
+              }`}
+            >
+              EMI Calculator
+            </Link>
+
+            <Link
+              href="/locator"
+              className={`px-3 py-1.5 rounded-lg transition-colors ${
+                pathname === "/locator"
+                  ? "bg-slate-100 text-slate-900 font-bold"
+                  : "hover:text-slate-900 hover:bg-slate-50"
+              }`}
+            >
+              Partner Locator
+            </Link>
+
+            <Link
+              href="/dossier"
+              className={`px-3 py-1.5 rounded-lg transition-colors ${
+                pathname === "/dossier"
+                  ? "bg-slate-100 text-slate-900 font-bold"
+                  : "hover:text-slate-900 hover:bg-slate-50"
+              }`}
+            >
+              Application Dossier
             </Link>
 
             <Link
@@ -140,39 +173,6 @@ export function Header() {
             </Link>
 
             <Link
-              href="/calculator"
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                pathname === "/calculator"
-                  ? "bg-slate-100 text-slate-900 font-bold"
-                  : "hover:text-slate-900 hover:bg-slate-50"
-              }`}
-            >
-              Calculator
-            </Link>
-
-            <Link
-              href="/locator"
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                pathname === "/locator"
-                  ? "bg-slate-100 text-slate-900 font-bold"
-                  : "hover:text-slate-900 hover:bg-slate-50"
-              }`}
-            >
-              Locator
-            </Link>
-
-            <Link
-              href="/dossier"
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                pathname === "/dossier"
-                  ? "bg-slate-100 text-slate-900 font-bold"
-                  : "hover:text-slate-900 hover:bg-slate-50"
-              }`}
-            >
-              Dossier
-            </Link>
-
-            <Link
               href="/admin"
               className={`px-3 py-1.5 rounded-lg transition-colors ${
                 pathname === "/admin"
@@ -180,7 +180,7 @@ export function Header() {
                   : "hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Admin
+              MoSJE Admin
             </Link>
           </nav>
 
