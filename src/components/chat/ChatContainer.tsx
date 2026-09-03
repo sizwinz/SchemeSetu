@@ -249,85 +249,11 @@ export function ChatContainer({
         </div>
 
         <div className="flex items-center space-x-1.5 sm:space-x-2">
-          {/* Read Aloud Active Controls: Pause/Resume and Stop */}
-          {(audioState.isSpeaking || audioState.isPaused) && (
-            <div className="flex items-center space-x-1 bg-white px-2 py-1 rounded-xl border border-slate-200 shadow-2xs">
-              <span className="relative flex h-2 w-2 mr-0.5">
-                <span
-                  className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
-                    audioState.isPaused ? "bg-amber-400" : "bg-emerald-400"
-                  } opacity-75`}
-                />
-                <span
-                  className={`relative inline-flex rounded-full h-2 w-2 ${
-                    audioState.isPaused ? "bg-amber-500" : "bg-emerald-500"
-                  }`}
-                />
-              </span>
-
-              {/* Pause / Resume Button */}
-              <button
-                type="button"
-                onClick={audioState.isPaused ? resumeSpeech : pauseSpeech}
-                className="p-1 rounded text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-                title={audioState.isPaused ? "Resume read aloud" : "Pause read aloud"}
-              >
-                {audioState.isPaused ? (
-                  <Play className="h-3.5 w-3.5 fill-current" />
-                ) : (
-                  <Pause className="h-3.5 w-3.5 fill-current" />
-                )}
-              </button>
-
-              {/* Stop Button */}
-              <button
-                type="button"
-                onClick={cancelSpeech}
-                className="p-1 rounded text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
-                title="Stop read aloud completely"
-              >
-                <Square className="h-3.5 w-3.5 fill-current" />
-              </button>
-            </div>
-          )}
-
-          {/* Audio Mute/Unmute Toggle */}
-          <button
-            type="button"
-            onClick={() => {
-              const nextMuted = !audioState.isMuted;
-              setAudioMuted(nextMuted);
-              setAutoSpeak(!nextMuted);
-            }}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border transition-colors cursor-pointer font-semibold ${
-              audioState.isMuted
-                ? "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
-                : "bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200"
-            }`}
-            title={
-              audioState.isMuted
-                ? "Read aloud is muted (Click to unmute)"
-                : "Read aloud is active (Click to mute)"
-            }
-          >
-            {audioState.isMuted ? (
-              <>
-                <VolumeX className="h-3.5 w-3.5 text-red-600" />
-                <span className="hidden sm:inline">Unmute</span>
-              </>
-            ) : (
-              <>
-                <Volume2 className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Mute</span>
-              </>
-            )}
-          </button>
-
           {/* Bilingual Switcher */}
           <button
             type="button"
             onClick={handleLanguageToggle}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold transition-colors cursor-pointer"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold transition-colors cursor-pointer shadow-2xs"
           >
             <Languages className="h-3.5 w-3.5 text-slate-500" />
             <span>{language === "hi-IN" ? "हिंदी" : "EN"}</span>
@@ -337,7 +263,7 @@ export function ChatContainer({
           <button
             type="button"
             onClick={handleResetChat}
-            className="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer shadow-2xs"
             title="Clear Chat Conversation"
           >
             <RotateCcw className="h-4 w-4" />

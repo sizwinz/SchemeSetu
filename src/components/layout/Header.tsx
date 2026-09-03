@@ -186,12 +186,12 @@ export function Header() {
 
           {/* Right: Mockup & Audio Controls */}
           <div className="flex items-center space-x-2 sm:space-x-2.5">
-            {/* Top Read Aloud Audio Control Bar (Mute / Pause / Stop) */}
-            <div className="flex items-center space-x-1 bg-slate-100 border border-slate-200/90 rounded-full px-2 py-1 text-xs transition-all">
-              {/* Active Audio State Indicators & Pause/Resume/Stop Controls */}
+            {/* Top Read Aloud Audio Controller (Single-line, non-wrapping) */}
+            <div className="h-8 inline-flex items-center whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50 px-2 text-xs transition-all shadow-2xs">
               {audioState.isSpeaking || audioState.isPaused ? (
-                <div className="flex items-center space-x-1.5 pr-1.5 border-r border-slate-300">
-                  <span className="relative flex h-2 w-2">
+                <div className="flex items-center space-x-1.5 whitespace-nowrap">
+                  {/* Status Indicator */}
+                  <span className="relative flex h-2 w-2 shrink-0">
                     <span
                       className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
                         audioState.isPaused ? "bg-amber-400" : "bg-emerald-400"
@@ -203,15 +203,16 @@ export function Header() {
                       }`}
                     />
                   </span>
-                  <span className="text-[10px] font-bold text-slate-700 hidden sm:inline">
-                    {audioState.isPaused ? "Paused" : "Reading Aloud"}
+
+                  <span className="text-[11px] font-semibold text-slate-700 select-none">
+                    {audioState.isPaused ? "Paused" : "Reading"}
                   </span>
 
                   {/* Pause / Resume Button */}
                   <button
                     type="button"
                     onClick={audioState.isPaused ? resumeSpeech : pauseSpeech}
-                    className="p-1 hover:bg-white rounded-full text-slate-700 transition-colors cursor-pointer"
+                    className="h-6 w-6 rounded-md hover:bg-slate-200/80 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
                     title={audioState.isPaused ? "Resume read aloud" : "Pause read aloud"}
                   >
                     {audioState.isPaused ? (
@@ -225,41 +226,55 @@ export function Header() {
                   <button
                     type="button"
                     onClick={cancelSpeech}
-                    className="p-1 hover:bg-white rounded-full text-red-600 hover:text-red-700 transition-colors cursor-pointer"
+                    className="h-6 w-6 rounded-md hover:bg-red-50 text-red-600 flex items-center justify-center transition-colors cursor-pointer"
                     title="Stop read aloud completely"
                   >
                     <Square className="h-3 w-3 fill-current" />
                   </button>
-                </div>
-              ) : null}
 
-              {/* Mute / Unmute Button */}
-              <button
-                type="button"
-                onClick={() => setAudioMuted(!audioState.isMuted)}
-                className={`flex items-center space-x-1 px-1.5 py-0.5 rounded-full text-[11px] font-semibold transition-colors cursor-pointer ${
-                  audioState.isMuted
-                    ? "text-red-700 bg-red-50 hover:bg-red-100"
-                    : "text-slate-700 hover:text-slate-900 hover:bg-white"
-                }`}
-                title={
-                  audioState.isMuted
-                    ? "Read aloud is muted (Click to unmute)"
-                    : "Read aloud is enabled (Click to mute)"
-                }
-              >
-                {audioState.isMuted ? (
-                  <>
-                    <VolumeX className="h-3.5 w-3.5 text-red-600" />
-                    <span className="hidden sm:inline">Audio Off</span>
-                  </>
-                ) : (
-                  <>
-                    <Volume2 className="h-3.5 w-3.5 text-slate-600" />
-                    <span className="hidden sm:inline">Read Aloud</span>
-                  </>
-                )}
-              </button>
+                  <span className="h-3.5 w-[1px] bg-slate-200 shrink-0" />
+
+                  {/* Mute Button */}
+                  <button
+                    type="button"
+                    onClick={() => setAudioMuted(!audioState.isMuted)}
+                    className="h-6 px-1.5 rounded-md hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-[11px] font-medium transition-colors cursor-pointer"
+                    title={audioState.isMuted ? "Audio muted (Click to unmute)" : "Audio active (Click to mute)"}
+                  >
+                    {audioState.isMuted ? (
+                      <>
+                        <VolumeX className="h-3.5 w-3.5 text-red-600" />
+                        <span className="text-[10px] text-red-600 font-semibold">Muted</span>
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="h-3.5 w-3.5 text-slate-600" />
+                        <span className="text-[10px]">Mute</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                /* Idle State */
+                <button
+                  type="button"
+                  onClick={() => setAudioMuted(!audioState.isMuted)}
+                  className="flex items-center space-x-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap px-1"
+                  title={audioState.isMuted ? "Click to enable audio read-aloud" : "Click to mute audio"}
+                >
+                  {audioState.isMuted ? (
+                    <>
+                      <VolumeX className="h-3.5 w-3.5 text-red-500" />
+                      <span>Audio Off</span>
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 className="h-3.5 w-3.5 text-slate-600" />
+                      <span>Audio On</span>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
 
             {/* Live Online / Offline State Indicator */}
