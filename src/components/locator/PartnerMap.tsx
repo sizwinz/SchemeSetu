@@ -66,9 +66,27 @@ export function PartnerMap({
     };
   }, []);
 
+  // Handle container resize or mobile tab visibility changes
+  useEffect(() => {
+    if (!mapContainerRef.current || !mapInstanceRef.current || !isMapReady) return;
+
+    const observer = new ResizeObserver(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    });
+
+    observer.observe(mapContainerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isMapReady]);
+
   // Pan map when user coordinates change
   useEffect(() => {
     if (mapInstanceRef.current && isMapReady) {
+      mapInstanceRef.current.invalidateSize();
       mapInstanceRef.current.setView([userCoords.lat, userCoords.lng], 12);
     }
   }, [userCoords, isMapReady]);

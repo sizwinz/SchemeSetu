@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { DISTRICT_HUBS } from "@/lib/partners/data";
 import { DistrictHub, GeoCoordinates, PartnerFilterOptions } from "@/lib/partners/types";
-import { Navigation, MapPin, Building2, Filter, AlertTriangle, ShieldCheck } from "lucide-react";
+import { calculateHaversineDistance } from "@/lib/partners/engine";
+import { Navigation, MapPin, Building2, Filter, AlertTriangle, ShieldCheck, CheckCircle2, X } from "lucide-react";
 
 interface PartnerFilterProps {
   selectedDistrict: DistrictHub;
@@ -12,6 +13,19 @@ interface PartnerFilterProps {
   filters: PartnerFilterOptions;
   onFilterChange: (filters: PartnerFilterOptions) => void;
   totalFound: number;
+}
+
+function findNearestHub(coords: GeoCoordinates): DistrictHub {
+  let nearest = DISTRICT_HUBS[0];
+  let minDistance = Infinity;
+  for (const hub of DISTRICT_HUBS) {
+    const dist = calculateHaversineDistance(coords, hub.coordinates);
+    if (dist < minDistance) {
+      minDistance = dist;
+      nearest = hub;
+    }
+  }
+  return nearest;
 }
 
 export function PartnerFilter({
@@ -24,35 +38,82 @@ export function PartnerFilter({
 }: PartnerFilterProps) {
   const [isLocating, setIsLocating] = useState<boolean>(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const [activeLocationLabel, setActiveLocationLabel] = useState<string | null>(null);
 
-  const handleAutoGPS = () => {
-    if (!navigator.geolocation) {
-      setGeoError("Geolocation is not supported by your browser.");
-      return;
+  const applyDetectedCoordinates = (coords: GeoCoordinates, label: string) => {
+    const nearestHub = findNearestHub(coords);
+    onUserCoordsChange(coords);
+    onDistrictChange(nearestHub);
+    setActiveLocationLabel(`${label} (Hub: ${nearestHub.name})`);
+    setGeoError(null);
+  };
+
+  const tryIpFallback = async (): Promise<boolean> => {
+    try {
+      const res = await fetch("/api/locate");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && typeof data.lat === "number" && typeof data.lng === "number") {
+          const locName = data.city ? `${data.city}${data.region ? `, ${data.region}` : ""}` : "Network Location";
+          applyDetectedCoordinates({ lat: data.lat, lng: data.lng }, locName);
+          return true;
+        }
+      }
+    } catch {
+      // Fallback failed
     }
+    return false;
+  };
 
+  const handleAutoGPS = async () => {
     setIsLocating(true);
     setGeoError(null);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setIsLocating(false);
-        onUserCoordsChange({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
+    // 1. Try Browser Geolocation API
+    if (typeof window !== "undefined" && "geolocation" in navigator) {
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 6000,
+            maximumAge: 60000,
+          });
         });
-      },
-      (error) => {
+
+        applyDetectedCoordinates(
+          {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+          "Device GPS"
+        );
         setIsLocating(false);
-        setGeoError("Unable to retrieve location. Please select a district hub.");
-      },
-      { timeout: 10000, maximumAge: 60000 }
-    );
+        return;
+      } catch {
+        // Geolocation failed or permission denied, continue to IP fallback
+      }
+    }
+
+    // 2. Fallback to Edge/IP Geolocation API
+    const ipSuccess = await tryIpFallback();
+    setIsLocating(false);
+
+    if (!ipSuccess) {
+      setGeoError("Unable to auto-detect location. Please select your district from the dropdown list.");
+    }
+  };
+
+  const handleClearLocation = () => {
+    setActiveLocationLabel(null);
+    setGeoError(null);
+    onUserCoordsChange(selectedDistrict.coordinates);
   };
 
   const handleDistrictSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const hub = DISTRICT_HUBS.find((h) => h.id === e.target.value);
     if (hub) {
+      setActiveLocationLabel(null);
+      setGeoError(null);
       onDistrictChange(hub);
       onUserCoordsChange(hub.coordinates);
     }
@@ -125,16 +186,35 @@ export function PartnerFilter({
             type="button"
             onClick={handleAutoGPS}
             disabled={isLocating}
-            className="w-full text-xs font-semibold py-2 px-3 rounded-xl border border-slate-300 hover:border-amber-500 hover:bg-amber-50 text-slate-700 bg-white transition-all flex items-center justify-center space-x-1.5 disabled:opacity-50"
+            className="w-full text-xs font-semibold py-2 px-3 rounded-xl border border-slate-300 hover:border-amber-500 hover:bg-amber-50 text-slate-700 bg-white transition-all flex items-center justify-center space-x-1.5 disabled:opacity-50 min-h-[44px] cursor-pointer"
           >
             <Navigation className={`h-3.5 w-3.5 text-amber-600 ${isLocating ? "animate-spin" : ""}`} />
-            <span>{isLocating ? "Detecting GPS..." : "Auto GPS"}</span>
+            <span>{isLocating ? "Detecting Location..." : "Auto GPS"}</span>
           </button>
         </div>
       </div>
 
+      {activeLocationLabel && (
+        <div className="text-xs text-emerald-800 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 flex items-center justify-between gap-2 animate-in fade-in">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+            <span className="font-semibold truncate">
+              Location Detected: {activeLocationLabel}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleClearLocation}
+            className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-emerald-100 transition-colors shrink-0 cursor-pointer"
+            title="Reset to default district"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {geoError && (
-        <div className="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-lg border border-amber-200 flex items-center gap-1.5">
+        <div className="text-[11px] text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200 flex items-center gap-1.5">
           <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
           <span>{geoError}</span>
         </div>
