@@ -278,7 +278,7 @@ export function ChatContainer({
   };
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-13.5rem)] sm:h-[75vh] min-h-[440px] sm:min-h-[500px] max-h-[850px] bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 sm:h-[75vh] sm:min-h-[500px] max-h-[850px] bg-white rounded-xl sm:rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
       {/* Chat Sub-Header Controls */}
       <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50/90 border-b border-slate-200 text-xs gap-2 shrink-0">
         <div className="flex items-center space-x-2 text-slate-700 shrink-0">
@@ -358,13 +358,13 @@ export function ChatContainer({
 
       {/* Suggested Quick Reply Chips */}
       {prompts.length > 0 && !isProcessing && (
-        <div className="px-4 py-2 bg-white/80 border-t border-slate-100">
+        <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/95 border-t border-slate-100 shrink-0">
           <QuickReplyChips prompts={prompts} onSelect={handlePromptSelect} />
         </div>
       )}
 
       {/* Input Action Bar */}
-      <div className="p-2.5 sm:p-3 bg-white border-t border-slate-200 shrink-0">
+      <div className="p-2 sm:p-3 bg-white border-t border-slate-200 shrink-0">
         <form onSubmit={handleFormSubmit} className="flex items-center gap-2">
           {/* Voice Speech-to-Text Button */}
           <VoiceInputButton

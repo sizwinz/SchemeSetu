@@ -54,7 +54,7 @@ export default function RootLayout({
         <LanguageProvider>
           <GoogleTranslateScript />
           <Header />
-          <main className="flex-1 w-full max-w-full overflow-x-hidden">{children}</main>
+          <main className="flex-1 flex flex-col w-full max-w-full overflow-x-hidden">{children}</main>
           <Footer />
           <BottomNav />
         </LanguageProvider>

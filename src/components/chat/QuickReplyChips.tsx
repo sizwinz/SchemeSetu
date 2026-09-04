@@ -35,8 +35,8 @@ export function QuickReplyChips({
   if (!prompts || prompts.length === 0) return null;
 
   return (
-    <div className="py-2 overflow-x-auto no-scrollbar">
-      <div className="flex items-center space-x-2 pb-1">
+    <div className="py-1 overflow-x-auto no-scrollbar touch-pan-x">
+      <div className="flex items-center space-x-2">
         <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider shrink-0 flex items-center gap-1">
           <Sparkles className="h-3 w-3 text-amber-600" />
           Suggested:

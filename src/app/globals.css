@@ -82,6 +82,13 @@ body {
   .mobile-bottom-spacing {
     padding-bottom: 5.5rem;
   }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 @media (min-width: 768px) {
