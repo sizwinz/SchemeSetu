@@ -34,8 +34,9 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/lib/i18n/languageContext";
 
-const INITIAL_MESSAGES: Record<AssistantLanguage, ChatMessage[]> = {
+const INITIAL_MESSAGES: Record<string, ChatMessage[]> = {
   "en-IN": [
     {
       id: "msg-welcome-en",
@@ -56,6 +57,37 @@ const INITIAL_MESSAGES: Record<AssistantLanguage, ChatMessage[]> = {
   ],
 };
 
+function getInitialMessages(locale: string): ChatMessage[] {
+  if (locale in INITIAL_MESSAGES) {
+    return INITIAL_MESSAGES[locale];
+  }
+  const clean = (locale || "").toLowerCase();
+  if (
+    clean.startsWith("hi") ||
+    clean.startsWith("mr") ||
+    clean.startsWith("gu") ||
+    clean.startsWith("bn") ||
+    clean.startsWith("pa")
+  ) {
+    return INITIAL_MESSAGES["hi-IN"];
+  }
+  return INITIAL_MESSAGES["en-IN"];
+}
+
+function getInitialPrompts(locale: string): QuickPrompt[] {
+  const clean = (locale || "").toLowerCase();
+  if (
+    clean.startsWith("hi") ||
+    clean.startsWith("mr") ||
+    clean.startsWith("gu") ||
+    clean.startsWith("bn") ||
+    clean.startsWith("pa")
+  ) {
+    return DIALOG_PROMPTS["hi-IN"].GREETING.quickPrompts;
+  }
+  return DIALOG_PROMPTS["en-IN"].GREETING.quickPrompts;
+}
+
 interface ChatContainerProps {
   onReplayAudio?: (text: string, lang: AssistantLanguage) => void;
   renderWidget?: (message: ChatMessage) => React.ReactNode;
@@ -69,12 +101,27 @@ export function ChatContainer({
   initialQuery,
   initialScheme,
 }: ChatContainerProps) {
-  const [language, setLanguage] = useState<AssistantLanguage>("en-IN");
+  const { currentLanguageOption, changeLanguage } = useLanguage();
+  const currentLocale = currentLanguageOption?.speechLocale || "en-IN";
+
+  const [language, setLanguage] = useState<AssistantLanguage>(currentLocale);
   const [autoSpeak, setAutoSpeak] = useState<boolean>(!isAudioMuted());
   const [inputText, setInputText] = useState<string>("");
-  const [messages, setMessages] = useState<ChatMessage[]>(() => INITIAL_MESSAGES["en-IN"]);
-  const [prompts, setPrompts] = useState<QuickPrompt[]>(() => DIALOG_PROMPTS["en-IN"].GREETING.quickPrompts);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => getInitialMessages(currentLocale));
+  const [prompts, setPrompts] = useState<QuickPrompt[]>(() => getInitialPrompts(currentLocale));
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  // Synchronize language when user switches language in Header dropdown
+  useEffect(() => {
+    const nextLocale = currentLanguageOption?.speechLocale || "en-IN";
+    setLanguage(nextLocale);
+    setDialogState((prev) => ({ ...prev, language: nextLocale }));
+
+    if (messages.length <= 1) {
+      setMessages(getInitialMessages(nextLocale));
+      setPrompts(getInitialPrompts(nextLocale));
+    }
+  }, [currentLanguageOption?.speechLocale]);
 
   // Audio Playback State from global speech synthesis
   const [audioState, setAudioState] = useState<AudioPlaybackState>({
@@ -101,7 +148,7 @@ export function ChatContainer({
   const [dialogState, setDialogState] = useState<DialogState>({
     currentStep: "GREETING",
     collectedProfile: {},
-    language: "en-IN",
+    language: currentLocale,
     autoSpeak: true,
   });
 
@@ -136,32 +183,25 @@ export function ChatContainer({
     }
   }, [initialQuery, initialScheme]);
 
-  const handleAudioPlayback = (text: string, lang: AssistantLanguage) => {
+  const handleAudioPlayback = (text: string, lang?: AssistantLanguage) => {
+    const targetLang = lang || language || currentLanguageOption?.speechLocale || "en-IN";
     if (onReplayAudio) {
-      onReplayAudio(text, lang);
+      onReplayAudio(text, targetLang);
     } else {
-      speakText(text, lang);
+      speakText(text, targetLang);
     }
   };
 
   const handleLanguageToggle = () => {
-    const nextLang: AssistantLanguage = language === "en-IN" ? "hi-IN" : "en-IN";
-    setLanguage(nextLang);
-    setDialogState((prev) => ({ ...prev, language: nextLang }));
-
-    if (messages.length <= 1) {
-      setMessages(INITIAL_MESSAGES[nextLang]);
-      setPrompts(DIALOG_PROMPTS[nextLang].GREETING.quickPrompts);
-      if (autoSpeak) {
-        handleAudioPlayback(DIALOG_PROMPTS[nextLang].GREETING.promptText, nextLang);
-      }
-    }
+    const isCurrentlyEn = language.startsWith("en");
+    const nextLangCode = isCurrentlyEn ? "hi" : "en";
+    changeLanguage(nextLangCode);
   };
 
   const handleResetChat = () => {
     cancelSpeech();
-    setMessages(INITIAL_MESSAGES[language]);
-    setPrompts(DIALOG_PROMPTS[language].GREETING.quickPrompts);
+    setMessages(getInitialMessages(language));
+    setPrompts(getInitialPrompts(language));
     setDialogState({
       currentStep: "GREETING",
       collectedProfile: {},
@@ -212,9 +252,9 @@ export function ChatContainer({
         id: `msg-${Date.now()}-err`,
         sender: "ASSISTANT",
         text:
-          language === "hi-IN"
-            ? "क्षमा करें, एक तकनीकी त्रुटि हुई। कृपया पुनः प्रयास करें।"
-            : "Sorry, I encountered a technical error. Please try again.",
+          language.startsWith("en")
+            ? "Sorry, I encountered a technical error. Please try again."
+            : "क्षमा करें, एक तकनीकी त्रुटि हुई। कृपया पुनः प्रयास करें।",
         timestamp: "Just now",
         type: "TEXT",
       };
@@ -244,7 +284,7 @@ export function ChatContainer({
         <div className="flex items-center space-x-2 text-slate-700 shrink-0">
           <MessageSquare className="h-4 w-4 text-amber-600" />
           <span className="font-bold text-slate-900">
-            {language === "hi-IN" ? "योजना सेतु सहायक" : "SchemeSetu Advisor"}
+            {language.startsWith("en") ? "SchemeSetu Advisor" : "योजना सेतु सहायक"}
           </span>
         </div>
 
@@ -254,9 +294,10 @@ export function ChatContainer({
             type="button"
             onClick={handleLanguageToggle}
             className="flex items-center space-x-1 px-2.5 py-1.5 min-h-[36px] rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold transition-colors cursor-pointer shadow-2xs"
+            title="Toggle language"
           >
             <Languages className="h-3.5 w-3.5 text-slate-500" />
-            <span>{language === "hi-IN" ? "हिंदी" : "EN"}</span>
+            <span>{language.startsWith("en") ? "EN" : "हिन्दी"}</span>
           </button>
 
           {/* Reset Conversation */}

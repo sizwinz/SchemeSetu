@@ -65,6 +65,23 @@ export function extractEntities(text: string): Partial<UserProfile> {
   return result;
 }
 
+function getPromptsForLang(lang: string) {
+  if (lang in DIALOG_PROMPTS) {
+    return DIALOG_PROMPTS[lang as "en-IN" | "hi-IN"];
+  }
+  const clean = (lang || "").toLowerCase();
+  if (
+    clean.startsWith("hi") ||
+    clean.startsWith("mr") ||
+    clean.startsWith("gu") ||
+    clean.startsWith("bn") ||
+    clean.startsWith("pa")
+  ) {
+    return DIALOG_PROMPTS["hi-IN"];
+  }
+  return DIALOG_PROMPTS["en-IN"];
+}
+
 export function advanceDialog(
   currentState: DialogState,
   userInput: string
@@ -78,6 +95,7 @@ export function advanceDialog(
   };
 } {
   const lang = currentState.language;
+  const promptsForLang = getPromptsForLang(lang);
   const entities = extractEntities(userInput);
   const rawAmount = extractRawAmount(userInput);
 
@@ -90,7 +108,7 @@ export function advanceDialog(
 
   // Handle restart requests
   if (/restart|new|clear|शुरू|नया/i.test(userInput.toLowerCase())) {
-    const greetingData = DIALOG_PROMPTS[lang].GREETING;
+    const greetingData = promptsForLang.GREETING;
     return {
       nextState: {
         currentStep: "GREETING",
@@ -156,7 +174,7 @@ export function advanceDialog(
 
   if (nextStep === "EVALUATION_COMPLETE") {
     const evaluationResult = evaluateEligibility(finalProfile);
-    const completePrompt = DIALOG_PROMPTS[lang].EVALUATION_COMPLETE;
+    const completePrompt = promptsForLang.EVALUATION_COMPLETE;
 
     return {
       nextState: {
@@ -174,7 +192,7 @@ export function advanceDialog(
     };
   }
 
-  const stepPromptData = DIALOG_PROMPTS[lang][nextStep];
+  const stepPromptData = promptsForLang[nextStep];
 
   return {
     nextState: {

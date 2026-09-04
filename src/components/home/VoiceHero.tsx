@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSpeechRecognition } from "@/lib/audio/speechRecognition";
+import { useLanguage } from "@/lib/i18n/languageContext";
 import { Search, Mic, Megaphone, Loader2, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,11 +32,13 @@ const KEYWORD_MAP: KeywordSuggestion[] = [
 
 export function VoiceHero() {
   const router = useRouter();
+  const { currentLanguageOption } = useLanguage();
+  const speechLocale = currentLanguageOption?.speechLocale || "hi-IN";
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const { isListening, isSupported, transcript, startListening, stopListening } =
     useSpeechRecognition({
-      language: "hi-IN",
+      language: speechLocale,
       onResult: (finalTranscript) => {
         setSearchQuery(finalTranscript);
         if (finalTranscript.trim()) {

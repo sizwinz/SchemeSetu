@@ -25,6 +25,7 @@ import {
   DEFAULT_PROFILE,
 } from "@/lib/user/profileStore";
 import {
+  speakText,
   pauseSpeech,
   resumeSpeech,
   cancelSpeech,
@@ -33,9 +34,81 @@ import {
   AudioPlaybackState,
 } from "@/lib/audio/speechSynthesis";
 import { LanguageDropdown } from "@/components/layout/LanguageDropdown";
+import { useLanguage } from "@/lib/i18n/languageContext";
+
+const AUDIO_ENABLED_ANNOUNCEMENTS: Record<string, string> = {
+  "en-IN": "Audio enabled. SchemeSetu read aloud is active.",
+  "hi-IN": "ऑडियो चालू है। स्कीमसेतु बोलकर सुनाने के लिए तैयार है।",
+  "mr-IN": "ऑडिओ सुरू केला आहे. स्कीमसेतू ऐकण्यासाठी सज्ज आहे.",
+  "gu-IN": "ઑડિયો ચાલુ કર્યો છે. સ્કીમસેતુ સાંભળવા માટે તૈયાર છે.",
+  "ta-IN": "ஆடியோ இயக்கப்பட்டது. வாசித்துக் காட்ட ஸ்கீம்சேது தயார்.",
+  "te-IN": "ఆడియో ప్రారంభించబడింది. చదివి వినిపించడానికి స్కీమ్‌సేతు సిద్ధంగా ఉంది.",
+  "bn-IN": "অডিও চালু করা হয়েছে। স্কিমসেতু প্রস্তুত।",
+  "kn-IN": "ಆಡಿಯೊ ಸಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ. ಸ್ಕೀಮ್‌ಸೇತು ಸಿದ್ಧವಾಗಿದೆ.",
+  "pa-IN": "ਆਡੀਓ ਚਾਲੂ ਹੈ। ਸਕੀਮਸੇਤੂ ਤਿਆਰ ਹੈ।",
+};
+
+const PAGE_SUMMARIES: Record<string, Record<string, string>> = {
+  "/": {
+    "en-IN": "SchemeSetu homepage. Concessional credit matching for Scheduled Caste entrepreneurs and students with 4.0% to 8.0% interest rates.",
+    "hi-IN": "स्कीमसेतु होमपेज। अनुसूचित जाति के उद्यमियों और छात्रों के लिए 4 से 8 प्रतिशत ब्याज दरों पर रियायती ऋण सहायता।",
+    "mr-IN": "स्कीमसेतू मुख्यपृष्ठ. अनुसूचित जातीच्या उद्योजकांसाठी आणि विद्यार्थ्यांसाठी 4 ते 8 टक्के व्याजदरावर सवलतीचे कर्ज.",
+    "gu-IN": "સ્કીમસેતુ હોમપેજ. અનુસૂચિત જાતિના ઉદ્યોગસાહસિકો અને વિદ્યાર્થીઓ માટે 4 થી 8 ટકા વ્યાજે કન્સેશનલ લોન સહાય.",
+    "ta-IN": "ஸ்கீம்சேது முகப்புப்பக்கம். பட்டியலின தொழில்முனைவோர் மற்றும் மாணவர்களுக்கான சலுகைக் கடன் திட்டம்.",
+    "te-IN": "స్కీమ్‌సేతు హోమ్‌పేజీ. షెడ్యూల్డ్ కులాల పారిశ్రామికవేత్తలు మరియు విద్యార్థుల కోసం రాయితీ రుణ సదుపాయం.",
+    "bn-IN": "স্কিমসেতু হোমপেজ। তফসিলি জাতির উদ্যোক্তা এবং শিক্ষার্থীদের জন্য স্বল্প সুদের ঋণ সহায়তা।",
+    "kn-IN": "ಸ್ಕೀಮ್‌ಸೇತು ಮುಖಪುಟ. ಪರಿಶಿಷ್ಟ ಜಾತಿಯ ಉದ್ಯಮಿಗಳು ಮತ್ತು ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ರಿಯಾಯಿತಿ ಸಾಲ ನೆರವು.",
+    "pa-IN": "ਸਕੀਮਸੇਤੂ ਹੋਮਪੇਜ। ਅਨੁਸੂਚਿਤ ਜਾਤੀ ਦੇ ਉੱਦਮੀਆਂ ਅਤੇ ਵਿਦਿਆਰਥੀਆਂ ਲਈ ਰਿਆਇਤੀ ਕਰਜ਼ਾ ਸਹਾਇਤਾ।",
+  },
+  "/calculator": {
+    "en-IN": "Concessional Loan and Moratorium Calculator. Model subsidized credit at 4.0% to 8.0% interest with up to 12 months grace period.",
+    "hi-IN": "रियायती ऋण और मोराटोरियम कैलकुलेटर। 4 से 8 प्रतिशत ब्याज दर और 12 महीने तक की छूट अवधि के साथ अपने ऋण की गणना करें।",
+    "mr-IN": "सवलतीचे कर्ज आणि मोरेटोरियम कॅल्क्युलेटर. 4 ते 8 टक्के व्याजदरावर आणि 12 महिन्यांपर्यंतच्या सवलतीच्या कालावधीसह कर्जाची गणना करा.",
+    "gu-IN": "કન્સેશનલ લોન અને મોરેટોરિયમ કેલ્ક્યુલેટર. 4 થી 8 ટકા વ્યાજ અને 12 મહિના સુધીની છૂટ સાથે લોનની ગણતરી કરો.",
+    "ta-IN": "கடன் மற்றும் சலுகைக் காலக் கணக்கீடு. 4 முதல் 8 சதவீத வட்டியில் கடன் திட்டங்களைக் கணக்கிடுங்கள்.",
+    "te-IN": "రాయితీ రుణం మరియు మొరటోరియం కాలిక్యులేటర్. 4 నుండి 8 శాతం వడ్డీతో రుణాన్ని లెక్కించండి.",
+    "bn-IN": "স্বল্প সুদের ঋণ এবং মোরেটোরিয়াম ক্যালকুলেটর। 4 থেকে 8 শতাংশ সুদে ঋণ গণনা করুন।",
+    "kn-IN": "ರಿಯಾಯಿತಿ ಸಾಲ ಮತ್ತು ಮೊರಟೋರಿಯಂ ಕ್ಯಾಲ್ಕುಲೇಟರ್. 4 ರಿಂದ 8 ಶೇಕಡಾ ಬಡ್ಡಿದರದಲ್ಲಿ ಸಾಲವನ್ನು ಲೆಕ್ಕಹಾಕಿ.",
+    "pa-IN": "ਰਿਆਇਤੀ ਕਰਜ਼ਾ ਅਤੇ ਮੋਰਟੋਰੀਅਮ ਕੈਲਕੁਲੇਟਰ। 4 ਤੋਂ 8 ਫ਼ੀਸਦੀ ਵਿਆਜ ਦਰ ਨਾਲ ਆਪਣੇ ਕਰਜ਼ੇ ਦੀ ਗਣਨਾ ਕਰੋ।",
+  },
+  "/locator": {
+    "en-IN": "Channel Partner Locator. Discover verified solvent banks and state agencies with non-performing assets under 10 percent near your district.",
+    "hi-IN": "चैनल पार्टनर लोकेटर। अपने जिले के निकट 10 प्रतिशत से कम एनपीए वाले वित्तीय रूप से सक्षम बैंक और राज्य एजेंसियां खोजें।",
+    "mr-IN": "चॅनल पार्टनर लोकेटर. आपल्या जिल्ह्यातील 10 टक्क्यांपेक्षा कमी एनपीए असलेल्या सक्षम बँका आणि संस्था शोधा.",
+    "gu-IN": "ચેનલ પાર્ટનર લોકેટર. તમારા જિલ્લા નજીક 10 ટકાથી ઓછા એનપીએ વાળા સક્ષમ બેંક અને સરકારી સંસ્થાઓ શોધો.",
+    "ta-IN": "சேவை மைய இருப்பிடக் கண்டுபிடிப்பான். உங்கள் மாவட்டத்திற்கு அருகிலுள்ள வங்கிகள் மற்றும் நிதி நிறுவனங்களைக் கண்டறியவும்.",
+    "te-IN": "ఛానల్ భాగస్వామి లొకేటర్. మీ జిల్లా సమీపంలోని తక్కువ ఎన్‌పీఏ కలిగిన బ్యాంకులు మరియు ఆర్థిక సంస్థలను కనుగొనండి.",
+    "bn-IN": "চ্যানেল পার্টনার সন্ধানকারী। আপনার জেলার কাছে অনুমোদিত এবং আর্থিকভাবে শক্তিশালী ব্যাংক শাখা খুঁজুন।",
+    "kn-IN": "ಚಾನೆಲ್ ಪಾಲುದಾರ ಲೊಕೇಟರ್. ನಿಮ್ಮ ಜಿಲ್ಲೆಯ ಸಮೀಪವಿರುವ ಅಧಿಕೃತ ಮತ್ತು ಸಕ್ಷಮ ಬ್ಯಾಂಕ್ ಶಾಖೆಗಳನ್ನು ಹುಡುಕಿ.",
+    "pa-IN": "ਚੈਨਲ ਪਾਰਟਨਰ ਲੋਕੇਟਰ। ਆਪਣੇ ਜ਼ਿਲ੍ਹੇ ਦੇ ਨੇੜੇ ਮਨਜ਼ੂਰਸ਼ੁਦਾ ਅਤੇ ਆਰਥਿਕ ਤੌਰ ਤੇ ਮਜ਼ਬੂਤ ਬੈਂਕ ਸ਼ਾਖਾਵਾਂ ਲੱਭੋ।",
+  },
+  "/dossier": {
+    "en-IN": "Pre-screened Application Dossier. Ready-to-print official slip with verifiable QR code for fast counter approval at channel partners.",
+    "hi-IN": "प्री-स्क्रीन किया गया आवेदन डोजियर। चैनल पार्टनर बैंक में त्वरित सत्यापन के लिए सत्यापन योग्य क्यूआर कोड युक्त आधिकारिक रसीद।",
+    "mr-IN": "पूर्व-तपासणी केलेला अर्ज डॉसियर. बँकेत त्वरित मंजुरीसाठी पडताळणी करण्यायोग्य क्यूआर कोडसह अधिकृत कागदपत्र.",
+    "gu-IN": "પ્રી-સ્ક્રીન કરેલ અરજી ડોઝિયર. બેંકમાં ઝડપી મંજૂરી માટે ચકાસણી યોગ્ય ક્યુઆર કોડ સાથે અધિકૃત સ્લિપ.",
+    "ta-IN": "முன்-சரிபார்க்கப்பட்ட விண்ணப்ப ஆவணம். வங்கியில் விரைவான ஒப்புதலுக்கான சரிபார்க்கக்கூடிய க்யூಆர் குறியீட்டுடன் கூடிய அதிகாரப்பூர்வ சீட்டு.",
+    "te-IN": "ముందస్తుగా పరిశీలించిన దరఖాస్తు పత్రం. బ్యాంక్ వద్ద త్వరిత అనుమతి కోసం క్యూఆర్ కోడ్‌తో కూడిన అధికారిక రసీదు.",
+    "bn-IN": "প্রি-স্ক্রিন করা আবেদনপত্র ডসিয়ার। ব্যাংকে দ্রুত অনুমোদনের জন্য কিউআর কোড সহ অফিসিয়াল স্লিপ।",
+    "kn-IN": "ಪೂರ್ವ ಪರಿಶೀಲಿಸಿದ ಅರ್ಜಿ ಡಾಕ್ಯುಮೆಂಟ್. ಬ್ಯಾಂಕ್‌ನಲ್ಲಿ ತ್ವರಿತ ಅನುಮೋದನೆಗಾಗಿ ಕ್ಯೂಆರ್ ಕೋಡ್ ಹೊಂದಿರುವ ಅಧಿಕೃತ ರಸೀದಿ.",
+    "pa-IN": "ਪੂਰਵ-ਜਾਂਚਿਆ ਬਿਨੈ-ਪੱਤਰ ਡੋਜ਼ੀਅਰ। ਬੈਂਕ ਵਿੱਚ ਤੇਜ਼ੀ ਨਾਲ ਪ੍ਰਵਾਨਗੀ ਲਈ ਕਿਊਆਰ ਕੋਡ ਵਾਲੀ ਅਧਿਕਾਰਤ ਪਰਚੀ।",
+  },
+  "/assistant": {
+    "en-IN": "AI Scheme Assistant. Interactive voice and chat-guided pre-screening for MoSJE concessional credit programs.",
+    "hi-IN": "एआई योजना सहायक। सामाजिक न्याय और अधिकारिता मंत्रालय के रियायती ऋण कार्यक्रमों के लिए संवादात्मक मार्गदर्शन।",
+    "mr-IN": "एआय योजना सहाय्यक. सवलतीच्या कर्ज योजनांसाठी संवादात्मक मार्गदर्शन आणि पात्रता तपासणी.",
+    "gu-IN": "એઆઈ યોજના સહાયક. કન્સેશનલ લોન યોજનાઓ માટે ઇન્ટરેક્ટિવ માર્ગદર્શન અને પાત્રતા ચકાસણી.",
+    "ta-IN": "செயற்கை நுண்ணறிவு திட்ட உதவியாளர். அரசு சலுகைக் கடன் திட்டங்களுக்கான வழிகாட்டுதல்.",
+    "te-IN": "ఏఐ స్కీమ్ అసిస్టెంట్. ప్రభుత్వ రాయితీ రుణ పథకాల కోసం ఇంటరాక్టివ్ మార్గదర్శకత్వం.",
+    "bn-IN": "এআই প্রকল্প সহায়ক। সরকারি স্বল্প সুদের ঋণ কর্মসূচির জন্য ইন্টারেক্টিভ পরামর্শ।",
+    "kn-IN": "ಎಐ ಯೋಜನೆ ಸಹಾಯಕ. ರಿಯಾಯಿತಿ ಸಾಲ ಕಾರ್ಯಕ್ರಮಗಳಿಗಾಗಿ ಸಂವಾದಾತ್ಮಕ ಮಾರ್ಗದರ್ಶನ.",
+    "pa-IN": "ਏਆਈ ਸਕੀਮ ਸਹਾਇਕ। ਸਰਕਾਰੀ ਰਿਆਇਤੀ ਕਰਜ਼ਾ ਪ੍ਰੋਗਰਾਮਾਂ ਲਈ ਗੱਲਬਾਤ ਰਾਹੀਂ ਮਾਰਗਦਰਸ਼ਨ।",
+  },
+};
 
 export function Header() {
   const pathname = usePathname();
+  const { currentLanguageOption } = useLanguage();
   const [isOnline, setIsOnline] = useState<boolean>(true);
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
   const [profile, setProfile] = useState<ApplicantProfileData>(DEFAULT_PROFILE);
@@ -244,24 +317,71 @@ export function Header() {
                   </button>
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => setAudioMuted(!audioState.isMuted)}
-                  className="flex items-center space-x-1 sm:space-x-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap px-0.5 sm:px-1"
-                  title={audioState.isMuted ? "Click to enable audio read-aloud" : "Click to mute audio"}
-                >
-                  {audioState.isMuted ? (
-                    <>
-                      <VolumeX className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-red-500" />
-                      <span className="hidden sm:inline">Audio Off</span>
-                    </>
-                  ) : (
-                    <>
-                      <Volume2 className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-slate-600" />
-                      <span className="hidden sm:inline">Audio On</span>
-                    </>
+                <div className="flex items-center space-x-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextMuted = !audioState.isMuted;
+                      setAudioMuted(nextMuted);
+                      if (!nextMuted) {
+                        const speechLocale = currentLanguageOption.speechLocale;
+                        const msg =
+                          AUDIO_ENABLED_ANNOUNCEMENTS[speechLocale] ||
+                          AUDIO_ENABLED_ANNOUNCEMENTS["en-IN"];
+                        speakText(msg, speechLocale);
+                      }
+                    }}
+                    className="flex items-center space-x-1 sm:space-x-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap px-0.5 sm:px-1"
+                    title={audioState.isMuted ? "Click to enable audio read-aloud" : "Click to mute audio"}
+                  >
+                    {audioState.isMuted ? (
+                      <>
+                        <VolumeX className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-red-500" />
+                        <span className="hidden sm:inline">Audio Off</span>
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-slate-600" />
+                        <span className="hidden sm:inline">Audio On</span>
+                      </>
+                    )}
+                  </button>
+
+                  {!audioState.isMuted && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const speechLocale = currentLanguageOption.speechLocale;
+                        const summaries = PAGE_SUMMARIES[pathname] || PAGE_SUMMARIES["/"];
+                        const text = summaries[speechLocale] || summaries["en-IN"];
+                        speakText(text, speechLocale);
+                      }}
+                      className="flex items-center space-x-1 text-[11px] font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2 py-0.5 sm:py-1 rounded-lg transition-colors cursor-pointer"
+                      title="Read aloud page summary in selected language"
+                    >
+                      <Volume2 className="h-3 w-3 text-amber-700 shrink-0" />
+                      <span>
+                        {currentLanguageOption.code === "hi"
+                          ? "सुनें"
+                          : currentLanguageOption.code === "mr"
+                          ? "ऐका"
+                          : currentLanguageOption.code === "gu"
+                          ? "સાંભળો"
+                          : currentLanguageOption.code === "ta"
+                          ? "கேட்க"
+                          : currentLanguageOption.code === "te"
+                          ? "వినండి"
+                          : currentLanguageOption.code === "bn"
+                          ? "শুনুন"
+                          : currentLanguageOption.code === "kn"
+                          ? "ಕೇಳಿ"
+                          : currentLanguageOption.code === "pa"
+                          ? "ਸੁਣੋ"
+                          : "Listen"}
+                      </span>
+                    </button>
                   )}
-                </button>
+                </div>
               )}
             </div>
 

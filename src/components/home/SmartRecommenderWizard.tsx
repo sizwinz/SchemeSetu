@@ -5,6 +5,7 @@ import Link from "next/link";
 import { UserProfile, SchemeRule } from "@/lib/schemes/types";
 import { evaluateEligibility, calculateFundingBreakdown } from "@/lib/schemes/engine";
 import { useSpeechRecognition } from "@/lib/audio/speechRecognition";
+import { useLanguage } from "@/lib/i18n/languageContext";
 import {
   Sparkles,
   Store,
@@ -96,9 +97,12 @@ export function SmartRecommenderWizard() {
   const costSliderId = useId();
   const incomeSliderId = useId();
 
+  const { currentLanguageOption } = useLanguage();
+  const speechLocale = currentLanguageOption?.speechLocale || "hi-IN";
+
   // Voice speech-to-text recognition for vernacular/semi-literate users
   const { isListening, transcript, startListening, stopListening } = useSpeechRecognition({
-    language: "hi-IN",
+    language: speechLocale,
     onResult: (spokenText) => {
       const lower = spokenText.toLowerCase();
       if (/tailor|silai|kapda|सिलाई|दर्जी|कपड़ा/i.test(lower)) {

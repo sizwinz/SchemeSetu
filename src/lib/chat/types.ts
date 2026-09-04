@@ -24,7 +24,7 @@ export interface ChatMessage {
   isAudioPlaying?: boolean;
 }
 
-export type AssistantLanguage = "en-IN" | "hi-IN";
+export type AssistantLanguage = "en-IN" | "hi-IN" | string;
 
 export type DialogStep =
   | "GREETING"
