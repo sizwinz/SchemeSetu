@@ -20,7 +20,7 @@ export default function AssistantPage() {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col max-w-5xl xl:max-w-6xl mx-auto w-full px-2.5 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-2 sm:pb-8 min-h-0 overflow-hidden">
+    <div className="h-[calc(100dvh-3.5rem)] lg:h-auto -mb-20 lg:mb-0 pb-[4.5rem] lg:pb-8 flex-1 flex flex-col max-w-5xl xl:max-w-6xl mx-auto w-full px-2.5 sm:px-6 lg:px-8 pt-2 sm:pt-4 min-h-0 overflow-hidden">
       {/* Title Bar: Compact 1-line on mobile, expanded on desktop */}
       <div className="flex items-center justify-between gap-2 pb-2 sm:pb-3 shrink-0">
         <div className="flex items-center space-x-2 min-w-0">

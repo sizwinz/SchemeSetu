@@ -3,10 +3,17 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { HelpCircle, Phone, Mail, X, ShieldCheck } from "lucide-react";
 
 export function Footer() {
+  const pathname = usePathname();
   const [showHelpModal, setShowHelpModal] = useState<boolean>(false);
+
+  // Conversational AI Assistant is a dedicated full-screen interface: omit footer on /assistant
+  if (pathname === "/assistant") {
+    return null;
+  }
 
   return (
     <>
