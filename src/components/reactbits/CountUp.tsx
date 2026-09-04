@@ -1,7 +1,6 @@
 "use client";
 
-import { useInView, useMotionValue, useSpring } from "motion/react";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 interface CountUpProps {
   to: number;
@@ -26,77 +25,79 @@ export function CountUp({
   duration = 1.2,
   className = "",
   startWhen = true,
-  separator = ",",
   prefix = "",
   suffix = "",
   onStart,
   onEnd,
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const motionValue = useMotionValue(direction === "down" ? to : from);
-
-  const damping = 20 + 40 * (1 / duration);
-  const stiffness = 100 * (1 / duration);
-
-  const springValue = useSpring(motionValue, {
-    damping,
-    stiffness,
-  });
-
-  const isInView = useInView(ref, { once: true, margin: "0px" });
-
-  const formatValue = useCallback(
-    (latest: number) => {
-      const rounded = Math.round(latest);
-      const formatted = new Intl.NumberFormat("en-IN", {
-        maximumFractionDigits: 0,
-      }).format(rounded);
-      return `${prefix}${formatted}${suffix}`;
-    },
-    [prefix, suffix]
-  );
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.textContent = formatValue(direction === "down" ? to : from);
-    }
-  }, [from, to, direction, formatValue]);
+    const el = ref.current;
+    if (!el || !startWhen) return;
 
-  useEffect(() => {
-    if (isInView && startWhen) {
-      if (typeof onStart === "function") {
-        onStart();
-      }
+    const startVal = direction === "down" ? to : from;
+    const endVal = direction === "down" ? from : to;
 
-      const timeoutId = setTimeout(() => {
-        motionValue.set(direction === "down" ? from : to);
-      }, delay * 1000);
+    const format = (n: number) => {
+      const rounded = Math.round(n);
+      return `${prefix}${new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(rounded)}${suffix}`;
+    };
 
-      const durationTimeoutId = setTimeout(
-        () => {
-          if (typeof onEnd === "function") {
-            onEnd();
-          }
-        },
-        delay * 1000 + duration * 1000
-      );
+    el.textContent = format(startVal);
 
-      return () => {
-        clearTimeout(timeoutId);
-        clearTimeout(durationTimeoutId);
+    let animationFrame: number;
+    let delayTimer: NodeJS.Timeout;
+    let hasStarted = false;
+
+    const runAnimation = () => {
+      if (hasStarted) return;
+      hasStarted = true;
+      onStart?.();
+
+      const startTime = performance.now();
+      const durationMs = duration * 1000;
+
+      const tick = (now: number) => {
+        const elapsed = Math.min(now - startTime, durationMs);
+        const progress = elapsed / durationMs;
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const current = startVal + (endVal - startVal) * ease;
+        if (el) el.textContent = format(current);
+
+        if (progress < 1) {
+          animationFrame = requestAnimationFrame(tick);
+        } else {
+          if (el) el.textContent = format(endVal);
+          onEnd?.();
+        }
       };
-    }
-  }, [isInView, startWhen, motionValue, direction, from, to, delay, onStart, onEnd, duration]);
 
-  useEffect(() => {
-    const unsubscribe = springValue.on("change", (latest: number) => {
-      if (ref.current) {
-        ref.current.textContent = formatValue(latest);
-      }
-    });
+      animationFrame = requestAnimationFrame(tick);
+    };
 
-    return () => unsubscribe();
-  }, [springValue, formatValue]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          delayTimer = setTimeout(runAnimation, delay * 1000);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-  return <span className={className} ref={ref}>{prefix}{to.toLocaleString("en-IN")}{suffix}</span>;
+    observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(delayTimer);
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [to, from, direction, delay, duration, startWhen, prefix, suffix, onStart, onEnd]);
+
+  return (
+    <span className={className} ref={ref}>
+      {prefix}{to.toLocaleString("en-IN")}{suffix}
+    </span>
+  );
 }
