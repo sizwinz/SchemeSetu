@@ -144,15 +144,15 @@ function CalculatorContent() {
   const annualSummary = generateAnnualSummary(monthlySchedule);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16 px-4 sm:px-6 lg:px-8 pt-4">
+    <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto pb-8 sm:pb-16 px-3 sm:px-6 lg:px-8 pt-3 sm:pt-4">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
         <div>
           <div className="flex items-center space-x-2.5">
-            <div className="p-2 bg-amber-500/10 text-amber-700 rounded-xl">
-              <Calculator className="h-6 w-6" />
+            <div className="p-2 bg-amber-500/10 text-amber-700 rounded-xl shrink-0">
+              <Calculator className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">
               Concessional Loan &amp; Moratorium Calculator
             </h1>
           </div>
@@ -170,13 +170,13 @@ function CalculatorContent() {
       </div>
 
       {/* Unified Scheme Selector Segmented Tab Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs space-y-3">
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-4 shadow-xs space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-amber-600" />
-            Select MoSJE (Ministry of Social Justice &amp; Empowerment) Scheme Preset
+            Select MoSJE Scheme Preset
           </span>
-          <span className="text-[11px] text-slate-400">
+          <span className="hidden sm:inline text-[11px] text-slate-400">
             Presets automatically calibrate statutory rate and grace period
           </span>
         </div>
@@ -189,26 +189,26 @@ function CalculatorContent() {
                 key={scheme.key}
                 type="button"
                 onClick={() => handleTabSwitch(scheme)}
-                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-2.5 sm:p-3 min-h-[56px] rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? "border-amber-500 bg-amber-50/50 shadow-2xs"
+                    ? "border-amber-500 bg-amber-50/50 shadow-2xs ring-1 ring-amber-400/40"
                     : "border-slate-200 bg-slate-50/40 hover:bg-slate-50 text-slate-700"
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <span className={`text-[10px] font-bold uppercase tracking-wider ${
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <span className={`text-[11px] sm:text-xs font-black uppercase tracking-wider ${
                     isSelected ? "text-amber-800" : "text-slate-500"
                   }`}>
-                    {scheme.key} ({scheme.name})
+                    {scheme.key}
                   </span>
-                  <span className={`text-xs font-bold ${
+                  <span className={`text-[11px] sm:text-xs font-bold font-sans tabular-nums ${
                     isSelected ? "text-emerald-700" : "text-slate-600"
                   }`}>
                     {scheme.rate}% p.a.
                   </span>
                 </div>
-                <span className={`text-xs font-bold block leading-tight ${
-                  isSelected ? "text-slate-900" : "text-slate-800"
+                <span className={`text-xs font-bold block leading-tight line-clamp-1 ${
+                  isSelected ? "text-slate-900" : "text-slate-700"
                 }`}>
                   {scheme.name}
                 </span>

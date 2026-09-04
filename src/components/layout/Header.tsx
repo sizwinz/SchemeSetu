@@ -41,7 +41,6 @@ export function Header() {
   const [profile, setProfile] = useState<ApplicantProfileData>(DEFAULT_PROFILE);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
-  // Audio Playback State
   const [audioState, setAudioState] = useState<AudioPlaybackState>({
     isSpeaking: false,
     isPaused: false,
@@ -88,28 +87,28 @@ export function Header() {
   return (
     <>
       <header className="w-full bg-white text-slate-900 shadow-2xs border-b border-slate-200/80 sticky top-0 z-40 print:hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
           {/* Left: Brand Identity */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
             <Link
               href="/"
-              className="flex items-center space-x-2.5 text-slate-900 hover:text-amber-700 transition-colors group"
+              className="flex items-center space-x-2 text-slate-900 hover:text-amber-700 transition-colors group"
             >
               <Image
                 src="/logo.png"
                 alt="SchemeSetu Logo"
                 width={32}
                 height={32}
-                className="h-8 w-8 object-contain transition-transform group-hover:scale-105"
+                className="h-7 w-7 sm:h-8 sm:w-8 object-contain transition-transform group-hover:scale-105"
                 priority
               />
-              <span className="font-extrabold text-xl tracking-tight text-slate-900">
+              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900">
                 SchemeSetu
               </span>
             </Link>
           </div>
 
-          {/* Center: Sleek Desktop Navigation */}
+          {/* Center: Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold text-slate-600">
             <Link
               href="/"
@@ -178,13 +177,12 @@ export function Header() {
             </Link>
           </nav>
 
-          {/* Right: Mockup & Audio Controls */}
-          <div className="flex items-center space-x-2 sm:space-x-2.5">
-            {/* Top Read Aloud Audio Controller (Single-line, non-wrapping) */}
-            <div className="h-8 inline-flex items-center whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50 px-2 text-xs transition-all shadow-2xs">
+          {/* Right: Condensed Controls */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5">
+            {/* Audio Controller - Compact on mobile, expanded on desktop */}
+            <div className="h-8 inline-flex items-center whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50 px-1.5 sm:px-2 text-xs transition-all shadow-2xs">
               {audioState.isSpeaking || audioState.isPaused ? (
-                <div className="flex items-center space-x-1.5 whitespace-nowrap">
-                  {/* Status Indicator */}
+                <div className="flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap">
                   <span className="relative flex h-2 w-2 shrink-0">
                     <span
                       className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
@@ -198,94 +196,90 @@ export function Header() {
                     />
                   </span>
 
-                  <span className="text-[11px] font-semibold text-slate-700 select-none">
+                  <span className="hidden sm:inline text-[11px] font-semibold text-slate-700 select-none">
                     {audioState.isPaused ? "Paused" : "Reading"}
                   </span>
 
-                  {/* Pause / Resume Button */}
                   <button
                     type="button"
                     onClick={audioState.isPaused ? resumeSpeech : pauseSpeech}
-                    className="h-6 w-6 rounded-md hover:bg-slate-200/80 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+                    className="h-7 w-7 sm:h-6 sm:w-6 rounded-md hover:bg-slate-200/80 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
                     title={audioState.isPaused ? "Resume read aloud" : "Pause read aloud"}
                   >
                     {audioState.isPaused ? (
-                      <Play className="h-3 w-3 fill-current" />
+                      <Play className="h-3.5 w-3.5 sm:h-3 sm:w-3 fill-current" />
                     ) : (
-                      <Pause className="h-3 w-3 fill-current" />
+                      <Pause className="h-3.5 w-3.5 sm:h-3 sm:w-3 fill-current" />
                     )}
                   </button>
 
-                  {/* Stop Button */}
                   <button
                     type="button"
                     onClick={cancelSpeech}
-                    className="h-6 w-6 rounded-md hover:bg-red-50 text-red-600 flex items-center justify-center transition-colors cursor-pointer"
+                    className="h-7 w-7 sm:h-6 sm:w-6 rounded-md hover:bg-red-50 text-red-600 flex items-center justify-center transition-colors cursor-pointer"
                     title="Stop read aloud completely"
                   >
-                    <Square className="h-3 w-3 fill-current" />
+                    <Square className="h-3.5 w-3.5 sm:h-3 sm:w-3 fill-current" />
                   </button>
 
-                  <span className="h-3.5 w-[1px] bg-slate-200 shrink-0" />
+                  <span className="hidden sm:block h-3.5 w-[1px] bg-slate-200 shrink-0" />
 
-                  {/* Mute Button */}
                   <button
                     type="button"
                     onClick={() => setAudioMuted(!audioState.isMuted)}
-                    className="h-6 px-1.5 rounded-md hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-[11px] font-medium transition-colors cursor-pointer"
+                    className="h-7 w-7 sm:h-6 sm:px-1.5 rounded-md hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 flex items-center justify-center sm:gap-1 text-[11px] font-medium transition-colors cursor-pointer"
                     title={audioState.isMuted ? "Audio muted (Click to unmute)" : "Audio active (Click to mute)"}
                   >
                     {audioState.isMuted ? (
                       <>
                         <VolumeX className="h-3.5 w-3.5 text-red-600" />
-                        <span className="text-[10px] text-red-600 font-semibold">Muted</span>
+                        <span className="hidden sm:inline text-[10px] text-red-600 font-semibold">Muted</span>
                       </>
                     ) : (
                       <>
                         <Volume2 className="h-3.5 w-3.5 text-slate-600" />
-                        <span className="text-[10px]">Mute</span>
+                        <span className="hidden sm:inline text-[10px]">Mute</span>
                       </>
                     )}
                   </button>
                 </div>
               ) : (
-                /* Idle State */
                 <button
                   type="button"
                   onClick={() => setAudioMuted(!audioState.isMuted)}
-                  className="flex items-center space-x-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap px-1"
+                  className="flex items-center space-x-1 sm:space-x-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap px-0.5 sm:px-1"
                   title={audioState.isMuted ? "Click to enable audio read-aloud" : "Click to mute audio"}
                 >
                   {audioState.isMuted ? (
                     <>
-                      <VolumeX className="h-3.5 w-3.5 text-red-500" />
-                      <span>Audio Off</span>
+                      <VolumeX className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-red-500" />
+                      <span className="hidden sm:inline">Audio Off</span>
                     </>
                   ) : (
                     <>
-                      <Volume2 className="h-3.5 w-3.5 text-slate-600" />
-                      <span>Audio On</span>
+                      <Volume2 className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-slate-600" />
+                      <span className="hidden sm:inline">Audio On</span>
                     </>
                   )}
                 </button>
               )}
             </div>
 
-            {/* Offline Alert Indicator (Only displayed if network disconnects) */}
+            {/* Offline Alert */}
             {!isOnline && (
               <div
-                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full border text-xs font-medium bg-amber-50 text-amber-800 border-amber-300 shadow-2xs whitespace-nowrap"
+                className="flex items-center space-x-1 px-2 py-1 rounded-full border text-xs font-medium bg-amber-50 text-amber-800 border-amber-300 shadow-2xs whitespace-nowrap"
                 title="Internet connection is offline"
               >
                 <span className="h-2 w-2 rounded-full bg-amber-500" />
-                <span>Offline</span>
+                <span className="hidden sm:inline">Offline</span>
               </div>
             )}
 
-            {/* Interactive Language Dropdown */}
+            {/* Language Dropdown */}
             <LanguageDropdown />
 
-            {/* Applicant Profile Modal Trigger */}
+            {/* Profile Button */}
             <button
               type="button"
               onClick={() => {
@@ -301,14 +295,14 @@ export function Header() {
         </div>
       </header>
 
-      {/* Interactive Beneficiary Profile Drawer / Modal */}
+      {/* Profile Modal */}
       {showProfileModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-xl space-y-4 relative animate-in fade-in zoom-in-95 duration-200 my-8">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-end sm:items-center justify-center sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl border border-slate-200 max-w-lg w-full p-5 sm:p-6 shadow-xl space-y-4 relative animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200 sm:my-8 max-h-[90vh] overflow-y-auto">
             <button
               type="button"
               onClick={() => setShowProfileModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer"
+              className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 cursor-pointer"
             >
               <X className="h-4 w-4" />
             </button>
@@ -337,11 +331,11 @@ export function Header() {
                   required
                   value={profile.fullName}
                   onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-base sm:text-sm text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-semibold text-slate-600 block mb-1">
                     Caste Category
@@ -354,7 +348,7 @@ export function Header() {
                         casteCategory: e.target.value as ApplicantProfileData["casteCategory"],
                       })
                     }
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-base sm:text-sm text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   >
                     <option value="Scheduled Caste (SC)">Scheduled Caste (SC)</option>
                     <option value="SC - Women Entrepreneur">SC - Women Entrepreneur</option>
@@ -365,7 +359,7 @@ export function Header() {
 
                 <div>
                   <label className="text-[11px] font-semibold text-slate-600 block mb-1">
-                    Certified Annual Income (₹)
+                    Certified Annual Income
                   </label>
                   <input
                     type="number"
@@ -376,12 +370,12 @@ export function Header() {
                     onChange={(e) =>
                       setProfile({ ...profile, annualIncome: Number(e.target.value) })
                     }
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-mono focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-base sm:text-sm text-slate-900 tabular-nums focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-semibold text-slate-600 block mb-1">
                     Caste Certificate No.
@@ -393,7 +387,7 @@ export function Header() {
                       setProfile({ ...profile, casteCertificateNo: e.target.value })
                     }
                     placeholder="e.g. UP-SC-2024-892182"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-mono focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-base sm:text-sm text-slate-900 tabular-nums focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   />
                 </div>
 
@@ -405,12 +399,12 @@ export function Header() {
                     type="tel"
                     value={profile.contactPhone}
                     onChange={(e) => setProfile({ ...profile, contactPhone: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-mono focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-base sm:text-sm text-slate-900 tabular-nums focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-semibold text-slate-600 block mb-1">
                     State
@@ -419,7 +413,7 @@ export function Header() {
                     type="text"
                     value={profile.state}
                     onChange={(e) => setProfile({ ...profile, state: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-base sm:text-sm text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   />
                 </div>
 
@@ -431,7 +425,7 @@ export function Header() {
                     type="text"
                     value={profile.district}
                     onChange={(e) => setProfile({ ...profile, district: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-base sm:text-sm text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -446,7 +440,7 @@ export function Header() {
                   onChange={(e) =>
                     setProfile({ ...profile, enterpriseActivity: e.target.value })
                   }
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-base sm:text-sm text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
                 />
               </div>
 
@@ -459,13 +453,13 @@ export function Header() {
                   <button
                     type="button"
                     onClick={() => setShowProfileModal(false)}
-                    className="px-3 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold cursor-pointer"
+                    className="px-3 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold cursor-pointer text-sm"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-mosje-navy hover:bg-slate-800 text-amber-300 font-bold flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl bg-mosje-navy hover:bg-slate-800 text-amber-300 font-bold flex items-center space-x-1.5 shadow-xs cursor-pointer text-sm"
                   >
                     <Save className="h-3.5 w-3.5" />
                     <span>Save Profile</span>

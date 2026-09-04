@@ -20,20 +20,20 @@ export default function AssistantPage() {
   }, []);
 
   return (
-    <div className="space-y-4 max-w-4xl mx-auto pb-12 px-4 sm:px-6 pt-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-3 sm:space-y-4 max-w-4xl mx-auto pb-4 sm:pb-8 px-3 sm:px-6 pt-3 sm:pt-4">
+      <div className="flex items-center justify-between gap-2">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">
             AI Scheme Assistant
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Voice and chat-enabled interactive pre-screening for MoSJE concessional credit programs.
           </p>
         </div>
-        <div className="hidden sm:flex items-center space-x-1.5">
-          <Badge variant="outline" className="text-slate-600 bg-white border-slate-200 text-xs py-1 px-3">
-            <ShieldCheck className="h-3.5 w-3.5 mr-1 text-emerald-600" />
-            <span>Statutory 90% Assistance</span>
+        <div className="flex items-center space-x-1.5 shrink-0">
+          <Badge variant="outline" className="text-slate-600 bg-white border-slate-200 text-[10px] sm:text-xs py-0.5 sm:py-1 px-2 sm:px-3">
+            <ShieldCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1 text-emerald-600" />
+            <span>90% Assistance</span>
           </Badge>
         </div>
       </div>

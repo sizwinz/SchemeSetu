@@ -158,7 +158,7 @@ export function BranchLeadQueue({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by applicant name, ID, or activity..."
-            className="w-full text-xs py-2 pl-8 pr-3 rounded-xl border border-slate-300 bg-slate-50/50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full text-base sm:text-xs py-2 pl-8 pr-3 min-h-[40px] rounded-xl border border-slate-300 bg-slate-50/50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
         </div>
 
@@ -175,7 +175,7 @@ export function BranchLeadQueue({
               key={stage.id}
               type="button"
               onClick={() => setStatusFilter(stage.id)}
-              className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3 py-1.5 min-h-[36px] rounded-lg whitespace-nowrap transition-all cursor-pointer ${
                 statusFilter === stage.id
                   ? "bg-slate-900 text-white shadow-2xs font-bold"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"

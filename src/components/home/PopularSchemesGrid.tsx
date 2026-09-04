@@ -77,43 +77,43 @@ const POPULAR_SCHEMES: PopularSchemeItem[] = [
 
 export function PopularSchemesGrid() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
       {POPULAR_SCHEMES.map((scheme) => {
         const Icon = scheme.icon;
         return (
-          <Link key={scheme.id} href={scheme.href} className="group block">
+          <Link key={scheme.id} href={scheme.href} className="group block h-full">
             <SpotlightCard
               spotlightColor={scheme.spotlightColor}
-              className="h-full flex flex-col justify-between p-5 border-slate-200/90 group-hover:border-slate-300 transition-all shadow-2xs"
+              className="h-full flex flex-col justify-between p-3.5 sm:p-5 border-slate-200/90 group-hover:border-slate-300 transition-all shadow-2xs rounded-xl"
             >
               <div>
-                <div className="flex items-start justify-between gap-2 mb-4">
-                  <div className={`p-2.5 rounded-xl ${scheme.iconBg} ${scheme.iconColor}`}>
-                    <Icon className="h-5 w-5" />
+                <div className="flex items-start justify-between gap-1.5 mb-2.5 sm:mb-4">
+                  <div className={`p-2 sm:p-2.5 rounded-xl ${scheme.iconBg} ${scheme.iconColor}`}>
+                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                   </div>
 
-                  <Badge variant="outline" className="text-[10px] font-bold">
+                  <Badge variant="outline" className="text-[10px] font-bold px-1.5 py-0.5">
                     {scheme.code}
                   </Badge>
                 </div>
 
-                <h3 className="font-bold text-sm text-slate-900 group-hover:text-amber-700 transition-colors leading-snug mb-1">
+                <h3 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-amber-700 transition-colors leading-snug mb-1 line-clamp-2">
                   {scheme.code}: {scheme.title}
                 </h3>
-                <p className="text-xs text-slate-500 line-clamp-1 mb-4">
+                <p className="hidden sm:block text-xs text-slate-500 line-clamp-1 mb-4">
                   {scheme.subtitle}
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+              <div className="pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-400 block">Up to</span>
-                  <span className="font-bold text-slate-900 font-sans tabular-nums">{scheme.maxAmount}</span>
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 block">Up to</span>
+                  <span className="font-bold text-slate-900 font-sans tabular-nums text-xs sm:text-sm">{scheme.maxAmount}</span>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] text-slate-400 block">Interest</span>
-                  <span className="font-bold text-amber-700 font-sans tabular-nums">{scheme.interestRate} p.a.</span>
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 block">Interest</span>
+                  <span className="font-bold text-amber-700 font-sans tabular-nums text-xs sm:text-sm">{scheme.interestRate}</span>
                 </div>
               </div>
             </SpotlightCard>

@@ -36,15 +36,15 @@ export default function AdminPage() {
       .reduce((sum, l) => sum + l.concessionalAmount, 0) / 10000000;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16 px-4 sm:px-6 lg:px-8 pt-4">
+    <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto pb-8 sm:pb-16 px-3 sm:px-6 lg:px-8 pt-3 sm:pt-4">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center space-x-2">
-            <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl">
-              <Landmark className="h-6 w-6" />
+            <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl shrink-0">
+              <Landmark className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">
               Institutional Administration &amp; MoSJE Governance
             </h1>
           </div>
@@ -53,7 +53,7 @@ export default function AdminPage() {
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 shrink-0">
           <Badge variant="sovereign" className="text-xs py-1 px-3">
             <ShieldCheck className="h-3.5 w-3.5 mr-1" />
             <span>MoSJE / NSFDC Authorized</span>
@@ -62,17 +62,17 @@ export default function AdminPage() {
       </div>
 
       {/* Primary Role Navigation Tabs */}
-      <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-2xl w-fit">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 sm:gap-2 bg-slate-100 p-1.5 rounded-2xl w-full sm:w-fit">
         <button
           type="button"
           onClick={() => setActiveTab("branch")}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+          className={`flex items-center justify-center space-x-2 px-3 sm:px-4 py-2.5 sm:py-2 min-h-[44px] rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === "branch"
               ? "bg-white text-slate-900 shadow-2xs font-bold"
               : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          <Building2 className="h-4 w-4 text-amber-600" />
+          <Building2 className="h-4 w-4 text-amber-600 shrink-0" />
           <span>Branch Officer Console</span>
           <span className="ml-1 text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-slate-200/80 text-slate-700">
             {leads.length}
@@ -82,13 +82,13 @@ export default function AdminPage() {
         <button
           type="button"
           onClick={() => setActiveTab("ministry")}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+          className={`flex items-center justify-center space-x-2 px-3 sm:px-4 py-2.5 sm:py-2 min-h-[44px] rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === "ministry"
               ? "bg-white text-slate-900 shadow-2xs font-bold"
               : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          <Layers className="h-4 w-4 text-amber-600" />
+          <Layers className="h-4 w-4 text-amber-600 shrink-0" />
           <span>MoSJE Network Governance</span>
           <span className="ml-1 text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-slate-200/80 text-slate-700">
             {PRESEEDED_PARTNERS.length} Partners

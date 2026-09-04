@@ -66,3 +66,19 @@ body {
 #google_translate_element {
   display: none !important;
 }
+
+/* Mobile Safe Area & Touch Target Utilities */
+@layer utilities {
+  .pb-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mobile-bottom-spacing {
+    padding-bottom: 5.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-bottom-spacing {
+    padding-bottom: 0;
+  }
+}

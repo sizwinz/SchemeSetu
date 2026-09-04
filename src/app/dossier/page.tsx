@@ -108,25 +108,25 @@ export default function DossierPage() {
   const qrPayloadString = serializeDossierQrPayload(dossier);
 
   return (
-    <div className="max-w-4xl mx-auto pb-16 px-4 sm:px-6 pt-4 space-y-6">
+    <div className="max-w-4xl mx-auto pb-8 sm:pb-16 px-3 sm:px-6 pt-3 sm:pt-4 space-y-4 sm:space-y-6">
       {/* Screen Action Bar (Hidden during @media print) */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
         <div>
-          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <FileText className="h-5 w-5 text-amber-600" />
+          <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <FileText className="h-5 w-5 text-amber-600 shrink-0" />
             <span>Pre-Screened Application Dossier &amp; Routing Slip</span>
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 mt-0.5">
             Certified MoSJE pre-qualification packet with high-density scannable QR verification code.
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 shrink-0">
           <Button
             size="sm"
             variant="outline"
             onClick={handleResetSample}
-            className="text-xs rounded-xl"
+            className="text-xs rounded-xl min-h-[38px]"
             title="Reset to statutory sample application"
           >
             <RefreshCw className="h-3.5 w-3.5 mr-1" />
@@ -137,7 +137,7 @@ export default function DossierPage() {
             size="sm"
             variant="accent"
             onClick={handlePrint}
-            className="text-xs rounded-xl font-bold"
+            className="text-xs rounded-xl font-bold min-h-[38px]"
           >
             <Printer className="h-4 w-4 mr-1" />
             <span>Print Official Slip</span>
@@ -146,25 +146,25 @@ export default function DossierPage() {
       </div>
 
       {/* Formal A4 Document Card (Prints cleanly on A4 paper) */}
-      <div className="bg-white border-2 border-slate-900/90 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 print:border-none print:shadow-none print:p-0 print:m-0 text-slate-900">
+      <div className="bg-white border-2 border-slate-900/90 rounded-2xl p-4 sm:p-8 shadow-sm space-y-5 sm:space-y-6 print:border-none print:shadow-none print:p-0 print:m-0 text-slate-900">
         {/* Document Header with MoSJE Emblem */}
         <div className="text-center pb-4 border-b-2 border-slate-900 space-y-1">
           <div className="flex items-center justify-center space-x-2">
-            <Landmark className="h-7 w-7 text-slate-900" />
-            <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
+            <Landmark className="h-6 w-6 sm:h-7 sm:w-7 text-slate-900" />
+            <div className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
               Government of India &bull; Ministry of Social Justice and Empowerment
             </div>
           </div>
-          <h1 className="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 pt-1">
+          <h1 className="text-base sm:text-xl font-black uppercase tracking-tight text-slate-900 pt-1">
             Pre-Screened Concessional Credit Application Dossier
           </h1>
-          <p className="text-xs font-medium text-slate-600">
+          <p className="text-[11px] sm:text-xs font-medium text-slate-600">
             National Scheduled Castes Finance &amp; Development Corporation (NSFDC) Channel Financing
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-2">
             <Badge variant="success" className="text-[10px] font-bold uppercase">
-              Verified Pre-Screened &bull; Affirmative Action Priority
+              Verified Pre-Screened &bull; Priority
             </Badge>
             <span className="font-mono text-xs font-bold text-slate-800">
               Application ID: {dossier.applicationId}
@@ -173,9 +173,9 @@ export default function DossierPage() {
         </div>
 
         {/* 2-Column Split: Key Info & Cryptographic QR Slip */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start">
           {/* Left Column: Applicant & Financing Profile */}
-          <div className="md:col-span-8 space-y-5">
+          <div className="md:col-span-8 space-y-4 sm:space-y-5 order-last md:order-first">
             {/* Applicant Identity Card */}
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -302,7 +302,7 @@ export default function DossierPage() {
           </div>
 
           {/* Right Column: Verifiable Tamper-Evident QR Code */}
-          <div className="md:col-span-4 flex flex-col items-center">
+          <div className="md:col-span-4 flex flex-col items-center order-first md:order-last w-full">
             <DossierQR
               value={qrPayloadString}
               checksum={dossier.checksum}
@@ -320,20 +320,20 @@ export default function DossierPage() {
         </div>
 
         {/* Statutory Official Signoff Block */}
-        <div className="pt-6 border-t-2 border-slate-900 grid grid-cols-2 sm:grid-cols-3 gap-6 text-xs">
-          <div className="space-y-6">
+        <div className="pt-6 border-t-2 border-slate-900 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 text-xs">
+          <div className="space-y-4 sm:space-y-6">
             <span className="text-[10px] text-slate-400 block uppercase font-mono">Beneficiary Declaration</span>
             <div className="h-10 border-b border-dashed border-slate-400" />
             <span className="text-[11px] text-slate-700 block">Applicant Signature / Thumb Impression</span>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <span className="text-[10px] text-slate-400 block uppercase font-mono">Processing Branch Officer</span>
             <div className="h-10 border-b border-dashed border-slate-400" />
             <span className="text-[11px] text-slate-700 block">Officer Signature &amp; Branch Stamp</span>
           </div>
 
-          <div className="col-span-2 sm:col-span-1 space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-[10px] font-mono">
+          <div className="col-span-1 space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-[10px] font-mono">
             <span className="font-bold uppercase text-slate-600 block font-sans">Statutory Integrity Seal</span>
             <div>Generated: {new Date(dossier.submissionDate).toLocaleDateString("en-IN")}</div>
             <div>Checksum: {dossier.checksum}</div>

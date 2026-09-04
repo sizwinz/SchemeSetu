@@ -44,15 +44,15 @@ export default function LocatorPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 pt-4">
+    <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto pb-8 sm:pb-12 px-3 sm:px-6 lg:px-8 pt-3 sm:pt-4">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center space-x-2">
-            <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl">
-              <Building2 className="h-6 w-6" />
+            <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl shrink-0">
+              <Building2 className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">
               Authorized Channel Partner Locator &amp; Health Router
             </h1>
           </div>
@@ -105,12 +105,12 @@ export default function LocatorPage() {
         totalFound={rankedPartners.length}
       />
 
-      {/* Mobile Segments Tab Bar */}
-      <div className="flex sm:hidden bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+      {/* Mobile/Tablet Segments Tab Bar */}
+      <div className="flex lg:hidden bg-slate-100 p-1 rounded-xl text-xs font-semibold">
         <button
           type="button"
           onClick={() => setActiveMobileTab("map")}
-          className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
+          className={`flex-1 min-h-[44px] py-2 px-3 rounded-lg flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
             activeMobileTab === "map"
               ? "bg-white text-slate-900 shadow-2xs font-bold"
               : "text-slate-500 hover:text-slate-800"
@@ -123,7 +123,7 @@ export default function LocatorPage() {
         <button
           type="button"
           onClick={() => setActiveMobileTab("list")}
-          className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
+          className={`flex-1 min-h-[44px] py-2 px-3 rounded-lg flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
             activeMobileTab === "list"
               ? "bg-white text-slate-900 shadow-2xs font-bold"
               : "text-slate-500 hover:text-slate-800"
@@ -139,7 +139,7 @@ export default function LocatorPage() {
         {/* Left 50% Pane: Leaflet Interactive Map */}
         <div
           className={`lg:col-span-6 sticky top-20 ${
-            activeMobileTab === "list" ? "hidden sm:block" : "block"
+            activeMobileTab === "list" ? "hidden lg:block" : "block"
           }`}
         >
           <PartnerMap
@@ -153,7 +153,7 @@ export default function LocatorPage() {
         {/* Right 50% Pane: Partner Cards List */}
         <div
           className={`lg:col-span-6 space-y-4 max-h-[700px] overflow-y-auto pr-1 ${
-            activeMobileTab === "map" ? "hidden sm:block" : "block"
+            activeMobileTab === "map" ? "hidden lg:block" : "block"
           }`}
         >
           {rankedPartners.length > 0 ? (

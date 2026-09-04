@@ -58,7 +58,7 @@ export function VoiceInputButton({
         type="button"
         onClick={handleClick}
         disabled={disabled}
-        className={`relative p-2.5 rounded-xl border transition-all flex items-center justify-center ${
+        className={`relative p-2.5 min-h-[44px] min-w-[44px] rounded-xl border transition-all flex items-center justify-center cursor-pointer ${
           isListening
             ? "bg-amber-600 border-amber-600 text-white shadow-md shadow-amber-600/30"
             : "bg-white border-slate-300 text-slate-700 hover:border-amber-500 hover:bg-amber-50/40"

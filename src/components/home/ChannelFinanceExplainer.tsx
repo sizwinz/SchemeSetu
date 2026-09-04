@@ -37,7 +37,7 @@ export function ChannelFinanceExplainer() {
       </div>
 
       {/* The 4 Authorized Channel Partner Types with Full Forms Beside Short Forms */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         {/* 1. SCA */}
         <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2.5">
           <div className="flex items-center space-x-2">
@@ -113,7 +113,7 @@ export function ChannelFinanceExplainer() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0 text-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 shrink-0 text-xs">
           <div className="flex items-center space-x-1.5 bg-white px-3 py-2 rounded-xl border border-emerald-200 text-emerald-800 shadow-2xs">
             <CheckCircle className="h-4 w-4 text-emerald-600" />
             <span className="font-semibold">Solvent (&lt;10% NPA): Allowed</span>

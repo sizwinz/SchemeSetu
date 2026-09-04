@@ -157,9 +157,9 @@ export function SmartRecommenderWizard() {
   };
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 sm:p-7 space-y-6">
+    <section className="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-7 space-y-5 sm:space-y-6">
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
         <div>
           <div className="flex items-center space-x-2">
             <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700">
@@ -178,7 +178,7 @@ export function SmartRecommenderWizard() {
         <button
           type="button"
           onClick={isListening ? stopListening : startListening}
-          className={`flex items-center space-x-2 px-3 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+          className={`w-full sm:w-auto min-h-[44px] flex items-center justify-center space-x-2 px-3.5 py-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
             isListening
               ? "bg-amber-100 border-amber-300 text-amber-900 animate-pulse ring-2 ring-amber-300/60"
               : "bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700 shadow-2xs"
@@ -186,7 +186,7 @@ export function SmartRecommenderWizard() {
           title="Speak your enterprise requirements in Hindi or English"
         >
           <Mic className={`h-4 w-4 ${isListening ? "text-amber-700" : "text-amber-600"}`} />
-          <span>{isListening ? "Listening... (Bolिये)" : "Voice Match (बोलकर बताएं)"}</span>
+          <span>{isListening ? "Listening... (Boliye)" : "Voice Match (बोलकर बताएं)"}</span>
         </button>
       </div>
 
@@ -258,34 +258,34 @@ export function SmartRecommenderWizard() {
               onValueChange={([val]) => setCost(val)}
             />
 
-            <div className="flex justify-between text-[10px] text-slate-400">
+            <div className="flex flex-wrap items-center justify-between gap-1 text-[10px] text-slate-400">
               <button
                 type="button"
                 onClick={() => setCost(50000)}
-                className="hover:text-slate-700 cursor-pointer"
+                className="hover:text-slate-700 cursor-pointer py-1"
               >
-                ₹50K (Micro)
+                ₹50K<span className="hidden sm:inline"> (Micro)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setCost(140000)}
-                className="font-medium text-amber-700 hover:underline cursor-pointer"
+                className="font-medium text-amber-700 hover:underline cursor-pointer py-1"
               >
-                ₹1.40L (MCF Cap)
+                ₹1.40L<span className="hidden sm:inline"> (MCF Cap)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setCost(500000)}
-                className="hover:text-slate-700 cursor-pointer"
+                className="hover:text-slate-700 cursor-pointer py-1"
               >
-                ₹5.00L (Medium)
+                ₹5.00L<span className="hidden sm:inline"> (Medium)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setCost(5000000)}
-                className="font-medium text-slate-600 hover:underline cursor-pointer"
+                className="font-medium text-slate-600 hover:underline cursor-pointer py-1"
               >
-                ₹50.00L (Term Loan Cap)
+                ₹50.00L<span className="hidden sm:inline"> (Term Cap)</span>
               </button>
             </div>
           </div>
@@ -319,8 +319,8 @@ export function SmartRecommenderWizard() {
 
             <div className="flex justify-between text-[10px] text-slate-400">
               <span>₹50K</span>
-              <span>₹2.40L (Avg)</span>
-              <span className="text-amber-700 font-semibold">₹5.00L Statutory Cap</span>
+              <span className="hidden sm:inline">₹2.40L (Avg)</span>
+              <span className="text-amber-700 font-semibold">₹5.00L Cap</span>
               <span>₹6.00L</span>
             </div>
           </div>
@@ -330,11 +330,11 @@ export function SmartRecommenderWizard() {
             <span className="text-xs font-bold text-slate-800 block">
               4. Beneficiary Category
             </span>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setDemographic("ALL_SC")}
-                className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center ${
+                className={`py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center min-h-[44px] flex items-center justify-center ${
                   demographic === "ALL_SC"
                     ? "border-amber-500 bg-amber-50/60 text-slate-900 shadow-2xs"
                     : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -345,7 +345,7 @@ export function SmartRecommenderWizard() {
               <button
                 type="button"
                 onClick={() => setDemographic("SC_WOMEN")}
-                className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center ${
+                className={`py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center min-h-[44px] flex items-center justify-center ${
                   demographic === "SC_WOMEN"
                     ? "border-amber-500 bg-amber-50/60 text-slate-900 shadow-2xs"
                     : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -356,7 +356,7 @@ export function SmartRecommenderWizard() {
               <button
                 type="button"
                 onClick={() => setDemographic("SC_STUDENTS")}
-                className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center ${
+                className={`py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center min-h-[44px] flex items-center justify-center ${
                   demographic === "SC_STUDENTS"
                     ? "border-amber-500 bg-amber-50/60 text-slate-900 shadow-2xs"
                     : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -369,7 +369,7 @@ export function SmartRecommenderWizard() {
         </div>
 
         {/* Right Column: Matched Scheme Recommendation Card */}
-        <div className="lg:col-span-5 bg-slate-50 rounded-2xl border border-slate-200/90 p-5 space-y-4 shadow-2xs">
+        <div className="lg:col-span-5 bg-slate-50 rounded-2xl border border-slate-200/90 p-4 sm:p-5 space-y-4 shadow-2xs">
           <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Matched Scheme Output
@@ -465,7 +465,7 @@ export function SmartRecommenderWizard() {
               <div className="space-y-2 pt-1">
                 <Link
                   href={`/calculator?scheme=${primaryScheme.code}&amount=${funding?.totalCost || cost}&rate=${primaryScheme.interestRateMin}&tenure=${primaryScheme.repaymentTenureYears}`}
-                  className="w-full py-2.5 px-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold flex items-center justify-between transition-colors shadow-xs group"
+                  className="w-full min-h-[44px] py-2.5 px-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold flex items-center justify-between transition-colors shadow-xs group"
                 >
                   <div className="flex items-center space-x-2">
                     <Calculator className="h-4 w-4 text-amber-100" />
@@ -476,7 +476,7 @@ export function SmartRecommenderWizard() {
 
                 <Link
                   href={`/locator?category=${primaryScheme.code}&amount=${funding?.totalCost || cost}`}
-                  className="w-full py-2.5 px-3 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold flex items-center justify-between transition-colors group"
+                  className="w-full min-h-[44px] py-2.5 px-3 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold flex items-center justify-between transition-colors group"
                 >
                   <div className="flex items-center space-x-2">
                     <MapPin className="h-4 w-4 text-amber-600" />

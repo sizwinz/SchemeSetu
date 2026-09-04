@@ -238,9 +238,9 @@ export function ChatContainer({
   };
 
   return (
-    <div className="flex flex-col h-[75vh] min-h-[500px] max-h-[850px] bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+    <div className="flex flex-col h-[calc(100dvh-13.5rem)] sm:h-[75vh] min-h-[440px] sm:min-h-[500px] max-h-[850px] bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
       {/* Chat Sub-Header Controls */}
-      <div className="flex items-center justify-between px-3 sm:px-4 py-3 bg-slate-50/90 border-b border-slate-200 text-xs gap-2">
+      <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50/90 border-b border-slate-200 text-xs gap-2 shrink-0">
         <div className="flex items-center space-x-2 text-slate-700 shrink-0">
           <MessageSquare className="h-4 w-4 text-amber-600" />
           <span className="font-bold text-slate-900">
@@ -253,7 +253,7 @@ export function ChatContainer({
           <button
             type="button"
             onClick={handleLanguageToggle}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center space-x-1 px-2.5 py-1.5 min-h-[36px] rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold transition-colors cursor-pointer shadow-2xs"
           >
             <Languages className="h-3.5 w-3.5 text-slate-500" />
             <span>{language === "hi-IN" ? "हिंदी" : "EN"}</span>
@@ -263,7 +263,7 @@ export function ChatContainer({
           <button
             type="button"
             onClick={handleResetChat}
-            className="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer shadow-2xs"
+            className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer shadow-2xs"
             title="Clear Chat Conversation"
           >
             <RotateCcw className="h-4 w-4" />
@@ -323,7 +323,7 @@ export function ChatContainer({
       )}
 
       {/* Input Action Bar */}
-      <div className="p-3 bg-white border-t border-slate-200">
+      <div className="p-2.5 sm:p-3 bg-white border-t border-slate-200 shrink-0">
         <form onSubmit={handleFormSubmit} className="flex items-center space-x-2">
           {/* Voice Speech-to-Text Button */}
           <VoiceInputButton
@@ -342,13 +342,13 @@ export function ChatContainer({
                 ? "यहाँ टाइप करें या माइक दबाकर बोलें..."
                 : "Type your query or tap mic to speak..."
             }
-            className="flex-1 text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+            className="flex-1 text-base sm:text-sm px-3.5 sm:px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50 min-h-[44px]"
           />
 
           <Button
             type="submit"
             disabled={!inputText.trim() || isProcessing}
-            className="rounded-xl px-4 font-bold"
+            className="rounded-xl px-3.5 sm:px-4 min-h-[44px] min-w-[44px] font-bold shrink-0 flex items-center justify-center cursor-pointer"
           >
             <Send className="h-4 w-4" />
           </Button>
