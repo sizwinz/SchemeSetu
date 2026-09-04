@@ -52,7 +52,7 @@ export function Footer() {
       <button
         type="button"
         onClick={() => setShowHelpModal(true)}
-        className="fixed bottom-24 md:bottom-6 right-6 z-40 bg-[#0F172A] hover:bg-slate-800 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer print:hidden"
+        className="hidden md:flex fixed bottom-6 right-6 z-40 bg-[#0F172A] hover:bg-slate-800 text-white w-12 h-12 rounded-full shadow-lg items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer print:hidden"
         title="Need help? Click for MoSJE Helpline"
       >
         <HelpCircle className="h-6 w-6" />
