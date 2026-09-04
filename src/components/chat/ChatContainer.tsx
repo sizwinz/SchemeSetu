@@ -288,7 +288,7 @@ export function ChatContainer({
           </span>
         </div>
 
-        <div className="flex items-center space-x-1.5 sm:space-x-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Bilingual Switcher */}
           <button
             type="button"
@@ -365,7 +365,7 @@ export function ChatContainer({
 
       {/* Input Action Bar */}
       <div className="p-2.5 sm:p-3 bg-white border-t border-slate-200 shrink-0">
-        <form onSubmit={handleFormSubmit} className="flex items-center space-x-2">
+        <form onSubmit={handleFormSubmit} className="flex items-center gap-2">
           {/* Voice Speech-to-Text Button */}
           <VoiceInputButton
             language={language}

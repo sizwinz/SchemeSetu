@@ -221,8 +221,8 @@ export function PartnerFilter({
       )}
 
       {/* Institution Type Filters */}
-      <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar pt-1">
-        <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0 mr-1.5">
+      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 pb-1 touch-pan-x">
+        <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0 mr-1">
           Type:
         </span>
         {[
@@ -240,7 +240,7 @@ export function PartnerFilter({
               key={item.value}
               type="button"
               onClick={() => handleInstitutionSelect(item.value)}
-              className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all shrink-0 ${
+              className={`text-xs px-3 py-1.5 min-h-[32px] rounded-full font-medium transition-all shrink-0 cursor-pointer ${
                 isActive
                   ? "bg-mosje-navy text-amber-300 shadow-xs"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"

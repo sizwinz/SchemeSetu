@@ -121,12 +121,12 @@ export default function DossierPage() {
           </p>
         </div>
 
-        <div className="flex items-center space-x-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <Button
             size="sm"
             variant="outline"
             onClick={handleResetSample}
-            className="text-xs rounded-xl min-h-[38px]"
+            className="text-xs rounded-xl min-h-[38px] cursor-pointer"
             title="Reset to statutory sample application"
           >
             <RefreshCw className="h-3.5 w-3.5 mr-1" />
@@ -137,7 +137,7 @@ export default function DossierPage() {
             size="sm"
             variant="accent"
             onClick={handlePrint}
-            className="text-xs rounded-xl font-bold min-h-[38px]"
+            className="text-xs rounded-xl font-bold min-h-[38px] cursor-pointer"
           >
             <Printer className="h-4 w-4 mr-1" />
             <span>Print Official Slip</span>

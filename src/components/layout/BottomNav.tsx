@@ -23,7 +23,7 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 md:hidden print:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 lg:hidden print:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
       <div className="grid grid-cols-5 h-[4.25rem] pb-safe-bottom">
         {navItems.map((item) => {
           const Icon = item.icon;

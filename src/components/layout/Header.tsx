@@ -17,6 +17,14 @@ import {
   Pause,
   Play,
   Square,
+  Menu,
+  BookOpen,
+  Calculator,
+  MapPin,
+  MessageSquareText,
+  FileText,
+  HelpCircle,
+  ChevronRight,
 } from "lucide-react";
 import {
   ApplicantProfileData,
@@ -113,6 +121,27 @@ export function Header() {
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
   const [profile, setProfile] = useState<ApplicantProfileData>(DEFAULT_PROFILE);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+
+  // Close mobile drawer when pathname changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  // Handle Escape key to close mobile drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMobileMenuOpen(false);
+      }
+    };
+    if (mobileMenuOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
 
   const [audioState, setAudioState] = useState<AudioPlaybackState>({
     isSpeaking: false,
@@ -181,8 +210,8 @@ export function Header() {
             </Link>
           </div>
 
-          {/* Center: Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold text-slate-600">
+          {/* Center: Desktop Navigation (shown on xl: and wider) */}
+          <nav className="hidden xl:flex items-center space-x-1 text-xs font-semibold text-slate-600">
             <Link
               href="/"
               className={`px-3 py-1.5 rounded-lg transition-colors ${
@@ -251,11 +280,11 @@ export function Header() {
           </nav>
 
           {/* Right: Condensed Controls */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2.5">
-            {/* Audio Controller - Compact on mobile, expanded on desktop */}
-            <div className="h-8 inline-flex items-center whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50 px-1.5 sm:px-2 text-xs transition-all shadow-2xs">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Audio Controller - Strictly compact to prevent translation collisions */}
+            <div className="h-8 inline-flex items-center whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50 px-1.5 sm:px-2 text-xs transition-all shadow-2xs shrink-0">
               {audioState.isSpeaking || audioState.isPaused ? (
-                <div className="flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap">
+                <div className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap notranslate" translate="no">
                   <span className="relative flex h-2 w-2 shrink-0">
                     <span
                       className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
@@ -269,15 +298,16 @@ export function Header() {
                     />
                   </span>
 
-                  <span className="hidden sm:inline text-[11px] font-semibold text-slate-700 select-none">
+                  <span className="hidden md:inline text-[11px] font-semibold text-slate-700 select-none notranslate" translate="no">
                     {audioState.isPaused ? "Paused" : "Reading"}
                   </span>
 
                   <button
                     type="button"
                     onClick={audioState.isPaused ? resumeSpeech : pauseSpeech}
-                    className="h-7 w-7 sm:h-6 sm:w-6 rounded-md hover:bg-slate-200/80 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+                    className="h-7 w-7 sm:h-6 sm:w-6 rounded-md hover:bg-slate-200/80 text-slate-700 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     title={audioState.isPaused ? "Resume read aloud" : "Pause read aloud"}
+                    aria-label={audioState.isPaused ? "Resume read aloud" : "Pause read aloud"}
                   >
                     {audioState.isPaused ? (
                       <Play className="h-3.5 w-3.5 sm:h-3 sm:w-3 fill-current" />
@@ -289,35 +319,32 @@ export function Header() {
                   <button
                     type="button"
                     onClick={cancelSpeech}
-                    className="h-7 w-7 sm:h-6 sm:w-6 rounded-md hover:bg-red-50 text-red-600 flex items-center justify-center transition-colors cursor-pointer"
+                    className="h-7 w-7 sm:h-6 sm:w-6 rounded-md hover:bg-red-50 text-red-600 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     title="Stop read aloud completely"
+                    aria-label="Stop read aloud completely"
                   >
                     <Square className="h-3.5 w-3.5 sm:h-3 sm:w-3 fill-current" />
                   </button>
 
-                  <span className="hidden sm:block h-3.5 w-[1px] bg-slate-200 shrink-0" />
+                  <span className="h-3.5 w-[1px] bg-slate-200 shrink-0" />
 
+                  {/* Icon-only Mute button with aria-label to prevent wide translation collisions */}
                   <button
                     type="button"
                     onClick={() => setAudioMuted(!audioState.isMuted)}
-                    className="h-7 w-7 sm:h-6 sm:px-1.5 rounded-md hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 flex items-center justify-center sm:gap-1 text-[11px] font-medium transition-colors cursor-pointer"
+                    className="h-7 w-7 sm:h-6 sm:w-6 rounded-md hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     title={audioState.isMuted ? "Audio muted (Click to unmute)" : "Audio active (Click to mute)"}
+                    aria-label={audioState.isMuted ? "Unmute audio" : "Mute audio"}
                   >
                     {audioState.isMuted ? (
-                      <>
-                        <VolumeX className="h-3.5 w-3.5 text-red-600" />
-                        <span className="hidden sm:inline text-[10px] text-red-600 font-semibold">Muted</span>
-                      </>
+                      <VolumeX className="h-3.5 w-3.5 text-red-600" />
                     ) : (
-                      <>
-                        <Volume2 className="h-3.5 w-3.5 text-slate-600" />
-                        <span className="hidden sm:inline text-[10px]">Mute</span>
-                      </>
+                      <Volume2 className="h-3.5 w-3.5 text-slate-600" />
                     )}
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center space-x-1.5">
+                <div className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
                   <button
                     type="button"
                     onClick={() => {
@@ -331,18 +358,18 @@ export function Header() {
                         speakText(msg, speechLocale);
                       }
                     }}
-                    className="flex items-center space-x-1 sm:space-x-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap px-0.5 sm:px-1"
+                    className="flex items-center gap-1 sm:gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap px-0.5 sm:px-1 shrink-0"
                     title={audioState.isMuted ? "Click to enable audio read-aloud" : "Click to mute audio"}
                   >
                     {audioState.isMuted ? (
                       <>
-                        <VolumeX className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-red-500" />
-                        <span className="hidden sm:inline">Audio Off</span>
+                        <VolumeX className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-red-500 shrink-0" />
+                        <span className="hidden md:inline notranslate" translate="no">Audio Off</span>
                       </>
                     ) : (
                       <>
-                        <Volume2 className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-slate-600" />
-                        <span className="hidden sm:inline">Audio On</span>
+                        <Volume2 className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-slate-600 shrink-0" />
+                        <span className="hidden md:inline notranslate" translate="no">Audio On</span>
                       </>
                     )}
                   </button>
@@ -356,11 +383,11 @@ export function Header() {
                         const text = summaries[speechLocale] || summaries["en-IN"];
                         speakText(text, speechLocale);
                       }}
-                      className="flex items-center space-x-1 text-[11px] font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2 py-0.5 sm:py-1 rounded-lg transition-colors cursor-pointer"
+                      className="flex items-center gap-1 text-[11px] font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2 py-0.5 sm:py-1 rounded-lg transition-colors cursor-pointer shrink-0"
                       title="Read aloud page summary in selected language"
                     >
                       <Volume2 className="h-3 w-3 text-amber-700 shrink-0" />
-                      <span>
+                      <span className="notranslate" translate="no">
                         {currentLanguageOption.code === "hi"
                           ? "सुनें"
                           : currentLanguageOption.code === "mr"
@@ -388,7 +415,7 @@ export function Header() {
             {/* Offline Alert */}
             {!isOnline && (
               <div
-                className="flex items-center space-x-1 px-2 py-1 rounded-full border text-xs font-medium bg-amber-50 text-amber-800 border-amber-300 shadow-2xs whitespace-nowrap"
+                className="flex items-center space-x-1 px-2 py-1 rounded-full border text-xs font-medium bg-amber-50 text-amber-800 border-amber-300 shadow-2xs whitespace-nowrap shrink-0"
                 title="Internet connection is offline"
               >
                 <span className="h-2 w-2 rounded-full bg-amber-500" />
@@ -408,8 +435,20 @@ export function Header() {
               }}
               className="w-8 h-8 rounded-full border border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0"
               title="View & Edit Beneficiary Applicant Profile"
+              aria-label="View & Edit Beneficiary Applicant Profile"
             >
               <User className="h-4 w-4" />
+            </button>
+
+            {/* Mobile / Tablet Menu Drawer Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="xl:hidden w-8 h-8 rounded-full border border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0"
+              title="Open Navigation Menu"
+              aria-label="Open Navigation Menu"
+            >
+              <Menu className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -587,6 +626,176 @@ export function Header() {
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile & Tablet Slide-Over Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 xl:hidden">
+          {/* Backdrop Overlay */}
+          <div
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity duration-200"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+
+          {/* Drawer Sidebar */}
+          <div className="fixed inset-y-0 right-0 max-w-xs sm:max-w-sm w-full bg-white shadow-2xl flex flex-col z-50 border-l border-slate-200 animate-in slide-in-from-right duration-200">
+            {/* Drawer Header */}
+            <div className="p-4 border-b border-slate-200/80 flex items-center justify-between bg-slate-50/70">
+              <div className="flex items-center space-x-2">
+                <Image
+                  src="/logo.png"
+                  alt="SchemeSetu Logo"
+                  width={28}
+                  height={28}
+                  className="h-7 w-7 object-contain"
+                />
+                <span className="font-extrabold text-base tracking-tight text-slate-900">
+                  SchemeSetu
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+                title="Close Navigation Menu"
+                aria-label="Close Navigation Menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Drawer Links Body */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-5">
+              {/* Section 1: Main Portals */}
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                  Portal Navigation
+                </span>
+                <nav className="space-y-1">
+                  {[
+                    { href: "/", label: "Scheme Recommender", icon: BookOpen, desc: "AI-guided affirmative matching" },
+                    { href: "/calculator", label: "EMI Calculator", icon: Calculator, desc: "Moratorium & repayment schedule" },
+                    { href: "/locator", label: "Partner Locator", icon: MapPin, desc: "Solvent SCAs & bank branches" },
+                    { href: "/dossier", label: "Application Dossier", icon: FileText, desc: "Verifiable QR application slip" },
+                    { href: "/assistant", label: "AI Assistant", icon: MessageSquareText, desc: "Vernacular voice & chat agent" },
+                    { href: "/admin", label: "MoSJE Admin", icon: Landmark, desc: "Institutional queue & governance" },
+                  ].map((item) => {
+                    const IconComponent = item.icon;
+                    const isActive = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                          isActive
+                            ? "bg-amber-50 text-amber-950 border border-amber-200/80 font-bold"
+                            : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-1.5 rounded-lg ${isActive ? "bg-amber-200/60 text-amber-800" : "bg-slate-100 text-slate-600"}`}>
+                            <IconComponent className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <span className="block text-xs">{item.label}</span>
+                            <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-slate-400" />
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
+
+              {/* Section 2: Beneficiary Services */}
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                  Citizen Services
+                </span>
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setProfile(getStoredApplicantProfile());
+                      setShowProfileModal(true);
+                    }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors text-left cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="p-1.5 rounded-lg bg-amber-50 text-amber-700">
+                        <User className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <span className="block text-xs">Beneficiary Profile</span>
+                        <span className="block text-[10px] text-slate-400 font-normal">Edit personal &amp; income details</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-400" />
+                  </button>
+
+                  <Link
+                    href="/helpdesk"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                      pathname === "/helpdesk"
+                        ? "bg-amber-50 text-amber-950 border border-amber-200/80 font-bold"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
+                        <HelpCircle className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <span className="block text-xs">Helpdesk &amp; Grievances</span>
+                        <span className="block text-[10px] text-slate-400 font-normal">Toll-free 1800-11-2001 support</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-400" />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Section 3: Statutory Policies */}
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                  Statutory Policies
+                </span>
+                <div className="flex items-center space-x-3 text-xs text-slate-500 pl-1">
+                  <Link
+                    href="/privacy"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="hover:text-slate-900 transition-colors"
+                  >
+                    Privacy Policy
+                  </Link>
+                  <span>&bull;</span>
+                  <Link
+                    href="/terms"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="hover:text-slate-900 transition-colors"
+                  >
+                    Terms of Service
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Drawer Footer */}
+            <div className="p-4 border-t border-slate-200/80 bg-slate-50 text-center space-y-1">
+              <p className="text-[11px] font-semibold text-slate-700">
+                Ministry of Social Justice &amp; Empowerment
+              </p>
+              <p className="text-[10px] text-slate-400">
+                National Scheduled Castes Finance &amp; Development Corporation
+              </p>
+            </div>
           </div>
         </div>
       )}

@@ -91,7 +91,7 @@ export function AmortizationTable({
         </div>
 
         {/* View Mode Switcher and CSV Export */}
-        <div className="flex items-center space-x-2 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
           <div className="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
             <button
               type="button"
@@ -121,7 +121,7 @@ export function AmortizationTable({
             variant="outline"
             size="sm"
             onClick={handleExportCSV}
-            className="text-xs h-8 px-2.5 rounded-xl text-slate-700"
+            className="text-xs h-8 px-2.5 rounded-xl text-slate-700 shrink-0"
           >
             <Download className="h-3.5 w-3.5 mr-1" />
             <span>Export CSV</span>
@@ -130,7 +130,7 @@ export function AmortizationTable({
       </div>
 
       {/* Table Content */}
-      <div className="overflow-x-auto max-h-[480px]">
+      <div className="overflow-x-auto max-h-[480px] touch-pan-x">
         {viewMode === "annual" ? (
           <table className="w-full text-xs text-left text-slate-700 font-sans">
             <thead className="text-[11px] text-slate-500 uppercase bg-slate-50/90 sticky top-0 border-b border-slate-200">
