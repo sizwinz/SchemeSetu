@@ -38,13 +38,9 @@ export function Footer() {
             Terms of Service
           </Link>
           <span>&bull;</span>
-          <button
-            type="button"
-            onClick={() => setShowHelpModal(true)}
-            className="hover:text-slate-800 transition-colors cursor-pointer"
-          >
-            Helpdesk
-          </button>
+          <Link href="/helpdesk" className="hover:text-slate-800 transition-colors">
+            Helpdesk &amp; Grievances
+          </Link>
         </div>
       </footer>
 
