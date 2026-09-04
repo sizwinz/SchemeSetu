@@ -29,6 +29,13 @@
   }
 }
 
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
 body {
   color: hsl(var(--foreground));
   background: hsl(var(--background));

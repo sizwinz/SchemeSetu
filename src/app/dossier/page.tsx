@@ -108,7 +108,7 @@ export default function DossierPage() {
   const qrPayloadString = serializeDossierQrPayload(dossier);
 
   return (
-    <div className="max-w-5xl xl:max-w-6xl mx-auto pb-8 sm:pb-16 px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 space-y-4 sm:space-y-6">
+    <div className="max-w-5xl xl:max-w-6xl mx-auto pb-8 sm:pb-16 px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 space-y-4 sm:space-y-6 overflow-x-hidden max-w-full">
       {/* Screen Action Bar (Hidden during @media print) */}
       <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
         <div>

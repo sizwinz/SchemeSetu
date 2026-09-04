@@ -8,12 +8,12 @@ import { Sparkles, ArrowUpRight } from "lucide-react";
 
 export default function HomePage() {
   return (
-    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 py-5 sm:py-8 space-y-6 sm:space-y-10">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 py-5 sm:py-8 space-y-6 sm:space-y-10 overflow-x-hidden max-w-full">
       {/* Sovereign Hero Header with 4 Statutory Pillars */}
       <section className="text-center max-w-4xl mx-auto space-y-3.5">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-800 text-xs font-semibold shadow-2xs">
-          <Sparkles className="h-3.5 w-3.5 text-amber-600" />
-          <span>Problem Statement ID 26092 • MoSJE &amp; NSFDC Affirmative Credit</span>
+        <div className="inline-flex items-center space-x-1.5 sm:space-x-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-800 text-[11px] sm:text-xs font-semibold shadow-2xs max-w-full text-center">
+          <Sparkles className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+          <span>Problem Statement ID 26092 &bull; MoSJE &amp; NSFDC Affirmative Credit</span>
         </div>
 
         <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">

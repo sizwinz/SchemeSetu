@@ -189,22 +189,22 @@ export function Header() {
   return (
     <>
       <header className="w-full bg-white text-slate-900 shadow-2xs border-b border-slate-200/80 sticky top-0 z-40 print:hidden">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 h-14 sm:h-16 flex items-center justify-between">
+        <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 2xl:px-12 h-14 sm:h-16 flex items-center justify-between">
           {/* Left: Brand Identity */}
-          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0 min-w-0">
             <Link
               href="/"
-              className="flex items-center space-x-2 text-slate-900 hover:text-amber-700 transition-colors group"
+              className="flex items-center space-x-1.5 sm:space-x-2 text-slate-900 hover:text-amber-700 transition-colors group shrink-0"
             >
               <Image
                 src="/logo.png"
                 alt="SchemeSetu Logo"
                 width={32}
                 height={32}
-                className="h-7 w-7 sm:h-8 sm:w-8 object-contain transition-transform group-hover:scale-105"
+                className="h-7 w-7 sm:h-8 sm:w-8 object-contain transition-transform group-hover:scale-105 shrink-0"
                 priority
               />
-              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900">
+              <span className="font-extrabold text-base sm:text-xl tracking-tight text-slate-900 shrink-0">
                 SchemeSetu
               </span>
             </Link>
@@ -282,10 +282,10 @@ export function Header() {
           {/* Right: Condensed Controls */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Audio Controller - Strictly compact to prevent translation collisions */}
-            <div className="h-8 inline-flex items-center whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50 px-1.5 sm:px-2 text-xs transition-all shadow-2xs shrink-0">
+            <div className="h-8 inline-flex items-center whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50 px-1 sm:px-2 text-xs transition-all shadow-2xs shrink-0">
               {audioState.isSpeaking || audioState.isPaused ? (
                 <div className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap notranslate" translate="no">
-                  <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="relative flex h-2 w-2 shrink-0 ml-0.5">
                     <span
                       className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
                         audioState.isPaused ? "bg-amber-400" : "bg-emerald-400"
@@ -326,13 +326,13 @@ export function Header() {
                     <Square className="h-3.5 w-3.5 sm:h-3 sm:w-3 fill-current" />
                   </button>
 
-                  <span className="h-3.5 w-[1px] bg-slate-200 shrink-0" />
+                  <span className="hidden sm:inline-block h-3.5 w-[1px] bg-slate-200 shrink-0" />
 
-                  {/* Icon-only Mute button with aria-label to prevent wide translation collisions */}
+                  {/* Icon-only Mute button on sm: and up */}
                   <button
                     type="button"
                     onClick={() => setAudioMuted(!audioState.isMuted)}
-                    className="h-7 w-7 sm:h-6 sm:w-6 rounded-md hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                    className="hidden sm:flex h-7 w-7 sm:h-6 sm:w-6 rounded-md hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 items-center justify-center transition-colors cursor-pointer shrink-0"
                     title={audioState.isMuted ? "Audio muted (Click to unmute)" : "Audio active (Click to mute)"}
                     aria-label={audioState.isMuted ? "Unmute audio" : "Mute audio"}
                   >
@@ -348,18 +348,23 @@ export function Header() {
                   <button
                     type="button"
                     onClick={() => {
-                      const nextMuted = !audioState.isMuted;
-                      setAudioMuted(nextMuted);
-                      if (!nextMuted) {
+                      if (audioState.isMuted) {
+                        setAudioMuted(false);
                         const speechLocale = currentLanguageOption.speechLocale;
                         const msg =
                           AUDIO_ENABLED_ANNOUNCEMENTS[speechLocale] ||
                           AUDIO_ENABLED_ANNOUNCEMENTS["en-IN"];
                         speakText(msg, speechLocale);
+                      } else {
+                        const speechLocale = currentLanguageOption.speechLocale;
+                        const summaries = PAGE_SUMMARIES[pathname] || PAGE_SUMMARIES["/"];
+                        const text = summaries[speechLocale] || summaries["en-IN"];
+                        speakText(text, speechLocale);
                       }
                     }}
-                    className="flex items-center gap-1 sm:gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap px-0.5 sm:px-1 shrink-0"
-                    title={audioState.isMuted ? "Click to enable audio read-aloud" : "Click to mute audio"}
+                    className="flex items-center gap-1 sm:gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap px-1 sm:px-1.5 shrink-0"
+                    title={audioState.isMuted ? "Audio is muted. Click to unmute" : "Read aloud page summary"}
+                    aria-label={audioState.isMuted ? "Unmute audio" : "Read aloud page"}
                   >
                     {audioState.isMuted ? (
                       <>
@@ -368,7 +373,7 @@ export function Header() {
                       </>
                     ) : (
                       <>
-                        <Volume2 className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-slate-600 shrink-0" />
+                        <Volume2 className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-slate-600 hover:text-amber-700 shrink-0" />
                         <span className="hidden md:inline notranslate" translate="no">Audio On</span>
                       </>
                     )}
@@ -383,7 +388,7 @@ export function Header() {
                         const text = summaries[speechLocale] || summaries["en-IN"];
                         speakText(text, speechLocale);
                       }}
-                      className="flex items-center gap-1 text-[11px] font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2 py-0.5 sm:py-1 rounded-lg transition-colors cursor-pointer shrink-0"
+                      className="hidden sm:flex items-center gap-1 text-[11px] font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2 py-0.5 sm:py-1 rounded-lg transition-colors cursor-pointer shrink-0"
                       title="Read aloud page summary in selected language"
                     >
                       <Volume2 className="h-3 w-3 text-amber-700 shrink-0" />
@@ -426,14 +431,14 @@ export function Header() {
             {/* Language Dropdown */}
             <LanguageDropdown />
 
-            {/* Profile Button */}
+            {/* Profile Button - Hidden on mobile (< sm) because it is elevated in the slide-over drawer */}
             <button
               type="button"
               onClick={() => {
                 setProfile(getStoredApplicantProfile());
                 setShowProfileModal(true);
               }}
-              className="w-8 h-8 rounded-full border border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0"
+              className="hidden sm:flex w-8 h-8 rounded-full border border-slate-300 hover:border-slate-400 items-center justify-center text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0"
               title="View & Edit Beneficiary Applicant Profile"
               aria-label="View & Edit Beneficiary Applicant Profile"
             >
@@ -668,7 +673,65 @@ export function Header() {
             </div>
 
             {/* Drawer Links Body */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-5">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Beneficiary Profile Summary Card for Mobile */}
+              <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-3.5 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 bg-amber-500/15 text-amber-700 rounded-xl">
+                      <User className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <span className="font-bold text-xs text-slate-900 block leading-tight">
+                        {profile.fullName || "Beneficiary Applicant"}
+                      </span>
+                      <span className="text-[10px] text-slate-500 block">
+                        {profile.casteCategory}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setProfile(getStoredApplicantProfile());
+                      setShowProfileModal(true);
+                    }}
+                    className="text-[11px] font-bold text-amber-800 bg-amber-100/80 hover:bg-amber-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer shrink-0"
+                  >
+                    Edit Profile
+                  </button>
+                </div>
+
+                <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] text-slate-600">
+                  <span className="flex items-center gap-1">
+                    <Volume2 className="h-3.5 w-3.5 text-slate-500" />
+                    <span>Read Aloud Voice:</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextMuted = !audioState.isMuted;
+                      setAudioMuted(nextMuted);
+                      if (!nextMuted) {
+                        const speechLocale = currentLanguageOption.speechLocale;
+                        const msg =
+                          AUDIO_ENABLED_ANNOUNCEMENTS[speechLocale] ||
+                          AUDIO_ENABLED_ANNOUNCEMENTS["en-IN"];
+                        speakText(msg, speechLocale);
+                      }
+                    }}
+                    className={`px-2 py-0.5 rounded-md font-semibold text-[10px] transition-colors cursor-pointer ${
+                      audioState.isMuted
+                        ? "bg-slate-200 text-slate-600"
+                        : "bg-emerald-100 text-emerald-800"
+                    }`}
+                  >
+                    {audioState.isMuted ? "Disabled" : "Active"}
+                  </button>
+                </div>
+              </div>
+
               {/* Section 1: Main Portals */}
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">

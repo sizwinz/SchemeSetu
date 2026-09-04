@@ -144,7 +144,7 @@ function CalculatorContent() {
   const annualSummary = generateAnnualSummary(monthlySchedule);
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-[1600px] mx-auto pb-8 sm:pb-16 px-4 sm:px-6 lg:px-8 2xl:px-12 pt-3 sm:pt-4">
+    <div className="space-y-4 sm:space-y-6 max-w-[1600px] mx-auto pb-8 sm:pb-16 px-4 sm:px-6 lg:px-8 2xl:px-12 pt-3 sm:pt-4 overflow-x-hidden max-w-full">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
         <div>

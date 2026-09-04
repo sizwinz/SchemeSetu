@@ -46,11 +46,14 @@ export function LanguageDropdown() {
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 min-h-[32px] rounded-full border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-amber-500/40 shrink-0"
+        className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 sm:py-1.5 min-h-[32px] rounded-full border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-amber-500/40 shrink-0"
         title="Change interface language / भाषा बदलें"
       >
         <Globe className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-        <span className="truncate max-w-[70px] xs:max-w-[95px] sm:max-w-[130px] notranslate" translate="no">
+        <span className="text-xs font-bold uppercase sm:hidden notranslate" translate="no">
+          {currentLanguageOption.code}
+        </span>
+        <span className="hidden sm:inline truncate max-w-[130px] notranslate" translate="no">
           {currentLanguageOption.nativeName}
           {currentLanguageOption.code !== "en" && (
             <span className="hidden md:inline text-[10px] text-slate-400 font-normal ml-1">
