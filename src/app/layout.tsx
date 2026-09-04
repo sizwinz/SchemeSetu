@@ -48,13 +48,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 pb-20 lg:pb-0 font-sans antialiased overflow-x-hidden w-full max-w-full"
+        className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 pb-20 lg:pb-0 font-sans antialiased w-full max-w-full"
         suppressHydrationWarning
       >
         <LanguageProvider>
           <GoogleTranslateScript />
           <Header />
-          <main className="flex-1 flex flex-col w-full max-w-full overflow-x-hidden">{children}</main>
+          <main className="flex-1 flex flex-col w-full max-w-full overflow-x-clip">{children}</main>
           <Footer />
           <BottomNav />
         </LanguageProvider>
