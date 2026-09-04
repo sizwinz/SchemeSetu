@@ -20,7 +20,7 @@ export default function AssistantPage() {
   }, []);
 
   return (
-    <div className="space-y-3 sm:space-y-4 max-w-4xl mx-auto pb-4 sm:pb-8 px-3 sm:px-6 pt-3 sm:pt-4">
+    <div className="space-y-3 sm:space-y-4 max-w-5xl xl:max-w-6xl mx-auto pb-4 sm:pb-8 px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
       <div className="flex items-center justify-between gap-2">
         <div>
           <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">

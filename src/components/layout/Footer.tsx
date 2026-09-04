@@ -10,37 +10,39 @@ export function Footer() {
 
   return (
     <>
-      <footer className="w-full border-t border-slate-200/80 bg-slate-50/50 py-8 px-4 text-center text-xs text-slate-500 space-y-3 mt-auto print:hidden">
-        <div className="flex items-center justify-center space-x-2">
-          <Image
-            src="/logo.png"
-            alt="SchemeSetu Logo"
-            width={24}
-            height={24}
-            className="h-6 w-6 object-contain"
-          />
-          <span className="font-extrabold text-sm text-slate-900 tracking-tight">
-            SchemeSetu
-          </span>
-        </div>
-        <p className="font-medium text-slate-600">
-          100% Sovereign &amp; Private. Verified with DigiLocker and NSFDC Guidelines.
-        </p>
-        <p className="text-[11px] text-slate-400">
-          &copy; 2026 Ministry of Social Justice &amp; Empowerment. 100% Sovereign &amp; Private.
-        </p>
-        <div className="flex items-center justify-center space-x-2 text-[11px] text-slate-500 pt-1">
-          <Link href="/privacy" className="hover:text-slate-800 transition-colors">
-            Privacy Policy
-          </Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:text-slate-800 transition-colors">
-            Terms of Service
-          </Link>
-          <span>&bull;</span>
-          <Link href="/helpdesk" className="hover:text-slate-800 transition-colors">
-            Helpdesk &amp; Grievances
-          </Link>
+      <footer className="w-full border-t border-slate-200/80 bg-slate-50/50 py-8 px-4 text-center text-xs text-slate-500 mt-auto print:hidden">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 space-y-3">
+          <div className="flex items-center justify-center space-x-2">
+            <Image
+              src="/logo.png"
+              alt="SchemeSetu Logo"
+              width={24}
+              height={24}
+              className="h-6 w-6 object-contain"
+            />
+            <span className="font-extrabold text-sm text-slate-900 tracking-tight">
+              SchemeSetu
+            </span>
+          </div>
+          <p className="font-medium text-slate-600">
+            100% Sovereign &amp; Private. Verified with DigiLocker and NSFDC Guidelines.
+          </p>
+          <p className="text-[11px] text-slate-400">
+            &copy; 2026 Ministry of Social Justice &amp; Empowerment. 100% Sovereign &amp; Private.
+          </p>
+          <div className="flex items-center justify-center space-x-2 text-[11px] text-slate-500 pt-1">
+            <Link href="/privacy" className="hover:text-slate-800 transition-colors">
+              Privacy Policy
+            </Link>
+            <span>&bull;</span>
+            <Link href="/terms" className="hover:text-slate-800 transition-colors">
+              Terms of Service
+            </Link>
+            <span>&bull;</span>
+            <Link href="/helpdesk" className="hover:text-slate-800 transition-colors">
+              Helpdesk &amp; Grievances
+            </Link>
+          </div>
         </div>
       </footer>
 
