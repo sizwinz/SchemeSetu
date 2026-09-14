@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Store, User, Truck, GraduationCap } from "lucide-react";
 import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ interface PopularSchemeItem {
   subtitle: string;
   maxAmount: string;
   interestRate: string;
+  image: string;
   icon: React.ComponentType<{ className?: string }>;
   iconBg: string;
   iconColor: string;
@@ -25,9 +27,10 @@ const POPULAR_SCHEMES: PopularSchemeItem[] = [
     id: "mcf",
     code: "MCF",
     title: "Micro Credit Finance",
-    subtitle: "Micro-Enterprises & Small Vendors",
+    subtitle: "Micro-Enterprises & Small Retail Vendors",
     maxAmount: "₹1.40L",
     interestRate: "6.5%",
+    image: "/images/scheme_mcf.jpg",
     icon: Store,
     iconBg: "bg-blue-500/10",
     iconColor: "text-blue-600",
@@ -38,9 +41,10 @@ const POPULAR_SCHEMES: PopularSchemeItem[] = [
     id: "msy",
     code: "MSY",
     title: "Mahila Samriddhi Yojana",
-    subtitle: "Affirmative Credit for Women",
+    subtitle: "Affirmative Credit for Women Artisans",
     maxAmount: "₹1.40L",
     interestRate: "4.0%",
+    image: "/images/scheme_msy.jpg",
     icon: User,
     iconBg: "bg-amber-500/10",
     iconColor: "text-amber-600",
@@ -51,9 +55,10 @@ const POPULAR_SCHEMES: PopularSchemeItem[] = [
     id: "tls",
     code: "TLS",
     title: "Term Loan Scheme",
-    subtitle: "Medium Business & Machinery",
+    subtitle: "Medium Business, Machinery & Solar",
     maxAmount: "₹50.00L",
     interestRate: "8.0%",
+    image: "/images/scheme_tls.jpg",
     icon: Truck,
     iconBg: "bg-emerald-500/10",
     iconColor: "text-emerald-600",
@@ -67,6 +72,7 @@ const POPULAR_SCHEMES: PopularSchemeItem[] = [
     subtitle: "Higher Technical & Professional Studies",
     maxAmount: "₹40.00L",
     interestRate: "6.5%",
+    image: "/images/scheme_els.jpg",
     icon: GraduationCap,
     iconBg: "bg-indigo-500/10",
     iconColor: "text-indigo-600",
@@ -77,43 +83,59 @@ const POPULAR_SCHEMES: PopularSchemeItem[] = [
 
 export function PopularSchemesGrid() {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {POPULAR_SCHEMES.map((scheme) => {
         const Icon = scheme.icon;
         return (
           <Link key={scheme.id} href={scheme.href} className="group block h-full">
             <SpotlightCard
               spotlightColor={scheme.spotlightColor}
-              className="h-full flex flex-col justify-between p-3.5 sm:p-5 border-slate-200/90 group-hover:border-slate-300 transition-all shadow-2xs rounded-xl"
+              className="h-full flex flex-col justify-between p-3 sm:p-4 border-slate-200/90 group-hover:border-slate-300 transition-all shadow-2xs rounded-2xl overflow-hidden bg-white/95"
             >
               <div>
-                <div className="flex items-start justify-between gap-1.5 mb-2.5 sm:mb-4">
-                  <div className={`p-2 sm:p-2.5 rounded-xl ${scheme.iconBg} ${scheme.iconColor}`}>
-                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                {/* Photo Header */}
+                <div className="relative w-full h-36 sm:h-40 rounded-xl overflow-hidden mb-3 bg-slate-100">
+                  <Image
+                    src={scheme.image}
+                    alt={scheme.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/20 to-transparent" />
+
+                  <div className="absolute top-2 left-2 flex items-center space-x-1.5">
+                    <span className="px-2 py-0.5 rounded-md bg-white/95 backdrop-blur-xs text-[10px] font-extrabold text-slate-900 shadow-2xs">
+                      {scheme.code}
+                    </span>
                   </div>
 
-                  <Badge variant="outline" className="text-[10px] font-bold px-1.5 py-0.5">
-                    {scheme.code}
-                  </Badge>
+                  <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-white">
+                    <span className="text-xs font-bold text-amber-300 drop-shadow-xs">
+                      {scheme.interestRate} p.a.
+                    </span>
+                    <span className="text-[10px] font-medium bg-black/40 px-1.5 py-0.5 rounded-md backdrop-blur-xs">
+                      Up to {scheme.maxAmount}
+                    </span>
+                  </div>
                 </div>
 
-                <h3 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-amber-700 transition-colors leading-snug mb-1 line-clamp-2">
-                  {scheme.code}: {scheme.title}
-                </h3>
-                <p className="hidden sm:block text-xs text-slate-500 line-clamp-1 mb-4">
-                  {scheme.subtitle}
-                </p>
+                <div className="space-y-1">
+                  <h3 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-amber-700 transition-colors leading-snug line-clamp-2">
+                    {scheme.title}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                    {scheme.subtitle}
+                  </p>
+                </div>
               </div>
 
-              <div className="pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                <div>
-                  <span className="text-[9px] sm:text-[10px] text-slate-400 block">Up to</span>
-                  <span className="font-bold text-slate-900 font-sans tabular-nums text-xs sm:text-sm">{scheme.maxAmount}</span>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-[9px] sm:text-[10px] text-slate-400 block">Interest</span>
-                  <span className="font-bold text-amber-700 font-sans tabular-nums text-xs sm:text-sm">{scheme.interestRate}</span>
+              <div className="pt-2.5 mt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span className="text-[11px] font-semibold text-amber-700 group-hover:underline flex items-center">
+                  Calculate EMI &rarr;
+                </span>
+                <div className={`p-1.5 rounded-lg ${scheme.iconBg} ${scheme.iconColor}`}>
+                  <Icon className="h-3.5 w-3.5" />
                 </div>
               </div>
             </SpotlightCard>

@@ -45,6 +45,21 @@ body {
   position: static !important;
 }
 
+/* Sovereign Background Texture & Dot-Grid Architecture */
+.sovereign-bg {
+  background-color: #F8FAFC;
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(217, 119, 6, 0.05) 0%, transparent 60%),
+    radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.03) 0%, transparent 50%),
+    radial-gradient(rgba(148, 163, 184, 0.16) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 24px 24px;
+}
+
+/* Sovereign Tricolor Accent Stripe */
+.sovereign-tricolor-stripe {
+  background: linear-gradient(90deg, #FF9933 0%, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%, #138808 100%);
+}
+
 /* Custom Leaflet Map Pin Styles */
 .custom-health-pin {
   background: transparent !important;

@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 
 export function ChannelFinanceExplainer() {
   return (
-    <section className="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-7 space-y-5 sm:space-y-6">
+    <section className="bg-white/95 backdrop-blur-xs rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-7 space-y-5 sm:space-y-6 relative overflow-hidden">
       {/* Title & Context */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-100">
         <div>

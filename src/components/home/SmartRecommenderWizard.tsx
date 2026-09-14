@@ -2,6 +2,7 @@
 
 import React, { useState, useId, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { UserProfile, SchemeRule } from "@/lib/schemes/types";
 import { evaluateEligibility, calculateFundingBreakdown } from "@/lib/schemes/engine";
 import {
@@ -11,6 +12,13 @@ import {
 } from "@/lib/schemes/store";
 import { useSpeechRecognition } from "@/lib/audio/speechRecognition";
 import { useLanguage } from "@/lib/i18n/languageContext";
+
+const SCHEME_THUMBNAILS: Record<string, string> = {
+  MSY: "/images/scheme_msy.jpg",
+  MCF: "/images/scheme_mcf.jpg",
+  TERM_LOAN: "/images/scheme_tls.jpg",
+  EDUCATION_LOAN: "/images/scheme_els.jpg",
+};
 import {
   Sparkles,
   Store,
@@ -418,9 +426,28 @@ export function SmartRecommenderWizard() {
 
           {primaryScheme && evalResult.isEligible ? (
             <div className="space-y-4">
+              {SCHEME_THUMBNAILS[primaryScheme.code] && (
+                <div className="relative w-full h-32 rounded-xl overflow-hidden border border-slate-200 shadow-2xs">
+                  <Image
+                    src={SCHEME_THUMBNAILS[primaryScheme.code]}
+                    alt={primaryScheme.name}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 30vw"
+                    className="object-cover object-center"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+                  <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-white">
+                    <span className="text-xs font-bold drop-shadow-xs">{primaryScheme.name}</span>
+                    <span className="text-[10px] font-semibold bg-emerald-600/90 px-2 py-0.5 rounded-full">
+                      {primaryScheme.interestRateMin}% p.a.
+                    </span>
+                  </div>
+                </div>
+              )}
+
               <div>
                 <span className="text-[10px] text-amber-800 uppercase font-bold tracking-wider">
-                  {primaryScheme.code} • {primaryScheme.category.replace("_", " ")}
+                  {primaryScheme.code} : {primaryScheme.category.replace("_", " ")}
                 </span>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-0.5 leading-snug">
                   {primaryScheme.name}

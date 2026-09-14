@@ -48,7 +48,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 pb-20 lg:pb-0 font-sans antialiased w-full max-w-full"
+        className="min-h-screen flex flex-col sovereign-bg text-slate-900 pb-20 lg:pb-0 font-sans antialiased w-full max-w-full"
         suppressHydrationWarning
       >
         <LanguageProvider>
