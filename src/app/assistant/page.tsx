@@ -149,10 +149,10 @@ export default function AssistantPage() {
                   </span>
                 </div>
                 <Link
-                  href="/dossier"
+                  href="/locator"
                   className="text-[11px] font-bold text-amber-700 hover:text-amber-800 flex items-center gap-0.5"
                 >
-                  <span>View Slip</span>
+                  <span>Find Partner</span>
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>

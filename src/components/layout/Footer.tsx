@@ -39,15 +39,15 @@ export function Footer() {
           </p>
           <div className="flex items-center justify-center space-x-2 text-[11px] text-slate-500 pt-1">
             <Link href="/privacy" className="hover:text-slate-800 transition-colors">
-              Privacy Policy
+              Privacy Policy (DPDP Act)
             </Link>
             <span>&bull;</span>
             <Link href="/terms" className="hover:text-slate-800 transition-colors">
-              Terms of Service
+              MoSJE Statutory Terms
             </Link>
             <span>&bull;</span>
-            <Link href="/helpdesk" className="hover:text-slate-800 transition-colors">
-              Helpdesk &amp; Grievances
+            <Link href="/locator" className="hover:text-slate-800 transition-colors">
+              Channel Partner Network
             </Link>
           </div>
         </div>

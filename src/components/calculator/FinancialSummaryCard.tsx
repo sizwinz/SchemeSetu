@@ -172,23 +172,13 @@ export function FinancialSummaryCard({ result }: FinancialSummaryCardProps) {
         </div>
       </div>
 
-      {/* Direct Action Buttons to Advance User in Pipeline */}
-      <div className="space-y-2 pt-2 border-t border-slate-100">
-        <Button asChild className="w-full min-h-[44px] rounded-xl py-2.5 text-xs font-semibold justify-between shadow-2xs">
+      {/* Direct Action Button to Advance User in Pipeline */}
+      <div className="pt-2 border-t border-slate-100">
+        <Button asChild className="w-full min-h-[44px] rounded-xl py-2.5 text-xs font-semibold justify-between shadow-xs bg-amber-700 hover:bg-amber-800 text-white">
           <Link href={`/locator?amount=${result.principal}`}>
             <div className="flex items-center space-x-2">
-              <MapPin className="h-4 w-4" />
-              <span>Find Nearest Solvent Channel Partner</span>
-            </div>
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </Button>
-
-        <Button variant="outline" asChild className="w-full min-h-[44px] rounded-xl py-2.5 text-xs font-semibold justify-between">
-          <Link href="/dossier">
-            <div className="flex items-center space-x-2">
-              <FileCheck className="h-4 w-4 text-slate-600" />
-              <span>Generate Application Packet &amp; QR Dossier</span>
+              <MapPin className="h-4 w-4 text-amber-200" />
+              <span>Proceed to Step 3: Find Nearest Solvent Partner</span>
             </div>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>

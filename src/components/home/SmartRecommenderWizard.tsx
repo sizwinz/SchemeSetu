@@ -521,22 +521,22 @@ export function SmartRecommenderWizard() {
               <div className="space-y-2 pt-1">
                 <Link
                   href={`/calculator?scheme=${primaryScheme.code}&amount=${funding?.totalCost || cost}&rate=${primaryScheme.interestRateMin}&tenure=${primaryScheme.repaymentTenureYears}`}
-                  className="w-full min-h-[44px] py-2.5 px-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold flex items-center justify-between transition-colors shadow-xs group"
+                  className="w-full min-h-[44px] py-2.5 px-3.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold flex items-center justify-between transition-colors shadow-xs group cursor-pointer"
                 >
                   <div className="flex items-center space-x-2">
                     <Calculator className="h-4 w-4 text-amber-100" />
-                    <span>Simulate Projected EMI &amp; Moratorium</span>
+                    <span>Proceed to Step 2: Calculate EMI &amp; 3-12 Mo Moratorium</span>
                   </div>
                   <ArrowRight className="h-3.5 w-3.5 text-amber-100 group-hover:text-white transition-transform group-hover:translate-x-0.5" />
                 </Link>
 
                 <Link
                   href={`/locator?category=${primaryScheme.code}&amount=${funding?.totalCost || cost}`}
-                  className="w-full min-h-[44px] py-2.5 px-3 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold flex items-center justify-between transition-colors group"
+                  className="w-full min-h-[44px] py-2.5 px-3 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold flex items-center justify-between transition-colors group cursor-pointer"
                 >
                   <div className="flex items-center space-x-2">
                     <MapPin className="h-4 w-4 text-amber-600" />
-                    <span>Find Solvent Channel Partner Branch</span>
+                    <span>Skip to Step 3: Find Nearest Solvent Channel Partner</span>
                   </div>
                   <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-700 transition-transform group-hover:translate-x-0.5" />
                 </Link>

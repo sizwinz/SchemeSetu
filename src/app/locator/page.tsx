@@ -13,7 +13,8 @@ import { getDesignatedPartner, setDesignatedPartner } from "@/lib/partners/store
 import { PartnerMap } from "@/components/locator/PartnerMap";
 import { PartnerFilter } from "@/components/locator/PartnerFilter";
 import { PartnerCard } from "@/components/locator/PartnerCard";
-import { MapPin, Building2, ShieldCheck, Map, List, CheckCircle2, ArrowRight } from "lucide-react";
+import { ReferralSlipModal } from "@/components/locator/ReferralSlipModal";
+import { MapPin, Building2, ShieldCheck, Map, List, CheckCircle2, ArrowRight, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -23,6 +24,7 @@ export default function LocatorPage() {
   const [userCoords, setUserCoords] = useState<GeoCoordinates>(DISTRICT_HUBS[0].coordinates);
   const [selectedPartnerId, setSelectedPartnerId] = useState<string | null>(null);
   const [designatedPartner, setDesignatedPartnerState] = useState<ChannelPartner | null>(null);
+  const [showReferralSlip, setShowReferralSlip] = useState<boolean>(false);
   const [activeMobileTab, setActiveMobileTab] = useState<"map" | "list">("map");
 
   const [filters, setFilters] = useState<PartnerFilterOptions>({
@@ -86,11 +88,14 @@ export default function LocatorPage() {
             </div>
           </div>
 
-          <Button variant="sovereign" size="sm" asChild className="rounded-xl shrink-0 self-start sm:self-auto">
-            <Link href="/dossier">
-              <span>Proceed to Application Dossier</span>
-              <ArrowRight className="h-3.5 w-3.5 ml-1" />
-            </Link>
+          <Button
+            variant="sovereign"
+            size="sm"
+            onClick={() => setShowReferralSlip(true)}
+            className="rounded-xl shrink-0 self-start sm:self-auto font-semibold gap-1.5 shadow-xs cursor-pointer"
+          >
+            <FileText className="h-3.5 w-3.5" />
+            <span>View &amp; Print Referral Slip</span>
           </Button>
         </div>
       )}
@@ -181,6 +186,14 @@ export default function LocatorPage() {
           )}
         </div>
       </div>
+
+      {designatedPartner && (
+        <ReferralSlipModal
+          partner={designatedPartner}
+          isOpen={showReferralSlip}
+          onClose={() => setShowReferralSlip(false)}
+        />
+      )}
     </div>
   );
 }

@@ -211,8 +211,8 @@ export function Header() {
             </Link>
           </div>
 
-          {/* Center: Desktop Navigation (shown on xl: and wider) */}
-          <nav className="hidden xl:flex items-center space-x-1 text-xs font-semibold text-slate-600">
+          {/* Center: Desktop Navigation (focused on SIH26092 3-step deliverables) */}
+          <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold text-slate-600">
             <Link
               href="/"
               className={`px-3 py-1.5 rounded-lg transition-colors ${
@@ -221,7 +221,7 @@ export function Header() {
                   : "hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Scheme Recommender
+              1. Scheme Recommender
             </Link>
 
             <Link
@@ -232,7 +232,7 @@ export function Header() {
                   : "hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              EMI Calculator
+              2. EMI &amp; Moratorium
             </Link>
 
             <Link
@@ -243,18 +243,7 @@ export function Header() {
                   : "hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Partner Locator
-            </Link>
-
-            <Link
-              href="/dossier"
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                pathname === "/dossier"
-                  ? "bg-slate-100 text-slate-900 font-bold"
-                  : "hover:text-slate-900 hover:bg-slate-50"
-              }`}
-            >
-              Application Dossier
+              3. Partner Locator &amp; Router
             </Link>
 
             <Link
@@ -265,18 +254,7 @@ export function Header() {
                   : "hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              AI Assistant
-            </Link>
-
-            <Link
-              href="/admin"
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                pathname === "/admin"
-                  ? "bg-slate-100 text-slate-900 font-bold"
-                  : "hover:text-slate-900 hover:bg-slate-50"
-              }`}
-            >
-              MoSJE Admin
+              AI Voice Assistant
             </Link>
           </nav>
 
@@ -740,12 +718,10 @@ export function Header() {
                 </span>
                 <nav className="space-y-1">
                   {[
-                    { href: "/", label: "Scheme Recommender", icon: BookOpen, desc: "AI-guided affirmative matching" },
-                    { href: "/calculator", label: "EMI Calculator", icon: Calculator, desc: "Moratorium & repayment schedule" },
-                    { href: "/locator", label: "Partner Locator", icon: MapPin, desc: "Solvent SCAs & bank branches" },
-                    { href: "/dossier", label: "Application Dossier", icon: FileText, desc: "Verifiable QR application slip" },
-                    { href: "/assistant", label: "AI Assistant", icon: MessageSquareText, desc: "Vernacular voice & chat agent" },
-                    { href: "/admin", label: "MoSJE Admin", icon: Landmark, desc: "Institutional queue & governance" },
+                    { href: "/", label: "1. Scheme Recommender", icon: BookOpen, desc: "AI-guided affirmative scheme matching" },
+                    { href: "/calculator", label: "2. EMI & Moratorium Calculator", icon: Calculator, desc: "3 to 12 mo grace period & repayment" },
+                    { href: "/locator", label: "3. Partner Locator & Router", icon: MapPin, desc: "Solvent SCAs & bank branches (<10% NPA)" },
+                    { href: "/assistant", label: "AI Voice Assistant", icon: MessageSquareText, desc: "Vernacular speech & guidance" },
                   ].map((item) => {
                     const IconComponent = item.icon;
                     const isActive = pathname === item.href;

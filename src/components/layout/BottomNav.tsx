@@ -12,11 +12,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Schemes", href: "/", icon: BookOpen },
-  { label: "AI Chat", href: "/assistant", icon: MessageSquareText },
+  { label: "Recommender", href: "/", icon: BookOpen },
   { label: "Calculator", href: "/calculator", icon: Calculator },
   { label: "Locator", href: "/locator", icon: MapPin },
-  { label: "Dossier", href: "/dossier", icon: FileText },
+  { label: "AI Voice", href: "/assistant", icon: MessageSquareText },
 ];
 
 export function BottomNav() {
@@ -24,7 +23,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 lg:hidden print:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
-      <div className="grid grid-cols-5 h-[4.25rem] pb-safe-bottom">
+      <div className="grid grid-cols-4 h-[4.25rem] pb-safe-bottom">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
