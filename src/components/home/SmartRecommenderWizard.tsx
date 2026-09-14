@@ -496,19 +496,25 @@ export function SmartRecommenderWizard() {
                   </span>
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-500">NSFDC (Government Share - Up to 90%):</span>
+                      <span className="text-slate-500">
+                        NSFDC (Government Share - Up to {primaryScheme.fundingBreakdown.nsfdcSharePercent}%):
+                      </span>
                       <span className="font-bold text-slate-900 tabular-nums font-sans">
                         {formatCurrency(funding.nsfdcAmount)}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Channel Partner Bank Share (5%):</span>
+                      <span className="text-slate-500">
+                        Channel Partner Bank Share ({primaryScheme.fundingBreakdown.channelPartnerSharePercent}%):
+                      </span>
                       <span className="font-medium text-slate-700 tabular-nums font-sans">
                         {formatCurrency(funding.channelPartnerAmount)}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Promoter / Applicant Share (5%):</span>
+                      <span className="text-slate-500">
+                        Promoter / Applicant Share ({primaryScheme.fundingBreakdown.promoterContributionPercent}%):
+                      </span>
                       <span className="font-medium text-slate-700 tabular-nums font-sans">
                         {formatCurrency(funding.promoterAmount)}
                       </span>
@@ -531,7 +537,7 @@ export function SmartRecommenderWizard() {
                 </Link>
 
                 <Link
-                  href={`/locator?category=${primaryScheme.code}&amount=${funding?.totalCost || cost}`}
+                  href={`/locator?scheme=${primaryScheme.code}&category=${primaryScheme.code}&amount=${funding?.totalCost || cost}`}
                   className="w-full min-h-[44px] py-2.5 px-3 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold flex items-center justify-between transition-colors group cursor-pointer"
                 >
                   <div className="flex items-center space-x-2">

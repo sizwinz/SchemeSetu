@@ -87,7 +87,7 @@ export function evaluateEligibility(
     }
 
     if (scheme.targetGroup === "SC_WOMEN") {
-      if (profile.gender && profile.gender !== "FEMALE") {
+      if (profile.gender !== "FEMALE" && profile.targetGroup !== "SC_WOMEN") {
         qualifies = false;
       }
     }

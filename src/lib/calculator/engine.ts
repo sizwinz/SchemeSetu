@@ -130,18 +130,39 @@ export function generateAmortizationSchedule(
   let currentBalance = result.principal;
   const monthlyRate = result.annualInterestRate / 100 / 12;
 
+  // Active repayment months after moratorium grace period
+  const clampedMoratorium = Math.min(
+    result.moratoriumMonths,
+    Math.max(0, result.tenureMonths - 1)
+  );
+  const remainingTenureMonths = Math.max(
+    1,
+    result.tenureMonths - clampedMoratorium
+  );
+  const activeEMI = calculateStandardEMI(
+    result.principal,
+    result.annualInterestRate,
+    remainingTenureMonths
+  );
+
   for (let month = 1; month <= result.tenureMonths; month++) {
     const openingBalance = currentBalance;
     const isFinalMonth = month === result.tenureMonths;
+    const interestPaid = Math.round(openingBalance * monthlyRate);
 
-    let interestPaid = Math.round(openingBalance * monthlyRate);
-    let principalPaid = result.standardEMI - interestPaid;
-
-    if (isFinalMonth || principalPaid > openingBalance) {
-      principalPaid = openingBalance;
+    let principalPaid = 0;
+    if (month <= clampedMoratorium) {
+      // During moratorium grace period, principal repayment is paused
+      principalPaid = 0;
+    } else {
+      // Amortize principal over remaining tenure
+      principalPaid = activeEMI - interestPaid;
+      if (isFinalMonth || principalPaid > openingBalance) {
+        principalPaid = openingBalance;
+      }
     }
 
-    const moratoriumPaid = result.monthlyMoratoriumSurcharge;
+    const moratoriumPaid = 0;
     const totalPayment = principalPaid + interestPaid + moratoriumPaid;
     const closingBalance = Math.max(0, openingBalance - principalPaid);
 

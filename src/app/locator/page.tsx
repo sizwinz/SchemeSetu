@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { DISTRICT_HUBS, PRESEEDED_PARTNERS } from "@/lib/partners/data";
+import { MOSJE_SCHEMES } from "@/lib/schemes/data";
 import {
   ChannelPartner,
   DistrictHub,
@@ -14,12 +16,28 @@ import { PartnerMap } from "@/components/locator/PartnerMap";
 import { PartnerFilter } from "@/components/locator/PartnerFilter";
 import { PartnerCard } from "@/components/locator/PartnerCard";
 import { ReferralSlipModal } from "@/components/locator/ReferralSlipModal";
-import { MapPin, Building2, ShieldCheck, Map, List, CheckCircle2, ArrowRight, FileText } from "lucide-react";
+import { MapPin, Building2, ShieldCheck, Map, List, CheckCircle2, ArrowRight, FileText, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export default function LocatorPage() {
+function normalizeSchemeCode(code: string): string | undefined {
+  const upper = code.trim().toUpperCase();
+  if (upper === "TLS" || upper === "TERM_LOAN") return "TERM_LOAN";
+  if (["MSY", "MCF", "ELS"].includes(upper)) return upper;
+  return upper || undefined;
+}
+
+function LocatorContent() {
+  const searchParams = useSearchParams();
+  const rawScheme = searchParams.get("scheme") || searchParams.get("category") || "";
+  const rawAmount = searchParams.get("amount") || searchParams.get("cost");
+  const rawMoratorium = searchParams.get("moratorium");
+
+  const incomingScheme = rawScheme ? normalizeSchemeCode(rawScheme) : undefined;
+  const incomingAmount = rawAmount && !isNaN(Number(rawAmount)) ? Number(rawAmount) : undefined;
+  const incomingMoratorium = rawMoratorium && !isNaN(Number(rawMoratorium)) ? Number(rawMoratorium) : undefined;
+
   const [selectedDistrict, setSelectedDistrict] = useState<DistrictHub>(DISTRICT_HUBS[0]);
   const [userCoords, setUserCoords] = useState<GeoCoordinates>(DISTRICT_HUBS[0].coordinates);
   const [selectedPartnerId, setSelectedPartnerId] = useState<string | null>(null);
@@ -27,9 +45,31 @@ export default function LocatorPage() {
   const [showReferralSlip, setShowReferralSlip] = useState<boolean>(false);
   const [activeMobileTab, setActiveMobileTab] = useState<"map" | "list">("map");
 
-  const [filters, setFilters] = useState<PartnerFilterOptions>({
+  const [filters, setFilters] = useState<PartnerFilterOptions>(() => ({
     includeHighRisk: false,
-  });
+    schemeCode: incomingScheme,
+  }));
+
+  useEffect(() => {
+    if (incomingScheme) {
+      setFilters((prev) => ({
+        ...prev,
+        schemeCode: incomingScheme,
+      }));
+    }
+  }, [incomingScheme]);
+
+  const matchedScheme = MOSJE_SCHEMES.find(
+    (s) => s.code === filters.schemeCode || (filters.schemeCode === "TERM_LOAN" && s.code === "TERM_LOAN")
+  );
+
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(val);
+  };
 
   useEffect(() => {
     const saved = getDesignatedPartner();
@@ -97,6 +137,43 @@ export default function LocatorPage() {
             <FileText className="h-3.5 w-3.5" />
             <span>View &amp; Print Referral Slip</span>
           </Button>
+        </div>
+      )}
+
+      {/* Active Scheme Context Indicator (Pipeline Step 3 State Handoff) */}
+      {matchedScheme && (
+        <div className="bg-amber-50/70 border border-amber-200/90 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs animate-in fade-in">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-amber-100 text-amber-800 rounded-xl shrink-0">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-900 text-sm">
+                  Active Scheme Context: {matchedScheme.name} ({matchedScheme.code})
+                </span>
+                <Badge variant="outline" className="text-[10px] bg-amber-100/60 text-amber-900 border-amber-300 font-semibold">
+                  Pre-Screened Routing
+                </Badge>
+              </div>
+              <span className="text-slate-600 text-[11px] block mt-0.5">
+                Filtering solvent branches authorized for {matchedScheme.code} with NPA &lt; 10%
+                {incomingAmount ? ` &bull; Project Cost: ${formatCurrency(incomingAmount)}` : ""}
+                {incomingMoratorium ? ` &bull; Gestation Grace: ${incomingMoratorium} Months` : ""}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setFilters((prev) => ({ ...prev, schemeCode: undefined }))}
+              className="text-xs h-8 px-2.5 rounded-xl border-amber-300 text-amber-900 hover:bg-amber-100 cursor-pointer"
+            >
+              Reset Scheme Filter
+            </Button>
+          </div>
         </div>
       )}
 
@@ -192,8 +269,24 @@ export default function LocatorPage() {
           partner={designatedPartner}
           isOpen={showReferralSlip}
           onClose={() => setShowReferralSlip(false)}
+          activeSchemeCode={filters.schemeCode || incomingScheme}
+          targetAmount={incomingAmount}
         />
       )}
     </div>
+  );
+}
+
+export default function LocatorPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-[1600px] mx-auto px-4 py-12 text-center text-xs text-slate-500">
+          Loading Channel Partner Directory...
+        </div>
+      }
+    >
+      <LocatorContent />
+    </Suspense>
   );
 }

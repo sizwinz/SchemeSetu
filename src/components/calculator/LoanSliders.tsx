@@ -56,7 +56,18 @@ export function LoanSliders({ params, onChange }: LoanSlidersProps) {
     }).format(val);
   };
 
+  const maxMoratorium = Math.min(12, params.tenureYears * 12 - 1);
+
   const handleSliderChange = (key: keyof LoanParameters, value: number) => {
+    if (key === "tenureYears") {
+      const newMaxMoratorium = Math.min(12, value * 12 - 1);
+      onChange({
+        ...params,
+        tenureYears: value,
+        moratoriumMonths: Math.min(params.moratoriumMonths, newMaxMoratorium),
+      });
+      return;
+    }
     onChange({
       ...params,
       [key]: value,
@@ -226,25 +237,29 @@ export function LoanSliders({ params, onChange }: LoanSlidersProps) {
           <Slider
             id={moratoriumSliderId}
             min={0}
-            max={12}
+            max={maxMoratorium}
             step={3}
-            value={[params.moratoriumMonths]}
-            onValueChange={([val]) => handleSliderChange("moratoriumMonths", val)}
+            value={[Math.min(params.moratoriumMonths, maxMoratorium)]}
+            onValueChange={([val]) => handleSliderChange("moratoriumMonths", Math.min(val, maxMoratorium))}
           />
 
           {/* Quick Moratorium Chips */}
           <div className="flex flex-wrap gap-1.5 pt-0.5">
             {MORATORIUM_PRESETS.map((m) => {
               const isSelected = params.moratoriumMonths === m.value;
+              const isExceeded = m.value > maxMoratorium;
               return (
                 <button
                   key={m.label}
                   type="button"
-                  onClick={() => handleSliderChange("moratoriumMonths", m.value)}
-                  className={`text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
-                    isSelected
-                      ? "border-amber-500 bg-amber-50 text-amber-900 font-bold"
-                      : "border-slate-200 bg-slate-50/60 text-slate-600 hover:bg-slate-100"
+                  disabled={isExceeded}
+                  onClick={() => !isExceeded && handleSliderChange("moratoriumMonths", m.value)}
+                  className={`text-[11px] px-2.5 py-1 rounded-lg border transition-all font-medium ${
+                    isExceeded
+                      ? "border-slate-100 bg-slate-50 text-slate-300 cursor-not-allowed opacity-50"
+                      : isSelected
+                      ? "border-amber-500 bg-amber-50 text-amber-900 font-bold cursor-pointer"
+                      : "border-slate-200 bg-slate-50/60 text-slate-600 hover:bg-slate-100 cursor-pointer"
                   }`}
                 >
                   {m.label}

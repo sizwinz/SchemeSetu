@@ -120,6 +120,67 @@ describe("Financial Calculation & Moratorium Engine", () => {
       expect(annualSummary[annualSummary.length - 1].closingBalance).toBe(0);
     });
 
+    it("should pause principal repayment during gestation moratorium months and service simple interest only", () => {
+      const moratoriumMonths = 6;
+      const principal = 140000;
+      const annualInterestRate = 6.5;
+      const monthlyRate = annualInterestRate / 100 / 12;
+
+      const schedule = generateAmortizationSchedule({
+        principal,
+        annualInterestRate,
+        tenureYears: 5,
+        moratoriumMonths,
+      });
+
+      // Months 1 to moratoriumMonths: principal repayment MUST be paused
+      for (let m = 1; m <= moratoriumMonths; m++) {
+        const row = schedule[m - 1];
+        expect(row.month).toBe(m);
+        expect(row.principalPaid).toBe(0);
+        expect(row.interestPaid).toBe(Math.round(row.openingBalance * monthlyRate));
+        expect(row.totalPayment).toBe(row.interestPaid);
+        expect(row.closingBalance).toBe(principal);
+      }
+
+      // Month moratoriumMonths + 1 onwards: principal amortization begins
+      const postMoratoriumRow = schedule[moratoriumMonths];
+      expect(postMoratoriumRow.principalPaid).toBeGreaterThan(0);
+      expect(postMoratoriumRow.closingBalance).toBeLessThan(principal);
+
+      // Total principal repaid across the full schedule must equal original principal
+      const totalPrincipalPaid = schedule.reduce((sum, row) => sum + row.principalPaid, 0);
+      expect(totalPrincipalPaid).toBe(principal);
+      expect(schedule[schedule.length - 1].closingBalance).toBe(0);
+    });
+
+    it("should pause principal repayment for Mahila Samriddhi Yojana (4% rate, 3-year tenure, 6-month moratorium)", () => {
+      const schedule = generateAmortizationSchedule({
+        principal: 140000,
+        annualInterestRate: 4.0,
+        tenureYears: 3,
+        moratoriumMonths: 6,
+      });
+
+      expect(schedule.length).toBe(36);
+
+      // First 6 months: grace period with zero principal paid
+      for (let m = 1; m <= 6; m++) {
+        expect(schedule[m - 1].principalPaid).toBe(0);
+        expect(schedule[m - 1].interestPaid).toBeGreaterThan(0);
+        expect(schedule[m - 1].closingBalance).toBe(140000);
+      }
+
+      // Remaining 30 months: amortize principal evenly to zero
+      for (let m = 7; m <= 36; m++) {
+        expect(schedule[m - 1].principalPaid).toBeGreaterThan(0);
+      }
+
+      const totalPrincipalPaid = schedule.reduce((sum, row) => sum + row.principalPaid, 0);
+      expect(totalPrincipalPaid).toBe(140000);
+      expect(schedule[schedule.length - 1].closingBalance).toBe(0);
+    });
+
     it("should export schedule cleanly as CSV text with headers", () => {
       const schedule = generateAmortizationSchedule({
         principal: 140000,

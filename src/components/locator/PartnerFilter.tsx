@@ -251,6 +251,43 @@ export function PartnerFilter({
           );
         })}
       </div>
+
+      {/* Statutory Scheme Support Filters */}
+      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 pb-1 touch-pan-x border-t border-slate-100">
+        <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0 mr-1">
+          Scheme:
+        </span>
+        {[
+          { label: "All Schemes", value: "ALL" },
+          { label: "MSY (Women - 4%)", value: "MSY" },
+          { label: "MCF (Micro - 5-6.5%)", value: "MCF" },
+          { label: "Term Loan (TLS - 8%)", value: "TERM_LOAN" },
+          { label: "ELS (Education - 4-4.5%)", value: "ELS" },
+        ].map((item) => {
+          const isActive =
+            (!filters.schemeCode && item.value === "ALL") ||
+            filters.schemeCode === item.value;
+          return (
+            <button
+              key={item.value}
+              type="button"
+              onClick={() =>
+                onFilterChange({
+                  ...filters,
+                  schemeCode: item.value === "ALL" ? undefined : item.value,
+                })
+              }
+              className={`text-xs px-3 py-1.5 min-h-[32px] rounded-full font-medium transition-all shrink-0 cursor-pointer ${
+                isActive
+                  ? "bg-amber-800 text-amber-100 shadow-xs"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

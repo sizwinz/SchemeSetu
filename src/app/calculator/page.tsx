@@ -69,12 +69,12 @@ const SCHEMES: SchemeConfig[] = [
     key: "ELS",
     name: "Education Loan",
     code: "ELS",
-    rate: 6.5,
+    rate: 4.0,
     tenure: 5,
     moratorium: 12,
-    maxPrincipal: 4000000,
+    maxPrincipal: 3000000,
     defaultPrincipal: 800000,
-    description: "6.5% Concessional rate with extended 12-month gestation moratorium for professional higher studies.",
+    description: "4.0% - 4.5% Concessional rate with extended 12-month gestation moratorium for professional higher studies.",
   },
 ];
 
@@ -249,7 +249,7 @@ function CalculatorContent() {
 
         {/* Right Column: Financial Summary Card (Sticky alongside sliders on desktop) */}
         <div className="lg:col-span-5 lg:sticky lg:top-20">
-          <FinancialSummaryCard result={result} />
+          <FinancialSummaryCard result={result} schemeCode={currentConfig.code} />
         </div>
       </div>
 

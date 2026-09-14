@@ -6,6 +6,7 @@ import { ChannelPartner } from "@/lib/partners/types";
 import { getStoredApplicantProfile } from "@/lib/user/profileStore";
 import { getStoredWizardState } from "@/lib/schemes/store";
 import { getStoredCalculatorState } from "@/lib/calculator/store";
+import { MOSJE_SCHEMES } from "@/lib/schemes/data";
 import {
   Printer,
   X,
@@ -25,12 +26,16 @@ interface ReferralSlipModalProps {
   partner: ChannelPartner;
   isOpen: boolean;
   onClose: () => void;
+  activeSchemeCode?: string;
+  targetAmount?: number;
 }
 
 export function ReferralSlipModal({
   partner,
   isOpen,
   onClose,
+  activeSchemeCode,
+  targetAmount,
 }: ReferralSlipModalProps) {
   if (!isOpen) return null;
 
@@ -54,9 +59,27 @@ export function ReferralSlipModal({
     100000 + Math.random() * 900000
   )}`;
 
-  const totalCost = wizard.cost || calculator.params.principal || 140000;
-  const nsfdcShare = Math.round(totalCost * 0.9);
-  const promoterShare = totalCost - nsfdcShare;
+  const rawCode = activeSchemeCode || calculator.activeTab || "MSY";
+  const normalizedCode = rawCode === "TLS" ? "TERM_LOAN" : rawCode;
+  const matchedScheme =
+    MOSJE_SCHEMES.find(
+      (s) => s.code === normalizedCode || s.code === rawCode || s.id.toLowerCase().includes(rawCode.toLowerCase())
+    ) || MOSJE_SCHEMES[0];
+
+  const totalCost =
+    targetAmount ||
+    wizard.cost ||
+    calculator.params.principal ||
+    matchedScheme.maxProjectCost ||
+    140000;
+
+  const nsfdcShare = Math.round(
+    totalCost * (matchedScheme.fundingBreakdown.nsfdcSharePercent / 100)
+  );
+  const partnerShare = Math.round(
+    totalCost * (matchedScheme.fundingBreakdown.channelPartnerSharePercent / 100)
+  );
+  const promoterShare = Math.max(0, totalCost - nsfdcShare - partnerShare);
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
@@ -182,22 +205,52 @@ export function ReferralSlipModal({
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
                 3. Concessional Credit Terms
               </span>
-              <div className="space-y-1 text-xs">
+              <div className="space-y-1.5 text-xs">
+                <div className="flex justify-between pb-1 border-b border-slate-100">
+                  <span className="text-slate-500">Matched Scheme Name:</span>
+                  <span className="font-bold text-slate-900 text-right">{matchedScheme.name}</span>
+                </div>
+                <div className="flex justify-between pb-1 border-b border-slate-100">
+                  <span className="text-slate-500">Scheme Statutory Code:</span>
+                  <span className="font-mono font-bold text-amber-800">{matchedScheme.code}</span>
+                </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Estimated Project Cost:</span>
                   <span className="font-bold text-slate-900">{formatCurrency(totalCost)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">NSFDC Refinancing (90%):</span>
+                  <span className="text-slate-500">
+                    NSFDC Refinancing ({matchedScheme.fundingBreakdown.nsfdcSharePercent}%):
+                  </span>
                   <span className="font-bold text-emerald-700">{formatCurrency(nsfdcShare)}</span>
+                </div>
+                {partnerShare > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">
+                      Channel Partner Share ({matchedScheme.fundingBreakdown.channelPartnerSharePercent}%):
+                    </span>
+                    <span className="font-medium text-slate-700">{formatCurrency(partnerShare)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-slate-500">
+                    Promoter Contribution ({matchedScheme.fundingBreakdown.promoterContributionPercent}%):
+                  </span>
+                  <span className="font-medium text-slate-700">{formatCurrency(promoterShare)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Concessional Rate:</span>
-                  <span className="font-bold text-slate-900">{calculator.params.annualInterestRate}% p.a.</span>
+                  <span className="font-bold text-slate-900">
+                    {matchedScheme.interestRateMin === matchedScheme.interestRateMax
+                      ? `${matchedScheme.interestRateMin}% p.a.`
+                      : `${matchedScheme.interestRateMin}% - ${matchedScheme.interestRateMax}% p.a.`}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Moratorium Grace Period:</span>
-                  <span className="font-bold text-amber-700">{calculator.params.moratoriumMonths} Months Grace</span>
+                  <span className="font-bold text-amber-700">
+                    {calculator.params.moratoriumMonths || matchedScheme.moratoriumMonths} Months Grace
+                  </span>
                 </div>
               </div>
             </div>

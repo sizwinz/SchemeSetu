@@ -1,6 +1,8 @@
 # Planning and agent artifacts (per user guidelines)
 .planning/
 .agent/
+.agents/
+*.tsbuildinfo
 
 # Dependencies
 node_modules/

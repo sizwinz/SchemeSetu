@@ -19,9 +19,10 @@ import { Button } from "@/components/ui/button";
 
 interface FinancialSummaryCardProps {
   result: CalculationResult;
+  schemeCode?: string;
 }
 
-export function FinancialSummaryCard({ result }: FinancialSummaryCardProps) {
+export function FinancialSummaryCard({ result, schemeCode }: FinancialSummaryCardProps) {
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -175,7 +176,7 @@ export function FinancialSummaryCard({ result }: FinancialSummaryCardProps) {
       {/* Direct Action Button to Advance User in Pipeline */}
       <div className="pt-2 border-t border-slate-100">
         <Button asChild className="w-full min-h-[44px] rounded-xl py-2.5 text-xs font-semibold justify-between shadow-xs bg-amber-700 hover:bg-amber-800 text-white">
-          <Link href={`/locator?amount=${result.principal}`}>
+          <Link href={`/locator?scheme=${schemeCode || "TLS"}&amount=${result.principal}&moratorium=${result.moratoriumMonths}`}>
             <div className="flex items-center space-x-2">
               <MapPin className="h-4 w-4 text-amber-200" />
               <span>Proceed to Step 3: Find Nearest Solvent Partner</span>

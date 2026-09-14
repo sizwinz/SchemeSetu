@@ -12,7 +12,7 @@ export const MOSJE_SCHEMES: SchemeRule[] = [
     interestRateMin: 4.0,
     interestRateMax: 4.0,
     repaymentTenureYears: 3,
-    moratoriumMonths: 3,
+    moratoriumMonths: 6,
     fundingBreakdown: {
       nsfdcSharePercent: 90,
       channelPartnerSharePercent: 10,

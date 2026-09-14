@@ -428,7 +428,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="xl:hidden w-8 h-8 rounded-full border border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0"
+              className="xl:hidden min-w-[44px] min-h-[44px] w-9 h-9 rounded-full border border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0"
               title="Open Navigation Menu"
               aria-label="Open Navigation Menu"
             >
@@ -643,7 +643,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+                className="min-w-[44px] min-h-[44px] p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer"
                 title="Close Navigation Menu"
                 aria-label="Close Navigation Menu"
               >
@@ -795,6 +795,48 @@ export function Header() {
                       <div>
                         <span className="block text-xs">Helpdesk &amp; Grievances</span>
                         <span className="block text-[10px] text-slate-400 font-normal">Toll-free 1800-11-2001 support</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-400" />
+                  </Link>
+
+                  <Link
+                    href="/dossier"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                      pathname === "/dossier"
+                        ? "bg-amber-50 text-amber-950 border border-amber-200/80 font-bold"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <span className="block text-xs">Application Dossier</span>
+                        <span className="block text-[10px] text-slate-400 font-normal">Verifiable QR application slip</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-400" />
+                  </Link>
+
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                      pathname === "/admin"
+                        ? "bg-amber-50 text-amber-950 border border-amber-200/80 font-bold"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
+                        <Landmark className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <span className="block text-xs">MoSJE Officer Console</span>
+                        <span className="block text-[10px] text-slate-400 font-normal">Institutional counter portal</span>
                       </div>
                     </div>
                     <ChevronRight className="h-4 w-4 text-slate-400" />

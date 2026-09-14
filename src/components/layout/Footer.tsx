@@ -37,7 +37,7 @@ export function Footer() {
           <p className="text-[11px] text-slate-400">
             &copy; 2026 Ministry of Social Justice &amp; Empowerment. 100% Sovereign &amp; Private.
           </p>
-          <div className="flex items-center justify-center space-x-2 text-[11px] text-slate-500 pt-1">
+          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] text-slate-500 pt-1">
             <Link href="/privacy" className="hover:text-slate-800 transition-colors">
               Privacy Policy (DPDP Act)
             </Link>
@@ -48,6 +48,14 @@ export function Footer() {
             <span>&bull;</span>
             <Link href="/locator" className="hover:text-slate-800 transition-colors">
               Channel Partner Network
+            </Link>
+            <span>&bull;</span>
+            <Link href="/dossier" className="hover:text-slate-800 transition-colors">
+              Application Dossier
+            </Link>
+            <span>&bull;</span>
+            <Link href="/admin" className="hover:text-slate-800 transition-colors">
+              Officer Console
             </Link>
           </div>
         </div>
