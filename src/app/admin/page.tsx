@@ -1,20 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PRESEEDED_LEADS } from "@/lib/admin/data";
 import { PRESEEDED_PARTNERS } from "@/lib/partners/data";
 import { BeneficiaryLead, LeadStatus } from "@/lib/admin/types";
 import { progressLeadStatus } from "@/lib/admin/engine";
+import {
+  getStoredAdminLeads,
+  saveStoredAdminLeads,
+  getStoredBranchQuota,
+  saveStoredBranchQuota,
+  resetStoredAdminData,
+} from "@/lib/admin/store";
 import { QrVerificationDesk } from "@/components/admin/QrVerificationDesk";
 import { BranchLeadQueue } from "@/components/admin/BranchLeadQueue";
 import { MinistryGovernance } from "@/components/admin/MinistryGovernance";
-import { Building2, Landmark, ShieldCheck, IndianRupee, Layers } from "lucide-react";
+import { Building2, Landmark, ShieldCheck, IndianRupee, Layers, RotateCcw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"branch" | "ministry">("branch");
   const [leads, setLeads] = useState<BeneficiaryLead[]>(PRESEEDED_LEADS);
   const [branchQuotaLakhs, setBranchQuotaLakhs] = useState<number>(85.0);
+
+  useEffect(() => {
+    setLeads(getStoredAdminLeads());
+    setBranchQuotaLakhs(getStoredBranchQuota());
+  }, []);
 
   const handleUpdateLeadStatus = (leadId: string, newStatus: LeadStatus) => {
     const targetLead = leads.find((l) => l.id === leadId);
@@ -26,8 +39,17 @@ export default function AdminPage() {
       branchQuotaLakhs
     );
 
-    setLeads((prev) => prev.map((l) => (l.id === leadId ? updatedLead : l)));
+    const updatedLeads = leads.map((l) => (l.id === leadId ? updatedLead : l));
+    setLeads(updatedLeads);
     setBranchQuotaLakhs(updatedQuotaLakhs);
+    saveStoredAdminLeads(updatedLeads);
+    saveStoredBranchQuota(updatedQuotaLakhs);
+  };
+
+  const handleResetAdminDemo = () => {
+    resetStoredAdminData();
+    setLeads(PRESEEDED_LEADS);
+    setBranchQuotaLakhs(85.0);
   };
 
   const sanctionedTotalCr =
@@ -36,7 +58,7 @@ export default function AdminPage() {
       .reduce((sum, l) => sum + l.concessionalAmount, 0) / 10000000;
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-[1600px] mx-auto pb-8 sm:pb-16 px-4 sm:px-6 lg:px-8 2xl:px-12 pt-3 sm:pt-4 overflow-x-hidden max-w-full">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 py-5 sm:py-8 space-y-6 sm:space-y-8 overflow-x-hidden max-w-full">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -54,6 +76,17 @@ export default function AdminPage() {
         </div>
 
         <div className="flex items-center space-x-2 shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleResetAdminDemo}
+            className="text-xs rounded-xl min-h-[36px] border-slate-200 hover:bg-slate-50 cursor-pointer"
+            title="Reset verified leads and quotas to statutory factory defaults"
+          >
+            <RotateCcw className="h-3.5 w-3.5 mr-1 text-slate-500" />
+            <span>Reset Demo Data</span>
+          </Button>
+
           <Badge variant="sovereign" className="text-xs py-1 px-3">
             <ShieldCheck className="h-3.5 w-3.5 mr-1" />
             <span>MoSJE / NSFDC Authorized</span>

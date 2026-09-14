@@ -10,6 +10,11 @@ import {
 } from "@/lib/dossier/engine";
 import { getDesignatedPartner } from "@/lib/partners/store";
 import { getStoredApplicantProfile } from "@/lib/user/profileStore";
+import {
+  getStoredVerifiedDocIds,
+  saveStoredVerifiedDocIds,
+  clearStoredVerifiedDocIds,
+} from "@/lib/dossier/store";
 import { DossierQR } from "@/components/dossier/DossierQR";
 import { DocumentChecklist } from "@/components/dossier/DocumentChecklist";
 import {
@@ -85,15 +90,31 @@ export default function DossierPage() {
         checksum: newChecksum,
       };
     });
+    // Hydrate verified documents from localStorage
+    const storedVerified = getStoredVerifiedDocIds();
+    if (storedVerified) {
+      setDossier((prev) => ({
+        ...prev,
+        documents: prev.documents.map((d) => ({
+          ...d,
+          isVerified: storedVerified.includes(d.id),
+        })),
+      }));
+    }
   }, []);
 
   const handleToggleDocument = (docId: string) => {
-    setDossier((prev) => ({
-      ...prev,
-      documents: prev.documents.map((d) =>
+    setDossier((prev) => {
+      const updatedDocs = prev.documents.map((d) =>
         d.id === docId ? { ...d, isVerified: !d.isVerified } : d
-      ),
-    }));
+      );
+      const verifiedIds = updatedDocs.filter((d) => d.isVerified).map((d) => d.id);
+      saveStoredVerifiedDocIds(verifiedIds);
+      return {
+        ...prev,
+        documents: updatedDocs,
+      };
+    });
   };
 
   const handlePrint = () => {
@@ -107,6 +128,7 @@ export default function DossierPage() {
   };
 
   const handleResetSample = () => {
+    clearStoredVerifiedDocIds();
     setDossier(getSampleDossier());
   };
 
@@ -124,7 +146,7 @@ export default function DossierPage() {
   const totalDocsCount = dossier.documents.length;
 
   return (
-    <div className="max-w-[1600px] mx-auto pb-8 sm:pb-16 px-3 sm:px-6 lg:px-8 2xl:px-12 pt-3 sm:pt-4 space-y-4 sm:space-y-6 overflow-x-hidden max-w-full">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 py-5 sm:py-8 space-y-6 sm:space-y-8 overflow-x-hidden max-w-full">
       {/* Screen Action Bar (Hidden during @media print) */}
       <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
         <div>

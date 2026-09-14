@@ -79,7 +79,7 @@ export default function AssistantPage() {
   };
 
   return (
-    <div className="h-[calc(100dvh-3.5rem)] lg:h-auto -mb-20 lg:mb-0 pb-[4.5rem] lg:pb-10 flex-1 flex flex-col max-w-[1600px] mx-auto w-full px-3 sm:px-6 lg:px-8 2xl:px-12 pt-2 sm:pt-4 min-h-0 overflow-hidden">
+    <div className="h-[calc(100dvh-3.5rem)] lg:h-auto -mb-20 lg:mb-0 pb-[4.5rem] lg:pb-8 flex-1 flex flex-col max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 2xl:px-12 pt-2 sm:pt-4 lg:py-5 lg:sm:py-8 min-h-0 overflow-hidden">
       {/* Title Bar: Compact on mobile, expansive sovereign banner on desktop */}
       <div className="flex items-center justify-between gap-3 pb-2.5 sm:pb-3.5 shrink-0 border-b border-slate-200/80 mb-2 sm:mb-3">
         <div className="flex items-center space-x-2.5 min-w-0">

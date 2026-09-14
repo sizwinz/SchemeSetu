@@ -1,9 +1,14 @@
 "use client";
 
-import React, { useState, useId } from "react";
+import React, { useState, useId, useEffect } from "react";
 import Link from "next/link";
 import { UserProfile, SchemeRule } from "@/lib/schemes/types";
 import { evaluateEligibility, calculateFundingBreakdown } from "@/lib/schemes/engine";
+import {
+  getStoredWizardState,
+  saveStoredWizardState,
+  DEFAULT_WIZARD_STATE,
+} from "@/lib/schemes/store";
 import { useSpeechRecognition } from "@/lib/audio/speechRecognition";
 import { useLanguage } from "@/lib/i18n/languageContext";
 import {
@@ -89,10 +94,30 @@ const ACTIVITIES: ActivityOption[] = [
 ];
 
 export function SmartRecommenderWizard() {
-  const [selectedActivity, setSelectedActivity] = useState<string>("kirana");
-  const [cost, setCost] = useState<number>(120000);
-  const [income, setIncome] = useState<number>(240000);
-  const [demographic, setDemographic] = useState<"ALL_SC" | "SC_WOMEN" | "SC_STUDENTS">("ALL_SC");
+  const [selectedActivity, setSelectedActivity] = useState<string>(DEFAULT_WIZARD_STATE.selectedActivity);
+  const [cost, setCost] = useState<number>(DEFAULT_WIZARD_STATE.cost);
+  const [income, setIncome] = useState<number>(DEFAULT_WIZARD_STATE.income);
+  const [demographic, setDemographic] = useState<"ALL_SC" | "SC_WOMEN" | "SC_STUDENTS">(DEFAULT_WIZARD_STATE.demographic);
+  const [isHydrated, setIsHydrated] = useState<boolean>(false);
+
+  useEffect(() => {
+    const saved = getStoredWizardState();
+    setSelectedActivity(saved.selectedActivity);
+    setCost(saved.cost);
+    setIncome(saved.income);
+    setDemographic(saved.demographic);
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    saveStoredWizardState({
+      selectedActivity,
+      cost,
+      income,
+      demographic,
+    });
+  }, [selectedActivity, cost, income, demographic, isHydrated]);
 
   const costSliderId = useId();
   const incomeSliderId = useId();

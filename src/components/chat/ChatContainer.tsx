@@ -7,6 +7,11 @@ import {
   AssistantLanguage,
   DialogState,
 } from "@/lib/chat/types";
+import {
+  getStoredChatState,
+  saveStoredChatState,
+  clearStoredChatState,
+} from "@/lib/chat/store";
 import { ChatMessageItem } from "./ChatMessageItem";
 import { QuickReplyChips } from "./QuickReplyChips";
 import { VoiceInputButton } from "./VoiceInputButton";
@@ -152,6 +157,31 @@ export function ChatContainer({
     autoSpeak: true,
   });
 
+  const [isHydrated, setIsHydrated] = useState<boolean>(false);
+
+  // Hydrate chat conversation from localStorage
+  useEffect(() => {
+    const saved = getStoredChatState();
+    if (saved && Array.isArray(saved.messages) && saved.messages.length > 0) {
+      setMessages(saved.messages);
+      if (saved.prompts) setPrompts(saved.prompts);
+      if (saved.dialogState) setDialogState(saved.dialogState);
+    }
+    setIsHydrated(true);
+  }, []);
+
+  // Persist conversation updates
+  useEffect(() => {
+    if (!isHydrated) return;
+    if (messages.length > 1) {
+      saveStoredChatState({
+        messages,
+        prompts,
+        dialogState,
+      });
+    }
+  }, [messages, prompts, dialogState, isHydrated]);
+
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isInitialMount = useRef<boolean>(true);
 
@@ -200,6 +230,7 @@ export function ChatContainer({
 
   const handleResetChat = () => {
     cancelSpeech();
+    clearStoredChatState();
     setMessages(getInitialMessages(language));
     setPrompts(getInitialPrompts(language));
     setDialogState({

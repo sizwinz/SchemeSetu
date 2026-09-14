@@ -30,7 +30,7 @@ const TOC_SECTIONS = [
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 2xl:px-12 py-6 sm:py-10 space-y-8 overflow-x-hidden max-w-full">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 py-5 sm:py-8 space-y-6 sm:space-y-8 overflow-x-hidden max-w-full">
       {/* Back to Home Navigation */}
       <Link
         href="/"
