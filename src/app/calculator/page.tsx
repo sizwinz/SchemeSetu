@@ -231,8 +231,8 @@ function CalculatorContent() {
           <LoanSliders params={params} onChange={setParams} />
         </div>
 
-        {/* Right Column: Financial Summary Card */}
-        <div className="lg:col-span-5">
+        {/* Right Column: Financial Summary Card (Sticky alongside sliders on desktop) */}
+        <div className="lg:col-span-5 lg:sticky lg:top-20">
           <FinancialSummaryCard result={result} />
         </div>
       </div>

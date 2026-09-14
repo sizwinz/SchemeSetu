@@ -147,12 +147,13 @@ export default function LocatorPage() {
             selectedPartnerId={selectedPartnerId}
             onSelectPartner={(partnerId: string) => setSelectedPartnerId(partnerId)}
             userCoords={userCoords}
+            className="h-[450px] sm:h-[600px] lg:h-[720px] w-full rounded-2xl overflow-hidden shadow-sm border border-slate-200"
           />
         </div>
 
         {/* Right 50% Pane: Partner Cards List */}
         <div
-          className={`lg:col-span-6 space-y-4 max-h-[700px] overflow-y-auto pr-1 ${
+          className={`lg:col-span-6 space-y-4 max-h-[720px] overflow-y-auto pr-1 ${
             activeMobileTab === "map" ? "hidden lg:block" : "block"
           }`}
         >
