@@ -52,16 +52,6 @@ export function extractEntities(text: string): Partial<UserProfile> {
     result.gender = "MALE";
   }
 
-  // 3. Extract Student / Education
-  if (
-    /student|college|university|degree|education|vidyarthi|chhatra|छात्र|विद्यार्थी|शिक्षा|कॉलेज|स्कूल/i.test(
-      lower
-    )
-  ) {
-    result.targetGroup = "SC_STUDENTS";
-    result.educationLevel = "GRADUATE";
-  }
-
   return result;
 }
 
@@ -168,7 +158,6 @@ export function advanceDialog(
     estimatedCost: updatedProfile.estimatedCost ?? 120000,
     gender: updatedProfile.gender ?? "FEMALE",
     targetGroup: updatedProfile.targetGroup,
-    educationLevel: updatedProfile.educationLevel,
     projectCategory: updatedProfile.projectCategory ?? "General Small Business",
   };
 

@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Store, User, Truck, GraduationCap } from "lucide-react";
+import { Store, User, Truck } from "lucide-react";
 import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
 import { Badge } from "@/components/ui/badge";
 
@@ -55,7 +55,7 @@ const POPULAR_SCHEMES: PopularSchemeItem[] = [
     id: "tls",
     code: "TLS",
     title: "Term Loan Scheme",
-    subtitle: "Medium Business, Machinery & Solar",
+    subtitle: "Medium Business, Machinery & Transport",
     maxAmount: "₹50.00L",
     interestRate: "8.0%",
     image: "/images/scheme_tls.jpg",
@@ -65,25 +65,11 @@ const POPULAR_SCHEMES: PopularSchemeItem[] = [
     spotlightColor: "rgba(16, 185, 129, 0.08)",
     href: "/calculator?scheme=TERM_LOAN",
   },
-  {
-    id: "els",
-    code: "ELS",
-    title: "Education Loan Scheme",
-    subtitle: "Higher Technical & Professional Studies",
-    maxAmount: "₹40.00L",
-    interestRate: "6.5%",
-    image: "/images/scheme_els.jpg",
-    icon: GraduationCap,
-    iconBg: "bg-indigo-500/10",
-    iconColor: "text-indigo-600",
-    spotlightColor: "rgba(99, 102, 241, 0.08)",
-    href: "/calculator?scheme=ELS",
-  },
 ];
 
 export function PopularSchemesGrid() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
       {POPULAR_SCHEMES.map((scheme) => {
         const Icon = scheme.icon;
         return (

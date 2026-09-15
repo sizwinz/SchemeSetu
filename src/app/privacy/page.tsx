@@ -55,7 +55,7 @@ export default function PrivacyPolicyPage() {
         </h1>
 
         <p className="text-sm text-slate-600 leading-relaxed max-w-4xl">
-          SchemeSetu is a sovereign digital initiative managed under the aegis of the Ministry of Social Justice and Empowerment (MoSJE) in coordination with the National Scheduled Castes Finance and Development Corporation (NSFDC). We enforce strict client-side data minimization to safeguard marginalized entrepreneurs and students.
+          SchemeSetu is a sovereign digital initiative managed under the aegis of the Ministry of Social Justice and Empowerment (MoSJE) in coordination with the National Scheduled Castes Finance and Development Corporation (NSFDC). We enforce strict client-side data minimization to safeguard marginalized entrepreneurs.
         </p>
       </div>
 
@@ -144,7 +144,7 @@ export default function PrivacyPolicyPage() {
                 <strong>Applicant Profile Information:</strong> Full legal name, caste category certification status (SC, SC-Women, Safai Karamchari), contact telephone number, and state/district of residence.
               </li>
               <li>
-                <strong>Enterprise &amp; Project Parameters:</strong> Proposed enterprise activity (e.g., small retail, dairy, sanitation machinery, technical education), total project cost, and certified annual family income.
+                <strong>Enterprise &amp; Project Parameters:</strong> Proposed enterprise activity (e.g., small retail, dairy, sanitation machinery, transport units), total project cost, and certified annual family income.
               </li>
               <li>
                 <strong>Speech Audio Data:</strong> When voice-first mode is enabled, voice audio is converted to localized text solely through browser-native speech recognition APIs (Web Speech API). Audio voice streams are not stored or uploaded to external servers.
@@ -169,7 +169,7 @@ export default function PrivacyPolicyPage() {
                 Simulating prospective monthly EMI schedules and moratorium grace periods.
               </li>
               <li>
-                Generating the cryptographic, tamper-evident Pre-Screened Application Dossier with FNV-1a checksum verification.
+                Generating the cryptographic, tamper-evident Pre-Screened Application Slip with FNV-1a checksum verification.
               </li>
               <li>
                 Routing applications to verified, solvent Channel Partner branches with active lending quotas.
@@ -181,7 +181,7 @@ export default function PrivacyPolicyPage() {
           <section id="section-3" className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3 scroll-mt-24">
             <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
               <Lock className="h-4 w-4 text-blue-600" />
-              <span>3. Cryptographic QR Dossier &amp; Data Minimization</span>
+              <span>3. Cryptographic QR Slip &amp; Data Minimization</span>
             </h2>
             <p>
               SchemeSetu features client-side data minimization. The printable Pre-Screened Application Slip generates a high-density, tamper-evident QR code containing the applicant ID, scheme code, sanctioned principal, and FNV-1a checksum. This allows physical branch verification officers at bank desks to validate eligibility without requiring unencrypted public cloud transmission of sensitive records.

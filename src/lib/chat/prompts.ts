@@ -12,13 +12,12 @@ export const DIALOG_PROMPTS: Record<
   "en-IN": {
     GREETING: {
       promptText:
-        "Namaste! I am your SchemeSetu Concessional Credit Advisor. I connect Scheduled Caste entrepreneurs and students with tailored concessional credit schemes covering up to 90% of costs at 4.0% to 8.0% interest rates.\n\nWhat kind of business enterprise or educational program are you planning to start?",
+        "Namaste! I am your SchemeSetu Concessional Credit Advisor. I connect Scheduled Caste entrepreneurs with tailored concessional credit schemes covering up to 90% of costs at 4.0% to 8.0% interest rates.\n\nWhat kind of business enterprise are you planning to start?",
       quickPrompts: [
         { id: "p-retail", label: "Retail / Kirana", value: "Small grocery and retail kiosk", iconName: "store" },
         { id: "p-tailor", label: "Tailoring Shop", value: "Tailoring and garment fabrication", iconName: "scissors" },
         { id: "p-dairy", label: "Dairy & Livestock", value: "Dairy farming and livestock", iconName: "milk" },
         { id: "p-transport", label: "Transport Vehicle", value: "Commercial transport and logistics", iconName: "truck" },
-        { id: "p-edu", label: "Higher Education", value: "Higher education and professional studies", iconName: "graduation" },
       ],
     },
     COLLECT_ACTIVITY: {
@@ -44,11 +43,10 @@ export const DIALOG_PROMPTS: Record<
     },
     COLLECT_INCOME: {
       promptText:
-        "Thank you. Lastly, to check for special affirmative benefits (such as the 4.0% Mahila Samriddhi Yojana for women or student education rebates), please tell me your gender or if you are a student.",
+        "Thank you. Lastly, to check for special affirmative benefits (such as the 4.0% Mahila Samriddhi Yojana for women), please select your demographic category.",
       quickPrompts: [
         { id: "g-female", label: "Female Entrepreneur (MSY 4%)", value: "Female entrepreneur", iconName: "briefcase" },
         { id: "g-male", label: "Male Entrepreneur", value: "Male entrepreneur", iconName: "briefcase" },
-        { id: "g-student", label: "Student Applicant", value: "Student applying for higher education", iconName: "graduation" },
       ],
     },
     COLLECT_CATEGORY: {
@@ -68,13 +66,12 @@ export const DIALOG_PROMPTS: Record<
   "hi-IN": {
     GREETING: {
       promptText:
-        "नमस्ते! मैं आपका स्कीमसेतु रियायती ऋण सलाहकार हूँ। मैं अनुसूचित जाति के उद्यमियों और विद्यार्थियों को 4.0% से 8.0% रियायती ब्याज दर पर 90% तक सरकारी ऋण प्राप्त करने में सहायता करता हूँ।\n\nआप किस प्रकार का व्यवसाय या शिक्षा कार्यक्रम शुरू करना चाहते हैं?",
+        "नमस्ते! मैं आपका स्कीमसेतु रियायती ऋण सलाहकार हूँ। मैं अनुसूचित जाति के उद्यमियों को 4.0% से 8.0% रियायती ब्याज दर पर 90% तक सरकारी ऋण प्राप्त करने में सहायता करता हूँ।\n\nआप किस प्रकार का व्यवसाय शुरू करना चाहते हैं?",
       quickPrompts: [
         { id: "p-retail", label: "किराना / खुदरा दुकान", value: "किराना और खुदरा दुकान", iconName: "store" },
         { id: "p-tailor", label: "सिलाई केंद्र", value: "सिलाई और कपड़ा निर्माण", iconName: "scissors" },
         { id: "p-dairy", label: "डेयरी / पशुपालन", value: "दुग्ध व्यवसाय और पशुपालन", iconName: "milk" },
         { id: "p-transport", label: "वाहन / परिवहन", value: "व्यावसायिक परिवहन सेवा", iconName: "truck" },
-        { id: "p-edu", label: "उच्च शिक्षा ऋण", value: "उच्च शिक्षा और डिग्री", iconName: "graduation" },
       ],
     },
     COLLECT_ACTIVITY: {
@@ -100,11 +97,10 @@ export const DIALOG_PROMPTS: Record<
     },
     COLLECT_INCOME: {
       promptText:
-        "धन्यवाद। विशेष लाभ (जैसे महिला उद्यमियों के लिए 4% महिला समृद्धि योजना या छात्रों के लिए शिक्षा छूट) जांचने के लिए, कृपया अपना लिंग या विद्यार्थी स्थिति बताएं।",
+        "धन्यवाद। विशेष लाभ (जैसे महिला उद्यमियों के लिए 4% महिला समृद्धि योजना) जांचने के लिए, कृपया अपनी श्रेणी चुनें।",
       quickPrompts: [
         { id: "g-female", label: "महिला उद्यमी (4% एमएसवाई)", value: "महिला उद्यमी", iconName: "briefcase" },
         { id: "g-male", label: "पुरुष उद्यमी", value: "पुरुष उद्यमी", iconName: "briefcase" },
-        { id: "g-student", label: "विद्यार्थी", value: "विद्यार्थी", iconName: "graduation" },
       ],
     },
     COLLECT_CATEGORY: {

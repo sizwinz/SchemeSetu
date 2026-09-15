@@ -12,20 +12,12 @@ import {
 } from "@/lib/schemes/store";
 import { useSpeechRecognition } from "@/lib/audio/speechRecognition";
 import { useLanguage } from "@/lib/i18n/languageContext";
-
-const SCHEME_THUMBNAILS: Record<string, string> = {
-  MSY: "/images/scheme_msy.jpg",
-  MCF: "/images/scheme_mcf.jpg",
-  TERM_LOAN: "/images/scheme_tls.jpg",
-  EDUCATION_LOAN: "/images/scheme_els.jpg",
-};
 import {
   Sparkles,
   Store,
   Scissors,
   Milk,
   Truck,
-  GraduationCap,
   Building2,
   Mic,
   Calculator,
@@ -41,12 +33,18 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
+const SCHEME_THUMBNAILS: Record<string, string> = {
+  MSY: "/images/scheme_msy.jpg",
+  MCF: "/images/scheme_mcf.jpg",
+  TERM_LOAN: "/images/scheme_tls.jpg",
+};
+
 interface ActivityOption {
   id: string;
   label: string;
   icon: React.ElementType;
   defaultCost: number;
-  category: "business" | "women" | "education";
+  category: "business" | "women";
   description: string;
 }
 
@@ -91,21 +89,13 @@ const ACTIVITIES: ActivityOption[] = [
     category: "business",
     description: "Fabrication tools, equipment, processing",
   },
-  {
-    id: "education",
-    label: "Higher Education / Degree",
-    icon: GraduationCap,
-    defaultCost: 800000,
-    category: "education",
-    description: "Professional, medical, engineering & abroad",
-  },
 ];
 
 export function SmartRecommenderWizard() {
   const [selectedActivity, setSelectedActivity] = useState<string>(DEFAULT_WIZARD_STATE.selectedActivity);
   const [cost, setCost] = useState<number>(DEFAULT_WIZARD_STATE.cost);
   const [income, setIncome] = useState<number>(DEFAULT_WIZARD_STATE.income);
-  const [demographic, setDemographic] = useState<"ALL_SC" | "SC_WOMEN" | "SC_STUDENTS">(DEFAULT_WIZARD_STATE.demographic);
+  const [demographic, setDemographic] = useState<"ALL_SC" | "SC_WOMEN">("ALL_SC");
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
   useEffect(() => {
@@ -113,7 +103,11 @@ export function SmartRecommenderWizard() {
     setSelectedActivity(saved.selectedActivity);
     setCost(saved.cost);
     setIncome(saved.income);
-    setDemographic(saved.demographic);
+    if (saved.demographic === "SC_WOMEN") {
+      setDemographic("SC_WOMEN");
+    } else {
+      setDemographic("ALL_SC");
+    }
     setIsHydrated(true);
   }, []);
 
@@ -142,10 +136,6 @@ export function SmartRecommenderWizard() {
         setSelectedActivity("tailoring");
         setDemographic("SC_WOMEN");
         setCost(140000);
-      } else if (/student|padhai|college|chhatra|छात्र|पढ़ाई|कॉलेज/i.test(lower)) {
-        setSelectedActivity("education");
-        setDemographic("SC_STUDENTS");
-        setCost(800000);
       } else if (/truck|vehicle|gadi|transport|गाड़ी|ट्रक/i.test(lower)) {
         setSelectedActivity("transport");
         setCost(500000);
@@ -164,12 +154,8 @@ export function SmartRecommenderWizard() {
     setCost(activity.defaultCost);
     if (activity.category === "women") {
       setDemographic("SC_WOMEN");
-    } else if (activity.category === "education") {
-      setDemographic("SC_STUDENTS");
     } else {
-      if (demographic === "SC_STUDENTS") {
-        setDemographic("ALL_SC");
-      }
+      setDemographic("ALL_SC");
     }
   };
 
@@ -178,7 +164,6 @@ export function SmartRecommenderWizard() {
     estimatedCost: cost,
     targetGroup: demographic,
     gender: demographic === "SC_WOMEN" ? "FEMALE" : undefined,
-    educationLevel: demographic === "SC_STUDENTS" ? "GRADUATE" : undefined,
   };
 
   const evalResult = evaluateEligibility(userProfile);
@@ -367,39 +352,28 @@ export function SmartRecommenderWizard() {
             <span className="text-xs font-bold text-slate-800 block">
               4. Beneficiary Category
             </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setDemographic("ALL_SC")}
                 className={`py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center min-h-[44px] flex items-center justify-center ${
                   demographic === "ALL_SC"
-                    ? "border-amber-500 bg-amber-50/60 text-slate-900 shadow-2xs"
+                    ? "border-amber-500 bg-amber-50/60 text-slate-900 shadow-2xs font-bold"
                     : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                 }`}
               >
-                General SC
+                General SC Entrepreneur
               </button>
               <button
                 type="button"
                 onClick={() => setDemographic("SC_WOMEN")}
                 className={`py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center min-h-[44px] flex items-center justify-center ${
                   demographic === "SC_WOMEN"
-                    ? "border-amber-500 bg-amber-50/60 text-slate-900 shadow-2xs"
+                    ? "border-amber-500 bg-amber-50/60 text-slate-900 shadow-2xs font-bold"
                     : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                 }`}
               >
-                SC Woman (4% Rate)
-              </button>
-              <button
-                type="button"
-                onClick={() => setDemographic("SC_STUDENTS")}
-                className={`py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center min-h-[44px] flex items-center justify-center ${
-                  demographic === "SC_STUDENTS"
-                    ? "border-amber-500 bg-amber-50/60 text-slate-900 shadow-2xs"
-                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                }`}
-              >
-                SC Student
+                SC Woman Entrepreneur (4% MSY)
               </button>
             </div>
           </div>

@@ -41,12 +41,6 @@ const STATUTORY_PROMPTS = [
     badge: "8.0% p.a.",
     desc: "Commercial expansion and machinery projects",
   },
-  {
-    title: "Education Loan",
-    query: "What are the terms for NSFDC Education Loans for professional degrees?",
-    badge: "4.0% - 8.0%",
-    desc: "Up to ₹20.00L in India and abroad",
-  },
 ];
 
 function AssistantContent() {

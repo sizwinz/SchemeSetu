@@ -92,17 +92,6 @@ export function evaluateEligibility(
       }
     }
 
-    if (scheme.targetGroup === "SC_STUDENTS") {
-      const isStudent =
-        profile.targetGroup === "SC_STUDENTS" ||
-        profile.educationLevel === "GRADUATE" ||
-        profile.educationLevel === "POST_GRADUATE" ||
-        profile.educationLevel === "12TH_PASS";
-      if (!isStudent) {
-        qualifies = false;
-      }
-    }
-
     if (qualifies) {
       eligibleSchemes.push(scheme);
     }

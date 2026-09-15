@@ -65,17 +65,6 @@ const SCHEMES: SchemeConfig[] = [
     defaultPrincipal: 500000,
     description: "8.0% Rate for transport vehicles, machinery, and larger capital projects up to ₹50 Lakhs.",
   },
-  {
-    key: "ELS",
-    name: "Education Loan",
-    code: "ELS",
-    rate: 4.0,
-    tenure: 5,
-    moratorium: 12,
-    maxPrincipal: 3000000,
-    defaultPrincipal: 800000,
-    description: "4.0% - 4.5% Concessional rate with extended 12-month gestation moratorium for professional higher studies.",
-  },
 ];
 
 function CalculatorContent() {
@@ -197,7 +186,7 @@ function CalculatorContent() {
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           {SCHEMES.map((scheme) => {
             const isSelected = activeTab === scheme.key;
             return (

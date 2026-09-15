@@ -2,7 +2,7 @@
 
 export interface ApplicantProfileData {
   fullName: string;
-  casteCategory: "Scheduled Caste (SC)" | "SC - Women Entrepreneur" | "SC - Safai Karamchari" | "SC - Student";
+  casteCategory: "Scheduled Caste (SC)" | "SC - Women Entrepreneur" | "SC - Safai Karamchari";
   casteCertificateNo: string;
   annualIncome: number;
   contactPhone: string;

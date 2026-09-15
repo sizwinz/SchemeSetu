@@ -58,15 +58,15 @@ const AUDIO_ENABLED_ANNOUNCEMENTS: Record<string, string> = {
 
 const PAGE_SUMMARIES: Record<string, Record<string, string>> = {
   "/": {
-    "en-IN": "SchemeSetu homepage. Concessional credit matching for Scheduled Caste entrepreneurs and students with 4.0% to 8.0% interest rates.",
-    "hi-IN": "स्कीमसेतु होमपेज। अनुसूचित जाति के उद्यमियों और छात्रों के लिए 4 से 8 प्रतिशत ब्याज दरों पर रियायती ऋण सहायता।",
-    "mr-IN": "स्कीमसेतू मुख्यपृष्ठ. अनुसूचित जातीच्या उद्योजकांसाठी आणि विद्यार्थ्यांसाठी 4 ते 8 टक्के व्याजदरावर सवलतीचे कर्ज.",
-    "gu-IN": "સ્કીમસેતુ હોમપેજ. અનુસૂચિત જાતિના ઉદ્યોગસાહસિકો અને વિદ્યાર્થીઓ માટે 4 થી 8 ટકા વ્યાજે કન્સેશનલ લોન સહાય.",
-    "ta-IN": "ஸ்கீம்சேது முகப்புப்பக்கம். பட்டியலின தொழில்முனைவோர் மற்றும் மாணவர்களுக்கான சலுகைக் கடன் திட்டம்.",
-    "te-IN": "స్కీమ్‌సేతు హోమ్‌పేజీ. షెడ్యూల్డ్ కులాల పారిశ్రామికవేత్తలు మరియు విద్యార్థుల కోసం రాయితీ రుణ సదుపాయం.",
-    "bn-IN": "স্কিমসেতু হোমপেজ। তফসিলি জাতির উদ্যোক্তা এবং শিক্ষার্থীদের জন্য স্বল্প সুদের ঋণ সহায়তা।",
-    "kn-IN": "ಸ್ಕೀಮ್‌ಸೇತು ಮುಖಪುಟ. ಪರಿಶಿಷ್ಟ ಜಾತಿಯ ಉದ್ಯಮಿಗಳು ಮತ್ತು ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ರಿಯಾಯಿತಿ ಸಾಲ ನೆರವು.",
-    "pa-IN": "ਸਕੀਮਸੇਤੂ ਹੋਮਪੇਜ। ਅਨੁਸੂਚਿਤ ਜਾਤੀ ਦੇ ਉੱਦਮੀਆਂ ਅਤੇ ਵਿਦਿਆਰਥੀਆਂ ਲਈ ਰਿਆਇਤੀ ਕਰਜ਼ਾ ਸਹਾਇਤਾ।",
+    "en-IN": "SchemeSetu homepage. Concessional credit matching for Scheduled Caste entrepreneurs with 4.0% to 8.0% interest rates.",
+    "hi-IN": "स्कीमसेतु होमपेज। अनुसूचित जाति के उद्यमियों के लिए 4 से 8 प्रतिशत ब्याज दरों पर रियायती ऋण सहायता।",
+    "mr-IN": "स्कीमसेतू मुख्यपृष्ठ. अनुसूचित जातीच्या उद्योजकांसाठी 4 ते 8 टक्के व्याजदरावर सवलतीचे कर्ज.",
+    "gu-IN": "સ્કીમસેતુ હોમપેજ. અનુસૂચિત જાતિના ઉદ્યોગસાહસિકો માટે 4 થી 8 ટકા વ્યાજે કન્સેશનલ લોન સહાય.",
+    "ta-IN": "ஸ்கீம்சேது முகப்புப்பக்கம். பட்டியலின தொழில்முனைவோருக்கான சலுகைக் கடன் திட்டம்.",
+    "te-IN": "స్కీమ్‌సేతు హోమ్‌పేజీ. షెడ్యూల్డ్ కులాల పారిశ్రామికవేత్తల కోసం రాయితీ రుణ సదుపాయం.",
+    "bn-IN": "স্কিমসেতু হোমপেজ। তফসিলি জাতির উদ্যোক্তাদের জন্য স্বল্প সুদের ঋণ সহায়তা।",
+    "kn-IN": "ಸ್ಕೀಮ್‌ಸೇತು ಮುಖಪುಟ. ಪರಿಶಿಷ್ಟ ಜಾತಿಯ ಉದ್ಯಮಿಗಳಿಗೆ ರಿಯಾಯಿತಿ ಸಾಲ ನೆರವು.",
+    "pa-IN": "ਸਕੀਮਸੇਤੂ ਹੋਮਪੇਜ। ਅਨੁਸੂਚਿਤ ਜਾਤੀ ਦੇ ਉੱਦਮੀਆਂ ਲਈ ਰਿਆਇਤੀ ਕਰਜ਼ਾ ਸਹਾਇਤਾ।",
   },
   "/calculator": {
     "en-IN": "Concessional Loan and Moratorium Calculator. Model subsidized credit at 4.0% to 8.0% interest with up to 12 months grace period.",
@@ -89,17 +89,6 @@ const PAGE_SUMMARIES: Record<string, Record<string, string>> = {
     "bn-IN": "চ্যানেল পার্টনার সন্ধানকারী। আপনার জেলার কাছে অনুমোদিত এবং আর্থিকভাবে শক্তিশালী ব্যাংক শাখা খুঁজুন।",
     "kn-IN": "ಚಾನೆಲ್ ಪಾಲುದಾರ ಲೊಕೇಟರ್. ನಿಮ್ಮ ಜಿಲ್ಲೆಯ ಸಮೀಪವಿರುವ ಅಧಿಕೃತ ಮತ್ತು ಸಕ್ಷಮ ಬ್ಯಾಂಕ್ ಶಾಖೆಗಳನ್ನು ಹುಡುಕಿ.",
     "pa-IN": "ਚੈਨਲ ਪਾਰਟਨਰ ਲੋਕੇਟਰ। ਆਪਣੇ ਜ਼ਿਲ੍ਹੇ ਦੇ ਨੇੜੇ ਮਨਜ਼ੂਰਸ਼ੁਦਾ ਅਤੇ ਆਰਥਿਕ ਤੌਰ ਤੇ ਮਜ਼ਬੂਤ ਬੈਂਕ ਸ਼ਾਖਾਵਾਂ ਲੱਭੋ।",
-  },
-  "/dossier": {
-    "en-IN": "Pre-screened Application Dossier. Ready-to-print official slip with verifiable QR code for fast counter approval at channel partners.",
-    "hi-IN": "प्री-स्क्रीन किया गया आवेदन डोजियर। चैनल पार्टनर बैंक में त्वरित सत्यापन के लिए सत्यापन योग्य क्यूआर कोड युक्त आधिकारिक रसीद।",
-    "mr-IN": "पूर्व-तपासणी केलेला अर्ज डॉसियर. बँकेत त्वरित मंजुरीसाठी पडताळणी करण्यायोग्य क्यूआर कोडसह अधिकृत कागदपत्र.",
-    "gu-IN": "પ્રી-સ્ક્રીન કરેલ અરજી ડોઝિયર. બેંકમાં ઝડપી મંજૂરી માટે ચકાસણી યોગ્ય ક્યુઆર કોડ સાથે અધિકૃત સ્લિપ.",
-    "ta-IN": "முன்-சரிபார்க்கப்பட்ட விண்ணப்ப ஆவணம். வங்கியில் விரைவான ஒப்புதலுக்கான சரிபார்க்கக்கூடிய க்யூಆர் குறியீட்டுடன் கூடிய அதிகாரப்பூர்வ சீட்டு.",
-    "te-IN": "ముందస్తుగా పరిశీలించిన దరఖాస్తు పత్రం. బ్యాంక్ వద్ద త్వరిత అనుమతి కోసం క్యూఆర్ కోడ్‌తో కూడిన అధికారిక రసీదు.",
-    "bn-IN": "প্রি-স্ক্রিন করা আবেদনপত্র ডসিয়ার। ব্যাংকে দ্রুত অনুমোদনের জন্য কিউআর কোড সহ অফিসিয়াল স্লিপ।",
-    "kn-IN": "ಪೂರ್ವ ಪರಿಶೀಲಿಸಿದ ಅರ್ಜಿ ಡಾಕ್ಯುಮೆಂಟ್. ಬ್ಯಾಂಕ್‌ನಲ್ಲಿ ತ್ವರಿತ ಅನುಮೋದನೆಗಾಗಿ ಕ್ಯೂಆರ್ ಕೋಡ್ ಹೊಂದಿರುವ ಅಧಿಕೃತ ರಸೀದಿ.",
-    "pa-IN": "ਪੂਰਵ-ਜਾਂਚਿਆ ਬਿਨੈ-ਪੱਤਰ ਡੋਜ਼ੀਅਰ। ਬੈਂਕ ਵਿੱਚ ਤੇਜ਼ੀ ਨਾਲ ਪ੍ਰਵਾਨਗੀ ਲਈ ਕਿਊਆਰ ਕੋਡ ਵਾਲੀ ਅਧਿਕਾਰਤ ਪਰਚੀ।",
   },
   "/assistant": {
     "en-IN": "AI Scheme Assistant. Interactive voice and chat-guided pre-screening for MoSJE concessional credit programs.",
@@ -459,7 +448,7 @@ export function Header() {
                   Beneficiary Applicant Profile
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Data auto-populates your pre-screened application dossier and matching criteria
+                  Data auto-populates your pre-screened application slip and matching criteria
                 </p>
               </div>
             </div>
@@ -496,7 +485,6 @@ export function Header() {
                     <option value="Scheduled Caste (SC)">Scheduled Caste (SC)</option>
                     <option value="SC - Women Entrepreneur">SC - Women Entrepreneur</option>
                     <option value="SC - Safai Karamchari">SC - Safai Karamchari</option>
-                    <option value="SC - Student">SC - Student</option>
                   </select>
                 </div>
 
@@ -778,69 +766,6 @@ export function Header() {
                     </div>
                     <ChevronRight className="h-4 w-4 text-slate-400" />
                   </button>
-
-                  <Link
-                    href="/helpdesk"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                      pathname === "/helpdesk"
-                        ? "bg-amber-50 text-amber-950 border border-amber-200/80 font-bold"
-                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
-                        <HelpCircle className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <span className="block text-xs">Helpdesk &amp; Grievances</span>
-                        <span className="block text-[10px] text-slate-400 font-normal">Toll-free 1800-11-2001 support</span>
-                      </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-slate-400" />
-                  </Link>
-
-                  <Link
-                    href="/dossier"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                      pathname === "/dossier"
-                        ? "bg-amber-50 text-amber-950 border border-amber-200/80 font-bold"
-                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
-                        <FileText className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <span className="block text-xs">Application Dossier</span>
-                        <span className="block text-[10px] text-slate-400 font-normal">Verifiable QR application slip</span>
-                      </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-slate-400" />
-                  </Link>
-
-                  <Link
-                    href="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                      pathname === "/admin"
-                        ? "bg-amber-50 text-amber-950 border border-amber-200/80 font-bold"
-                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
-                        <Landmark className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <span className="block text-xs">MoSJE Officer Console</span>
-                        <span className="block text-[10px] text-slate-400 font-normal">Institutional counter portal</span>
-                      </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-slate-400" />
-                  </Link>
                 </div>
               </div>
 

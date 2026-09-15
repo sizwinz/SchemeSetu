@@ -64,7 +64,7 @@ export function ChannelFinanceExplainer() {
             </h3>
           </div>
           <p className="text-xs text-slate-500 leading-relaxed">
-            Nationalized commercial banks (SBI, PNB, Canara Bank) processing medium-to-large Term Loans (up to ₹50 Lakhs) and Education Loans.
+            Nationalized commercial banks (SBI, PNB, Canara Bank) processing medium-to-large Term Loans (up to ₹50 Lakhs) and enterprise credit.
           </p>
         </div>
 

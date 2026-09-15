@@ -2,13 +2,12 @@ import { describe, it, expect } from "vitest";
 import { MOSJE_SCHEMES } from "@/lib/schemes/data";
 
 describe("MoSJE Schemes Dataset Integrity", () => {
-  it("should contain all 4 core statutory schemes", () => {
-    expect(MOSJE_SCHEMES.length).toBeGreaterThanOrEqual(4);
+  it("should contain all 3 core statutory enterprise schemes", () => {
+    expect(MOSJE_SCHEMES.length).toBe(3);
     const codes = MOSJE_SCHEMES.map((s) => s.code);
     expect(codes).toContain("MCF");
     expect(codes).toContain("TERM_LOAN");
     expect(codes).toContain("MSY");
-    expect(codes).toContain("ELS");
   });
 
   it("should strictly enforce annual family income cap of Rs. 5.00 Lakhs across all schemes", () => {

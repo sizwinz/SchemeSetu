@@ -262,7 +262,6 @@ export function PartnerFilter({
           { label: "MSY (Women - 4%)", value: "MSY" },
           { label: "MCF (Micro - 5-6.5%)", value: "MCF" },
           { label: "Term Loan (TLS - 8%)", value: "TERM_LOAN" },
-          { label: "ELS (Education - 4-4.5%)", value: "ELS" },
         ].map((item) => {
           const isActive =
             (!filters.schemeCode && item.value === "ALL") ||

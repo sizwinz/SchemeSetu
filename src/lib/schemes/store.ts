@@ -2,7 +2,7 @@ export interface StoredWizardState {
   selectedActivity: string;
   cost: number;
   income: number;
-  demographic: "ALL_SC" | "SC_WOMEN" | "SC_STUDENTS";
+  demographic: "ALL_SC" | "SC_WOMEN";
 }
 
 const STORAGE_KEY = "schemesetu_wizard_state";

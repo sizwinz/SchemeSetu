@@ -28,10 +28,9 @@ describe("Conversational Dialog Engine", () => {
       expect(extractEntities("Woman artisan").gender).toBe("FEMALE");
     });
 
-    it("should identify student applicant status for educational loans", () => {
-      const extracted = extractEntities("I am a student applying for university college");
-      expect(extracted.targetGroup).toBe("SC_STUDENTS");
-      expect(extracted.educationLevel).toBe("GRADUATE");
+    it("should identify male gender for standard affirmative action schemes", () => {
+      const extracted = extractEntities("I am a male entrepreneur running a kiosk");
+      expect(extracted.gender).toBe("MALE");
     });
   });
 
@@ -59,7 +58,7 @@ describe("Conversational Dialog Engine", () => {
       // Turn 3: Income
       const turn3 = advanceDialog(state, "₹2,00,000 per annum");
       expect(turn3.nextState.currentStep).toBe("COLLECT_INCOME");
-      expect(turn3.assistantReply).toContain("gender");
+      expect(turn3.assistantReply).toContain("Mahila Samriddhi");
       state = turn3.nextState;
 
       // Turn 4: Gender / Student

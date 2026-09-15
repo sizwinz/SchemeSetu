@@ -24,7 +24,7 @@ import Link from "next/link";
 function normalizeSchemeCode(code: string): string | undefined {
   const upper = code.trim().toUpperCase();
   if (upper === "TLS" || upper === "TERM_LOAN") return "TERM_LOAN";
-  if (["MSY", "MCF", "ELS"].includes(upper)) return upper;
+  if (["MSY", "MCF"].includes(upper)) return upper;
   return upper || undefined;
 }
 

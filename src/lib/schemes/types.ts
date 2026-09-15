@@ -1,10 +1,9 @@
-export type TargetDemographic = "ALL_SC" | "SC_WOMEN" | "SC_STUDENTS";
+export type TargetDemographic = "ALL_SC" | "SC_WOMEN";
 
 export type SchemeCategory =
   | "MICRO_FINANCE"
   | "TERM_LOAN"
-  | "WOMEN_EMPOWERMENT"
-  | "EDUCATION";
+  | "WOMEN_EMPOWERMENT";
 
 export interface FundingBreakdown {
   nsfdcSharePercent: number;
@@ -16,7 +15,7 @@ export interface FundingBreakdown {
 export interface SchemeRule {
   id: string;
   name: string;
-  code: "MCF" | "TERM_LOAN" | "MSY" | "ELS";
+  code: "MCF" | "TERM_LOAN" | "MSY";
   category: SchemeCategory;
   targetGroup: TargetDemographic;
   maxProjectCost: number;
@@ -35,12 +34,6 @@ export interface UserProfile {
   estimatedCost: number;
   targetGroup?: TargetDemographic;
   gender?: "MALE" | "FEMALE" | "OTHER";
-  educationLevel?:
-    | "BELOW_10TH"
-    | "10TH_PASS"
-    | "12TH_PASS"
-    | "GRADUATE"
-    | "POST_GRADUATE";
   projectCategory?: string;
 }
 

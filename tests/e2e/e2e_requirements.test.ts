@@ -101,29 +101,30 @@ describe("Tier 1: Feature Coverage", () => {
       expect(result.primaryScheme?.repaymentTenureYears).toBe(10);
     });
 
-    it("T1.1.4: matches Educational Loan Scheme (ELS) for qualified SC students", () => {
+    it("T1.1.4: matches Term Loan Scheme (TLS) for capital projects up to Rs. 50 Lakhs", () => {
       const profile: UserProfile = {
         annualFamilyIncome: 250000,
         estimatedCost: 2000000,
-        targetGroup: "SC_STUDENTS",
-        educationLevel: "GRADUATE",
+        targetGroup: "ALL_SC",
       };
       const result = evaluateEligibility(profile);
       expect(result.isEligible).toBe(true);
-      expect(result.primaryScheme?.code).toBe("ELS");
-      expect(result.primaryScheme?.moratoriumMonths).toBe(12);
-      expect(result.primaryScheme?.interestRateMin).toBe(4.0);
+      expect(result.primaryScheme?.code).toBe("TERM_LOAN");
+      expect(result.primaryScheme?.moratoriumMonths).toBe(6);
+      expect(result.primaryScheme?.interestRateMin).toBe(6.5);
     });
 
     it("T1.1.5: ranks eligible schemes prioritizing lowest interest rate and maximum government coverage", () => {
       const ranked = rankSchemesByBenefit(MOSJE_SCHEMES);
-      expect(ranked.length).toBe(4);
-      // Lowest interest schemes (4.0% min) appear first: MSY and ELS
+      expect(ranked.length).toBe(3);
+      // Lowest interest schemes (4.0% min) appear first: MSY
       expect(ranked[0].interestRateMin).toBe(4.0);
-      expect(ranked[1].interestRateMin).toBe(4.0);
+      expect(ranked[0].code).toBe("MSY");
       // Higher interest schemes follow: MCF (5.0%) then Term Loan (6.5%)
-      expect(ranked[2].interestRateMin).toBe(5.0);
-      expect(ranked[3].interestRateMin).toBe(6.5);
+      expect(ranked[1].interestRateMin).toBe(5.0);
+      expect(ranked[1].code).toBe("MCF");
+      expect(ranked[2].interestRateMin).toBe(6.5);
+      expect(ranked[2].code).toBe("TERM_LOAN");
     });
   });
 
@@ -1112,23 +1113,21 @@ describe("Tier 3: Cross-Feature Combinations", () => {
     expect(psbs[0].healthTier).toBe("SOLVENT");
   });
 
-  it("T3.4: Educational Loan Scheme combination: Student Profile -> 4.0% Female Rate -> 12-Mo Gestation -> PSB", () => {
+  it("T3.4: Term Loan Scheme combination: Enterprise Profile -> 8.0% Rate -> 6-Mo Gestation -> PSB", () => {
     const profile: UserProfile = {
       annualFamilyIncome: 280000,
       estimatedCost: 2000000,
-      targetGroup: "SC_STUDENTS",
+      targetGroup: "ALL_SC",
       gender: "FEMALE",
-      educationLevel: "GRADUATE",
     };
     const recResult = evaluateEligibility(profile);
-    expect(recResult.primaryScheme?.code).toBe("ELS");
+    expect(recResult.primaryScheme?.code).toBe("TERM_LOAN");
 
-    // Female student gets 4.0% rate
     const calcResult = calculateConcessionalLoan({
       principal: 2000000,
-      annualInterestRate: 4.0,
+      annualInterestRate: 8.0,
       tenureYears: 5,
-      moratoriumMonths: 12,
+      moratoriumMonths: 6,
     });
     expect(calcResult.accruedGestationInterest).toBe(80000);
     expect(calcResult.effectiveMonthlyEMI).toBeGreaterThan(34000);
@@ -1136,7 +1135,7 @@ describe("Tier 3: Cross-Feature Combinations", () => {
     // Solvent PSB in Bengaluru
     const blrCoords = DISTRICT_HUBS.find((h) => h.id === "bengaluru")!.coordinates;
     const partners = filterAndRankPartners(PRESEEDED_PARTNERS, blrCoords, {
-      schemeCode: "ELS",
+      schemeCode: "TERM_LOAN",
       institutionType: "PSB",
       includeHighRisk: false,
     });
@@ -1349,23 +1348,22 @@ describe("Tier 3: Cross-Feature Combinations", () => {
     const sampleUtterances = [
       { text: "mujhe silai machine lagani hai", expectedActivity: "tailoring", expectedScheme: "MSY" },
       { text: "commercial truck business ke liye loan", expectedActivity: "transport", expectedScheme: "TERM_LOAN" },
-      { text: "college education padhai ke liye", expectedActivity: "education", expectedScheme: "ELS" },
+      { text: "mujhe kirana dukan shuru karni hai", expectedActivity: "kirana", expectedScheme: "MCF" },
     ];
 
     sampleUtterances.forEach((item) => {
       let activity = "";
       if (/silai|tailor/i.test(item.text)) activity = "tailoring";
       if (/truck|transport/i.test(item.text)) activity = "transport";
-      if (/education|padhai|college/i.test(item.text)) activity = "education";
+      if (/kirana|dukan/i.test(item.text)) activity = "kirana";
 
       expect(activity).toBe(item.expectedActivity);
 
       const profile: UserProfile = {
         annualFamilyIncome: 200000,
-        estimatedCost: activity === "tailoring" ? 140000 : activity === "transport" ? 1500000 : 800000,
-        targetGroup: activity === "tailoring" ? "SC_WOMEN" : activity === "education" ? "SC_STUDENTS" : "ALL_SC",
+        estimatedCost: activity === "tailoring" ? 140000 : activity === "transport" ? 1500000 : 100000,
+        targetGroup: activity === "tailoring" ? "SC_WOMEN" : "ALL_SC",
         gender: activity === "tailoring" ? "FEMALE" : undefined,
-        educationLevel: activity === "education" ? "GRADUATE" : undefined,
       };
       const result = evaluateEligibility(profile);
       expect(result.primaryScheme?.code).toBe(item.expectedScheme);
@@ -1548,47 +1546,46 @@ describe("Tier 4: Real-World Application Scenarios", () => {
     expect(rrb.healthTier).not.toBe("HIGH_RISK");
   });
 
-  it("Scenario 4: First-Generation SC Student (Priya K.) - Educational Loan Scheme (ELS)", () => {
-    // 1. Profile: First-generation SC female student pursuing accredited professional engineering degree
+  it("Scenario 4: SC Small Manufacturing Unit Entrepreneur (Priya K.) - Term Loan Scheme (TLS)", () => {
+    // 1. Profile: First-generation SC female entrepreneur establishing a garment processing unit
     const profile: UserProfile = {
       annualFamilyIncome: 240000,
       estimatedCost: 2000000, // Rs. 20.00 Lakhs
-      targetGroup: "SC_STUDENTS",
+      targetGroup: "ALL_SC",
       gender: "FEMALE",
-      educationLevel: "GRADUATE",
     };
 
     // 2. Step 1: Scheme Recommendation
     const evaluation = evaluateEligibility(profile);
     expect(evaluation.isEligible).toBe(true);
-    expect(evaluation.primaryScheme?.code).toBe("ELS");
+    expect(evaluation.primaryScheme?.code).toBe("TERM_LOAN");
 
     // 3. 90% NSFDC Funding Structure
     const funding = calculateFundingBreakdown(evaluation.primaryScheme!, profile.estimatedCost);
     expect(funding.nsfdcAmount).toBe(1800000);
-    expect(funding.channelPartnerAmount).toBe(200000);
-    expect(funding.promoterAmount).toBe(0);
+    expect(funding.channelPartnerAmount).toBe(100000);
+    expect(funding.promoterAmount).toBe(100000);
 
-    // 4. Step 2: Extended 12-Month Gestation Moratorium
+    // 4. Step 2: 6-Month Gestation Moratorium
     const calculation = calculateConcessionalLoan({
       principal: funding.totalCost,
-      annualInterestRate: 4.0, // Concessional rate for female students
+      annualInterestRate: 8.0,
       tenureYears: 5,
-      moratoriumMonths: 12,
+      moratoriumMonths: 6,
     });
-    expect(calculation.accruedGestationInterest).toBe(80000); // 2000000 * 0.04 * 1.0
+    expect(calculation.accruedGestationInterest).toBe(80000); // 2000000 * 0.08 * 0.5
     expect(calculation.monthlyMoratoriumSurcharge).toBe(Math.round(80000 / 60)); // 1333
 
     // 5. Step 3: Solvent Partner Routing in Bengaluru
     const blrCoords = DISTRICT_HUBS.find((h) => h.id === "bengaluru")!.coordinates;
     const partners = filterAndRankPartners(PRESEEDED_PARTNERS, blrCoords, {
-      schemeCode: "ELS",
+      schemeCode: "TERM_LOAN",
       includeHighRisk: false,
     });
     expect(partners.length).toBeGreaterThan(0);
     const designated = partners[0];
     expect(designated.healthTier).toBe("SOLVENT");
-    expect(designated.supportedSchemes).toContain("ELS");
+    expect(designated.supportedSchemes).toContain("TERM_LOAN");
   });
 
   it("Scenario 5: Insolvent Partner Evasion & Automated Safe Re-Routing", () => {

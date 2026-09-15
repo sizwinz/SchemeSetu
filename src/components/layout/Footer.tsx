@@ -49,14 +49,6 @@ export function Footer() {
             <Link href="/locator" className="hover:text-slate-800 transition-colors">
               Channel Partner Network
             </Link>
-            <span>&bull;</span>
-            <Link href="/dossier" className="hover:text-slate-800 transition-colors">
-              Application Dossier
-            </Link>
-            <span>&bull;</span>
-            <Link href="/admin" className="hover:text-slate-800 transition-colors">
-              Officer Console
-            </Link>
           </div>
         </div>
       </footer>

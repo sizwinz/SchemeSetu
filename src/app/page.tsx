@@ -25,7 +25,7 @@ export default function HomePage() {
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl">
-              Connecting Scheduled Caste entrepreneurs and students with tailored NSFDC concessional schemes covering up to 90% of project costs at 4.0% to 8.0% interest rates through solvent, low-NPA Channel Partners.
+              Connecting Scheduled Caste entrepreneurs with tailored NSFDC concessional schemes covering up to 90% of project costs at 4.0% to 8.0% interest rates through solvent, low-NPA Channel Partners.
             </p>
 
             {/* 4 Statutory Mandate Pillars */}
@@ -54,7 +54,7 @@ export default function HomePage() {
             <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200 shadow-md">
               <Image
                 src="/images/hero_entrepreneurs.jpg"
-                alt="Marginalized Indian entrepreneurs and students supported by MoSJE and NSFDC affirmative schemes"
+                alt="Marginalized Indian entrepreneurs supported by MoSJE and NSFDC affirmative schemes"
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 40vw"
@@ -71,7 +71,7 @@ export default function HomePage() {
 
               <div className="absolute bottom-3 left-3 right-3 text-white space-y-1">
                 <p className="text-xs sm:text-sm font-bold text-white drop-shadow-xs">
-                  Empowering SC Artisans, Dairy Farmers &amp; Tech Scholars
+                  Empowering SC Artisans, Dairy Farmers &amp; Micro-Enterprises
                 </p>
                 <div className="flex items-center space-x-2 text-[11px] text-slate-200">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
@@ -86,7 +86,7 @@ export default function HomePage() {
       {/* Deliverable 1: Front-and-Center Smart Scheme Recommender Wizard */}
       <SmartRecommenderWizard />
 
-      {/* Deliverable 1 Schemes: 4 Statutory Schemes Showcase */}
+      {/* Deliverable 1 Schemes: 3 Statutory Enterprise Schemes Showcase */}
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
           <div>
@@ -112,7 +112,7 @@ export default function HomePage() {
       {/* Deliverable 3 Context: Channel Finance Architecture & NPA Routing */}
       <ChannelFinanceExplainer />
 
-      {/* Trust & Pre-Screened Verifiable Dossier Banner */}
+      {/* Trust & Pre-Screened Referral Slip Banner */}
       <TrustBanner />
     </div>
   );

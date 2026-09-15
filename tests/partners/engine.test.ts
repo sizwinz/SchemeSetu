@@ -72,12 +72,12 @@ describe("Channel Partner Geolocation & Health Routing Engine", () => {
 
     it("should filter partners by authorized scheme code", () => {
       const results = filterAndRankPartners(PRESEEDED_PARTNERS, lucknowCoords, {
-        schemeCode: "ELS",
+        schemeCode: "MSY",
       });
 
       expect(results.length).toBeGreaterThan(0);
       results.forEach((p) => {
-        expect(p.supportedSchemes).toContain("ELS");
+        expect(p.supportedSchemes).toContain("MSY");
       });
     });
 

@@ -57,18 +57,18 @@ describe("Scheme Evaluation Engine", () => {
     expect(result.primaryScheme?.interestRateMin).toBe(4.0);
   });
 
-  it("should qualify student applicants for Educational Loan Scheme", () => {
+  it("should qualify enterprise applicants with higher capital costs for Term Loan Scheme", () => {
     const profile: UserProfile = {
       annualFamilyIncome: 400000,
       estimatedCost: 1500000,
-      targetGroup: "SC_STUDENTS",
-      educationLevel: "GRADUATE",
+      targetGroup: "ALL_SC",
       gender: "MALE",
     };
     const result = evaluateEligibility(profile);
     expect(result.isEligible).toBe(true);
-    const hasELS = result.eligibleSchemes.some((s) => s.code === "ELS");
-    expect(hasELS).toBe(true);
+    const hasTLS = result.eligibleSchemes.some((s) => s.code === "TERM_LOAN");
+    expect(hasTLS).toBe(true);
+    expect(result.primaryScheme?.code).toBe("TERM_LOAN");
   });
 
   it("should calculate exact institutional funding breakdown for Micro Credit Finance", () => {

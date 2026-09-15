@@ -115,7 +115,7 @@ export default function TermsOfServicePage() {
               <span>1. Beneficiary Eligibility Invariants</span>
             </h2>
             <p>
-              Concessional assistance provided under NSFDC schemes (including Mahila Samriddhi Yojana, Micro Credit Finance, Term Loan Scheme, and Education Loan Scheme) is governed by statutory socio-economic criteria:
+              Concessional assistance provided under NSFDC schemes (including Mahila Samriddhi Yojana, Micro Credit Finance, and Term Loan Scheme) is governed by statutory socio-economic criteria:
             </p>
             <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
               <li>
@@ -154,7 +154,7 @@ export default function TermsOfServicePage() {
               <span>3. Nature of Pre-Screening &amp; Final Sanction Authority</span>
             </h2>
             <p>
-              Generation of a Pre-Screened Application Slip or QR Dossier confirms programmatic eligibility based on the applicant&apos;s self-declared parameters. Final credit sanction, margin verification, and disbursement remain the statutory prerogative of the designated Channel Partner bank after physical verification of original caste certificates, income certificates, Aadhaar identity, and project proposals.
+              Generation of a Pre-Screened Application Slip confirms programmatic eligibility based on the applicant&apos;s self-declared parameters. Final credit sanction, margin verification, and disbursement remain the statutory prerogative of the designated Channel Partner bank after physical verification of original caste certificates, income certificates, Aadhaar identity, and project proposals.
             </p>
           </section>
 

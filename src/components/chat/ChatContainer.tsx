@@ -366,7 +366,6 @@ export function ChatContainer({
                       estimatedCost: msg.widgetData.userProfile?.estimatedCost || 140000,
                       gender: msg.widgetData.userProfile?.gender || "FEMALE",
                       targetGroup: msg.widgetData.userProfile?.targetGroup,
-                      educationLevel: msg.widgetData.userProfile?.educationLevel,
                     }}
                   />
                 )}
