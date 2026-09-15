@@ -34,8 +34,39 @@ export function calculateFundingBreakdown(
   };
 }
 
-export function rankSchemesByBenefit(schemes: SchemeRule[]): SchemeRule[] {
+const ACTIVITY_SCHEME_PREFERENCES: Record<string, SchemeRule["code"][]> = {
+  kirana: ["MCF"],
+  dairy: ["MCF"],
+  tailoring: ["MSY", "MCF"],
+  artisanal: ["MSY", "MCF"],
+  transport: ["TERM_LOAN"],
+  manufacturing: ["TERM_LOAN"],
+};
+
+export function rankSchemesByBenefit(
+  schemes: SchemeRule[],
+  projectCategory?: string
+): SchemeRule[] {
+  const preferredCodes = projectCategory
+    ? ACTIVITY_SCHEME_PREFERENCES[projectCategory]
+    : undefined;
+
   return [...schemes].sort((a, b) => {
+    // Activity fit is evaluated before financial tie-breakers. This avoids
+    // recommending a women-focused handicraft scheme for a retail kiosk only
+    // because the applicant also happens to be a woman.
+    if (preferredCodes) {
+      const aPreference = preferredCodes.indexOf(a.code);
+      const bPreference = preferredCodes.indexOf(b.code);
+      const aMatches = aPreference !== -1;
+      const bMatches = bPreference !== -1;
+
+      if (aMatches !== bMatches) return aMatches ? -1 : 1;
+      if (aMatches && bMatches && aPreference !== bPreference) {
+        return aPreference - bPreference;
+      }
+    }
+
     if (a.interestRateMin !== b.interestRateMin) {
       return a.interestRateMin - b.interestRateMin;
     }
@@ -98,7 +129,7 @@ export function evaluateEligibility(
   }
 
   if (eligibleSchemes.length > 0) {
-    const ranked = rankSchemesByBenefit(eligibleSchemes);
+    const ranked = rankSchemesByBenefit(eligibleSchemes, profile.projectCategory);
     const primaryScheme = ranked[0];
     const otherEligible = ranked.slice(1);
 

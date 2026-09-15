@@ -38,6 +38,8 @@ export interface PartnerFilterOptions {
   districtId?: string;
   institutionType?: string;
   schemeCode?: string;
+  /** Project amount being routed, in rupees. Used to reject branches without capacity. */
+  requiredAmount?: number;
   includeHighRisk?: boolean;
   maxDistanceKm?: number;
 }

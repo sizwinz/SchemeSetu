@@ -91,7 +91,17 @@ export function filterAndRankPartners(
       return false;
     }
 
-    // 4. Max Distance Radius Filter (if specified)
+    // 4. Capacity gate. A partner must have enough live lending quota for the
+    // applicant's requested project amount; this prevents a valid applicant
+    // from being routed to a branch that cannot currently process the case.
+    if (
+      options.requiredAmount &&
+      partner.remainingQuotaLakhs * 100000 < options.requiredAmount
+    ) {
+      return false;
+    }
+
+    // 5. Max Distance Radius Filter (if specified)
     if (
       options.maxDistanceKm &&
       partner.distanceKm > options.maxDistanceKm

@@ -81,6 +81,20 @@ describe("Channel Partner Geolocation & Health Routing Engine", () => {
       });
     });
 
+    it("should only route an applicant to a branch with enough live quota", () => {
+      const requiredAmount = 2500000;
+      const results = filterAndRankPartners(PRESEEDED_PARTNERS, lucknowCoords, {
+        requiredAmount,
+      });
+
+      expect(results.length).toBeGreaterThan(0);
+      results.forEach((partner) => {
+        expect(partner.remainingQuotaLakhs * 100000).toBeGreaterThanOrEqual(
+          requiredAmount
+        );
+      });
+    });
+
     it("should filter partners by institution type", () => {
       const scaResults = filterAndRankPartners(PRESEEDED_PARTNERS, lucknowCoords, {
         institutionType: "SCA",

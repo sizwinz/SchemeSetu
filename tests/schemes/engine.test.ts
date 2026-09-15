@@ -57,6 +57,21 @@ describe("Scheme Evaluation Engine", () => {
     expect(result.primaryScheme?.interestRateMin).toBe(4.0);
   });
 
+  it("should use enterprise activity to avoid mismatching a retail applicant to MSY", () => {
+    const profile: UserProfile = {
+      annualFamilyIncome: 250000,
+      estimatedCost: 100000,
+      gender: "FEMALE",
+      targetGroup: "SC_WOMEN",
+      projectCategory: "kirana",
+    };
+
+    const result = evaluateEligibility(profile);
+
+    expect(result.isEligible).toBe(true);
+    expect(result.primaryScheme?.code).toBe("MCF");
+  });
+
   it("should qualify enterprise applicants with higher capital costs for Term Loan Scheme", () => {
     const profile: UserProfile = {
       annualFamilyIncome: 400000,

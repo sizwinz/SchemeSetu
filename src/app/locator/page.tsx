@@ -48,6 +48,7 @@ function LocatorContent() {
   const [filters, setFilters] = useState<PartnerFilterOptions>(() => ({
     includeHighRisk: false,
     schemeCode: incomingScheme,
+    requiredAmount: incomingAmount,
   }));
 
   useEffect(() => {
@@ -55,9 +56,10 @@ function LocatorContent() {
       setFilters((prev) => ({
         ...prev,
         schemeCode: incomingScheme,
+        requiredAmount: incomingAmount,
       }));
     }
-  }, [incomingScheme]);
+  }, [incomingScheme, incomingAmount]);
 
   const matchedScheme = MOSJE_SCHEMES.find(
     (s) => s.code === filters.schemeCode || (filters.schemeCode === "TERM_LOAN" && s.code === "TERM_LOAN")
@@ -99,7 +101,7 @@ function LocatorContent() {
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Find solvent SCAs, Public Sector Banks, and RRBs. Institutions with high NPAs (&gt;10%) or exhausted quotas are automatically filtered out.
+            Find solvent SCAs, Public Sector Banks, and RRBs. Institutions with high NPAs (&gt;10%) or insufficient live quota for your project are automatically filtered out.
           </p>
         </div>
 
@@ -159,6 +161,7 @@ function LocatorContent() {
               <span className="text-slate-600 text-[11px] block mt-0.5">
                 Filtering solvent branches authorized for {matchedScheme.code} with NPA &lt; 10%
                 {incomingAmount ? ` &bull; Project Cost: ${formatCurrency(incomingAmount)}` : ""}
+                {incomingAmount ? " &bull; Capacity verified" : ""}
                 {incomingMoratorium ? ` &bull; Gestation Grace: ${incomingMoratorium} Months` : ""}
               </span>
             </div>

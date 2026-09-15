@@ -89,6 +89,14 @@ const ACTIVITIES: ActivityOption[] = [
     category: "business",
     description: "Fabrication tools, equipment, processing",
   },
+  {
+    id: "artisanal",
+    label: "Artisan & Handicraft Unit",
+    icon: Sparkles,
+    defaultCost: 100000,
+    category: "business",
+    description: "Footwear, leathercraft, pottery & goods",
+  },
 ];
 
 export function SmartRecommenderWizard() {
@@ -145,6 +153,12 @@ export function SmartRecommenderWizard() {
       } else if (/machine|workshop|karkhana|कारखाना/i.test(lower)) {
         setSelectedActivity("manufacturing");
         setCost(1500000);
+      } else if (/kirana|shop|dukan|store|किराना|दुकान/i.test(lower)) {
+        setSelectedActivity("kirana");
+        setCost(120000);
+      } else if (/artisan|craft|leather|karigar|हस्तशिल्प|कारीगर/i.test(lower)) {
+        setSelectedActivity("artisanal");
+        setCost(100000);
       }
     },
   });
@@ -162,6 +176,7 @@ export function SmartRecommenderWizard() {
   const userProfile: UserProfile = {
     annualFamilyIncome: income,
     estimatedCost: cost,
+    projectCategory: selectedActivity,
     targetGroup: demographic,
     gender: demographic === "SC_WOMEN" ? "FEMALE" : undefined,
   };
@@ -264,7 +279,7 @@ export function SmartRecommenderWizard() {
           <div className="space-y-2 pt-2">
             <div className="flex items-center justify-between">
               <label htmlFor={costSliderId} className="text-xs font-bold text-slate-800 cursor-pointer">
-                2. Estimated Total Project / Study Cost
+                2. Estimated Total Project Cost
               </label>
               <span className="text-sm font-bold text-slate-900 tabular-nums">
                 {formatCurrency(cost)}
@@ -428,6 +443,10 @@ export function SmartRecommenderWizard() {
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
                   Tailored concessional assistance covering up to 90% of your project cost under NSFDC guidelines.
+                </p>
+                <p className="text-[11px] text-emerald-700 mt-1.5 flex items-center gap-1">
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                  <span>Matched for your {ACTIVITIES.find((activity) => activity.id === selectedActivity)?.label || "enterprise"} profile, cost, income, and category.</span>
                 </p>
               </div>
 
